@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use odra::casper_types::U512;
 use odra::prelude::*;
 use odra::Address;
@@ -12,10 +14,12 @@ pub enum Error {
     InsufficientBalance = 1,
     /// Caller is not the admin
     NotAdmin = 2,
+    // Caller is not the relayer contract
+    NotRealyer = 3,
     /// User already claimed their tokens
-    AlreadyDistibuted = 3,
+    AlreadyDistibuted = 4,
     /// Contract is paused
-    ContractPaused = 4,
+    ContractPaused = 5,
 }
 
 /// A module definition. Each module struct consists Vars and Mappings
@@ -25,6 +29,7 @@ pub struct Faucet {
     /// The module itself does not store the value,
     /// it's a proxy that writes/reads value to/from the host.
     admin: Var<Address>,
+    relayer: Var<Address>,
     paused: Var<bool>,
     distribution_amount: Var<U512>,
     distributed_to_addr: Mapping<Address, bool>,
@@ -38,7 +43,8 @@ pub struct Faucet {
 #[odra::module]
 impl Faucet {
     /// Initializes the contract.
-    pub fn init(&mut self, admin: Address, distribute_amount: U512) {
+    pub fn init(&mut self, admin: Address, relayer: Address, distribute_amount: U512) {
+        self.relayer.set(relayer);
         self.admin.set(admin);
         self.paused.set(false);
         self.distribution_amount.set(distribute_amount);
@@ -53,7 +59,7 @@ impl Faucet {
 
     pub fn distribute(&mut self, user_addr: Address, github_acc: String) {
         self.assert_not_paused();
-        //TODO: assert the relayer contract is the caller
+        self.assert_relayer();
         if self.distributed_to_addr.get(&user_addr).is_some()
             || self.distributed_to_acc.get(&github_acc).is_some()
         {
@@ -107,6 +113,12 @@ impl Faucet {
         }
     }
 
+    fn assert_relayer(&self) {
+        if self.env().caller() != self.relayer.get().unwrap() {
+            self.env().revert(Error::NotRealyer)
+        }
+    }
+
     fn assert_not_paused(&self) {
         if self.paused.get_or_default() {
             self.env().revert(Error::ContractPaused);
@@ -126,19 +138,23 @@ mod tests {
     fn distribute_flow() {
         let env = odra_test::env();
         let admin = env.get_account(0);
-        let alice = env.get_account(1);
-        let bob = env.get_account(2);
+        let relayer = env.get_account(1);
+        let alice = env.get_account(2);
+        let bob = env.get_account(3);
 
         let mut contract = FaucetHostRef::deploy(
             &env,
             FaucetInitArgs {
                 admin: admin,
+                relayer: relayer,
                 distribute_amount: U512::one(),
             },
         );
         // fund the contract
         contract.with_tokens(U512::from(100)).deposit();
         assert_eq!(contract.balance(), U512::from(100));
+
+        env.set_caller(relayer);
 
         let alice_inital_balance = env.balance_of(&alice);
         contract.distribute(alice, "alice".to_string());
@@ -155,5 +171,12 @@ mod tests {
         contract.distribute(bob, "bob".to_string());
         assert_eq!(bob_inital_balance + U512::one(), env.balance_of(&bob));
         assert_eq!(contract.balance(), U512::from(98));
+
+        //try to withdraw but the caller in not the relayer
+        env.set_caller(alice);
+        assert_eq!(
+            contract.try_distribute(alice, "alice".to_string()),
+            Err(Error::NotRealyer.into())
+        );
     }
 }
