@@ -1,5 +1,5 @@
 [package]
-name = "facuet"
+name = "faucet"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,12 +13,12 @@ odra-test = { version = "0.8.1", features = [], default-features = false }
 odra-build = { version = "0.8.1", features = [], default-features = false }
 
 [[bin]]
-name = "facuet_build_contract"
+name = "faucet_build_contract"
 path = "bin/build_contract.rs"
 test = false
 
 [[bin]]
-name = "facuet_build_schema"
+name = "faucet_build_schema"
 path = "bin/build_schema.rs"
 test = false
 
