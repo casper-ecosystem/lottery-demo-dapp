@@ -1,0 +1,32 @@
+[package]
+name = "lottery"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+odra = { version = "0.8.1", features = [], default-features = false }
+odra-modules = "0.8.1"
+rand = "0.8.4"
+
+[dev-dependencies]
+odra-test = { version = "0.8.1", features = [], default-features = false }
+
+[build-dependencies]
+odra-build = { version = "0.8.1", features = [], default-features = false }
+
+[[bin]]
+name = "lottery_build_contract"
+path = "bin/build_contract.rs"
+test = false
+
+[[bin]]
+name = "lottery_build_schema"
+path = "bin/build_schema.rs"
+test = false
+
+[profile.release]
+codegen-units = 1
+lto = true
+
+[profile.dev.package."*"]
+opt-level = 3
