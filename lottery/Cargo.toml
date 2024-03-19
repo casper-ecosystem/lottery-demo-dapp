@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 odra = { version = "0.8.1", features = [], default-features = false }
 odra-modules = "0.8.1"
-rand = "0.8.4"
 
 [dev-dependencies]
 odra-test = { version = "0.8.1", features = [], default-features = false }
