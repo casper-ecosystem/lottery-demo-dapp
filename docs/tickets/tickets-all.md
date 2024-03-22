@@ -1,30 +1,5 @@
 ## Tickets
 
-### As Example dApp, I should have the repository
-
-The example application should be developed in a mono-repository with the following structure:
-
-```bash
-client/
-server/
-smart-contract/
-COPYRIGHT.md
-README.md
-```
-
-### As Example dApp, I should have DESIGN for the “Header” section
-
-The “Header” section should be the standard [CPSR.click](http://CPSR.click) panel with the following menu items:
-
-- CSPR.products
-- About
-- Jackpots
-- Sign in/Account
-    - View on CSPR.live
-    - Copy public key
-    - My plays
-    - Switch account
-    - Sign out
 
 ### As Example dApp, I should have DESIGN for the “Footer” section
 
@@ -148,45 +123,6 @@ Learn more about CSPR.click, CSPR.cloud, Odra, and the Casper Network by checkin
 - [https://github.com/odradev/odra](https://github.com/odradev/odra)
 - [https://casper.network](https://casper.network/)
 
-### As Smart Contract, I should provide the possibility to play
-
-The smart contract should expose the `play_lottery` entry point that accepts no arguments. 
-
-When called, the entry point should verify the payment amount by checking the `treasury_purse` balance. If the balance is not less than the sum of the previously recorded `treasure_purse_balance` and the configurable `ticket_price` amount, then we deduct that the payment happened. Note that it’s important to check that `get_purse_balance(treasury_purse) >= treasure_purse_balance + ticket_price` instead of just equality to avoid the so-called “transfer to the payment purse” attack.
-
-After that, the contract should split the payment amount between `prize_pool` and the `collected_fees` as:
-
-`collected_fees += lottery_fee` 
-
-`prize_pool += ticket_price - lottery_fee`
-
-Where `lottery_fee` is a configurable state variable smaller than the `ticket_price`.
-
-Those balances should be stored only as state variables, without funds being actually moved between different purses.
-
-The entry point should calculate if the deploy caller won a prize and transfer the corresponding amount to the caller's main purse. The calculation should be based on the two configurable state variables called `jackpot_probability` and `consolation_prize_probability`. The jackpot amount equals the `prize_pool`. The consolation prize equals `rand(1, min(max_consolation_prize_amount, prize_pool))`. Where `jackpot_probability`, `consolation_prize_probability`, a `max_consolation_prize_amount` are configurable state variables.
-
-After each play the `play_id` should be incremented. The initial value of `play_id` is `1`. 
-
-When the caller wins the jackpot, the `round_id` should be incremented. The initial value of `round_id` should be `1`.
-
-On each play, the contract should emit a `play` event with the following properties:
-
-- `round_id`
-- `play_id`
-- `player_account_hash`
-- `prize_amount`
-- `is_jackpot`
-
-Let’s start from the following default values:
-
-```bash
-ticket_price = 50 CSPR
-lottery_fee = 1 CSPR
-jackpot_probability = 0.01
-consolation_prize_probability = 0.1
-max_consolation_prize_amount = 50 CSPR
-```
 
 ### As Smart Contract, I should an accompanying WASM proxy to collect user payments
 
