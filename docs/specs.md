@@ -109,4 +109,6 @@ This way, the application state management will be simpler.
 
 All tickets are maintained in the Github project for this repo at https://github.com/casper-ecosystem/pbw-2024-workshop/issues
 
-Tickets not yet enterede into the Github system are kept in the tickets subfolder.
+Tickets not yet entered into the Github system are kept in the tickets subfolder. Master list is [here](./tickets/tickets-all.md)
+
+
