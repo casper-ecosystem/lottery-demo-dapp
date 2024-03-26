@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import desktopBgImage from '../../../images/desktop-bg.svg';
 import jackpotImage from '../../../images/jackpot-text.svg';
+import jackpotFlare from '../../../images/jackpot-flare.svg';
 import { useState } from 'react';
 import Modal from './Modal';
 import { SetModalInViewProps } from '../../../App';
@@ -8,27 +9,31 @@ import { SetModalInViewProps } from '../../../App';
 const Container = styled.div(({ theme }) =>
 	theme.withMedia({
 		backgroundColor: '#0F1429',
-		backgroundImage: [`url("${desktopBgImage}")`],
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'right',
 		height: ['693px', '624px', '624px'],
 		width: '100%',
+		overflowX: 'hidden',
 	})
 );
 
 const ContentWrapper = styled.div(({ theme }) =>
 	theme.withMedia({
+		height: ['653px', '584px', '584px'],
+		margin: '40px auto 0 auto',
+		width: ['516px', '696px', '936px'],
 		display: 'flex',
-		position: 'relative',
-		top: '50%',
-		left: '10%',
-		transform: 'translateY(-50%)',
-		width: '50%',
+		justifyContent: 'space-between',
+		alignItems: 'center',
 	})
 );
 
-const IntroductoryContent = styled.div(({ theme }) => theme.withMedia({}));
+const IntroductoryContent = styled.div(({ theme }) =>
+	theme.withMedia({
+		zIndex: 1,
+	})
+);
 
 const GreetingText = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -36,7 +41,6 @@ const GreetingText = styled.div(({ theme }) =>
 		fontSize: ['24px', '40px', '40px'],
 		fontWeight: '600',
 		lineHeight: ['32px', '56px', '56px'],
-		marginTop: ['24px', '40px', '40px'],
 	})
 );
 
@@ -74,7 +78,7 @@ const PlayNowButton = styled.div(({ theme }) =>
 		display: 'flex',
 		justifyContent: 'center',
 		alignItem: 'center',
-		width: '176px',
+		width: '240px',
 		height: '36px',
 		padding: '8px 16px',
 		borderRadius: '4px',
@@ -93,12 +97,20 @@ const PlayNowButton = styled.div(({ theme }) =>
 
 const JackpotContainer = styled.div(({ theme }) =>
 	theme.withMedia({
-		position: 'absolute',
-		right: '400px',
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
 		width: '240px',
+		position: 'relative',
+	})
+);
+
+const JackpotFlare = styled.img(({ theme }) =>
+	theme.withMedia({
+		position: 'absolute',
+		top: '0',
+		left: '0',
+		transform: 'translate(-55%, -35%)',
 	})
 );
 
@@ -106,36 +118,38 @@ const JackpotImageText = styled.img`
 	width: 240px;
 `;
 
-const JackpotText = styled.div`
-	h2,
-	h3 {
-		display: inline;
-		background: -webkit-linear-gradient(#ffffff, #b4c3ed);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		filter: drop-shadow(0px 6px 0px #0a2ebf);
-	}
+const JackpotText = styled.div(({ theme }) =>
+	theme.withMedia({
+		'h2, h3': {
+			display: 'inline',
+			background: '-webkit-linear-gradient(#ffffff, #b4c3ed)',
+			WebkitBackgroundClip: 'text',
+			WebkitTextFillColor: 'transparent',
+			filter: 'drop-shadow(0px 6px 0px #0a2ebf)',
+		},
+		h2: {
+			fontSize: '48px !important',
+		},
+		h3: {
+			fontSize: '36px !important',
+		},
+	})
+);
 
-	h2 {
-		font-size: 48px !important;
-	}
-	h3 {
-		font-size: 36px !important;
-	}
-`;
-
-const CurrentPlays = styled.div`
-	margin-top: 1em;
-	p {
-		padding: 6px 22px;
-		border-radius: 22px;
-		background-color: #181d40;
-		color: #7490ff;
-		font-weight: 400;
-		font-size: 14px;
-		display: inline;
-	}
-`;
+const CurrentPlays = styled.div(({ theme }) =>
+	theme.withMedia({
+		marginTop: '1em',
+		p: {
+			padding: '6px 22px',
+			borderRadius: '22px',
+			backgroundColor: '#181d40',
+			color: '#7490ff',
+			fontWeight: '400',
+			fontSize: '14px',
+			display: 'inline',
+		},
+	})
+);
 
 export const Welcome = (props: SetModalInViewProps) => {
 	const handlePlayNow = () => {
@@ -158,18 +172,19 @@ export const Welcome = (props: SetModalInViewProps) => {
 						</ShotWrapper>
 						<PlayNowButton onClick={handlePlayNow}>Play Now</PlayNowButton>
 					</IntroductoryContent>
+					<JackpotContainer>
+						<JackpotFlare src={jackpotFlare} />
+						<JackpotImageText src={jackpotImage} />
+						<JackpotText>
+							<h2>1,027.44</h2>
+							&nbsp;
+							<h3>CSPR</h3>
+						</JackpotText>
+						<CurrentPlays>
+							<p>Current Plays: 234</p>
+						</CurrentPlays>
+					</JackpotContainer>
 				</ContentWrapper>
-				<JackpotContainer>
-					<JackpotImageText src={jackpotImage}></JackpotImageText>
-					<JackpotText>
-						<h2>8924.39</h2>
-						&nbsp;
-						<h3>CSPR</h3>
-					</JackpotText>
-					<CurrentPlays>
-						<p>Current Plays: 234</p>
-					</CurrentPlays>
-				</JackpotContainer>
 			</Container>
 		</>
 	);

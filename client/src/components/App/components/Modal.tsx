@@ -76,6 +76,7 @@ const StyledButton = styled.button(({ theme }) =>
 		width: '100%',
 		position: 'absolute',
 		bottom: 0,
+		cursor: 'pointer',
 	})
 );
 
@@ -96,8 +97,8 @@ export default function Modal(props: ModalProps) {
 		event.stopPropagation();
 	};
 
-	/* DISABLE SCROLLING
 	useEffect(() => {
+		// Disable Scrolling
 		if (props.modalInView) {
 			const originalStyle = window.getComputedStyle(document.body).overflow;
 			document.body.style.overflow = 'hidden';
@@ -106,7 +107,7 @@ export default function Modal(props: ModalProps) {
 				document.body.style.overflow = originalStyle;
 			};
 		}
-	}, [props.modalInView]);*/
+	}, [props.modalInView]);
 
 	useEffect(() => {
 		clickRef?.getActiveAccountWithBalance()?.then(activeAccountWithBalanceReturned => {
@@ -119,10 +120,8 @@ export default function Modal(props: ModalProps) {
 	}
 
 	async function connectWallet() {
-		console.log(await clickRef?.getSignInOptions());
+		console.log(await clickRef?.signIn());
 	}
-
-	const tokens = 0;
 
 	let ActionButton = <StyledButton onClick={connectWallet}>Connect Wallet</StyledButton>;
 	let Icon = <img src={welcomeHand} />;
