@@ -8,6 +8,7 @@ import { AppTheme } from './theme';
 import { Welcome } from './components/App/components';
 import Landing from './components/App/index';
 import React from 'react';
+import Header from './components/App/components/Header';
 
 const ContentContainer = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -51,6 +52,7 @@ const App = () => {
 				onThemeSwitch={() => setThemeMode(themeMode === ThemeModeType.light ? ThemeModeType.dark : ThemeModeType.light)}
 			/>
 			<Container>
+				<Header />
 				<ActiveAccountContext.Provider value={activeAccount}>
 					<Welcome setModalInView={setModalInView} />
 

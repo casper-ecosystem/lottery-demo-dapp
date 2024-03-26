@@ -21,7 +21,7 @@ const Container = styled.div(({ theme }) =>
 const ContentWrapper = styled.div(({ theme }) =>
 	theme.withMedia({
 		height: ['653px', '584px', '584px'],
-		margin: '40px auto 0 auto',
+		margin: '0 auto',
 		width: ['516px', '696px', '936px'],
 		display: 'flex',
 		justifyContent: 'space-between',

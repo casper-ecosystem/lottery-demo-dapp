@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ClickUI, Lang, ThemeModeType } from '@make-software/csprclick-ui';
 import { accountMenuItems } from './settings';
-import { homeSettings, homeSetting } from './settings/home';
 import styled from 'styled-components';
 export * from './settings';
 
@@ -38,7 +37,6 @@ const ClickTopBar = ({ themeMode, onThemeSwitch }: TopBarProps) => {
 					topBarSettings={{
 						onThemeSwitch: onThemeSwitch,
 						accountMenuItems: accountMenuItems,
-						customTopBarMenuSettings: [homeSettings(location, setLocation)],
 					}}
 					themeMode={themeMode}
 				/>
