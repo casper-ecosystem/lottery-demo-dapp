@@ -3,6 +3,7 @@ use odra::casper_types::U256;
 use odra::casper_types::U512;
 use odra::prelude::*;
 use odra::Address;
+use odra::Event;
 use odra::Mapping;
 use odra::OdraError;
 use odra::OdraType;
@@ -44,7 +45,24 @@ pub enum Error {
     ContractPaused = 5,
 }
 
-#[odra::module]
+#[derive(Event, PartialEq, Eq, Debug)]
+pub struct PlayEvent {
+    pub round_id: RoundId,
+    pub player: Address,
+    pub ticket_id: U256,
+    pub timestamp: u64,
+}
+
+#[derive(Event, PartialEq, Eq, Debug)]
+pub struct WinEvent {
+    pub round_id: RoundId,
+    pub winner: Address,
+    pub ticket_id: U256,
+    pub prize: U512,
+    pub timestamp: u64,
+}
+
+#[odra::module(events = [PlayEvent, WinEvent])]
 pub struct Lottery {
     ownable: SubModule<Ownable>,
     erc721: SubModule<Erc721Base>,
@@ -128,13 +146,23 @@ impl Lottery {
 
     pub fn resolve_lottery(&mut self, round_id: RoundId, seed: [u8; 32]) {
         self.ownable.assert_owner(&self.env().caller());
-        let winner_index = self.get_random_number(seed, round_id);
-        let winner_addr = self.owner_of(&U256::from(winner_index));
-        self.env()
-            .transfer_tokens(&winner_addr, &self.env().self_balance());
         match self.rounds.get(&round_id) {
             Some(mut r) => {
-                r.winner = Some(winner_addr);
+                let timestamp = self.env().get_block_time();
+                if timestamp <= r.ends_at {
+                    self.env().revert(Error::LotteryInProgress)
+                }
+                let ticket_id = U256::from(self.get_random_number(seed, round_id));
+                let winner = self.owner_of(&ticket_id);
+                self.env().transfer_tokens(&winner, &r.balance);
+                self.env().emit_event(WinEvent {
+                    round_id,
+                    winner,
+                    ticket_id,
+                    prize: r.balance,
+                    timestamp,
+                });
+                r.winner = Some(winner);
                 self.rounds.set(&round_id, r);
             }
             None => self.env().revert(Error::RoundNotFound),
@@ -152,12 +180,17 @@ impl Lottery {
         match self.rounds.get(&round_id) {
             Some(mut r) => {
                 let round_id_shifted = (round_id as u64) * TICKETS_PER_ROUND;
-                self.erc721.owners.set(
-                    &U256::from(round_id_shifted + r.next_index.as_u64()),
-                    Some(caller),
-                );
+                let ticket_id = U256::from(round_id_shifted + r.next_index.as_u64());
+                self.erc721.owners.set(&ticket_id, Some(caller));
                 r.next_index += U256::one();
+                r.balance += self.env().attached_value();
                 self.rounds.set(&round_id, r);
+                self.env().emit_event(PlayEvent {
+                    round_id,
+                    player: caller,
+                    ticket_id,
+                    timestamp: self.env().get_block_time(),
+                })
             }
             None => self.env().revert(Error::RoundNotFound),
         };
@@ -327,6 +360,11 @@ mod tests {
 
         let bob_inital_balance = env.balance_of(&bob);
         env.set_caller(admin);
+        assert_eq!(
+            contract.try_resolve_lottery(round_id, SEED),
+            Err(Error::LotteryInProgress.into())
+        );
+        env.advance_block_time(3 * ONE_HOUR_IN_MILISECONDS);
         contract.resolve_lottery(round_id, SEED);
         assert_eq!(contract.winner(round_id), Some(bob));
         assert_eq!(bob_inital_balance + 15, env.balance_of(&bob))
