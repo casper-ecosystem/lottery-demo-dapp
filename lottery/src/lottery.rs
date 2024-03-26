@@ -13,6 +13,7 @@ use odra_modules::erc721::erc721_base::Erc721Base;
 use odra_modules::erc721::Erc721;
 
 pub type RoundId = u32;
+const TICKETS_PER_ROUND: u64 = 10_000;
 
 #[derive(OdraType, PartialEq, Debug)]
 pub struct Round {
@@ -150,9 +151,9 @@ impl Lottery {
         self.erc721.balances.add(&caller, U256::one());
         match self.rounds.get(&round_id) {
             Some(mut r) => {
-                let round_id_shifted = (round_id as u64) << 16;
+                let round_id_shifted = (round_id as u64) * TICKETS_PER_ROUND;
                 self.erc721.owners.set(
-                    &U256::from(round_id_shifted | r.next_index.as_u64()),
+                    &U256::from(round_id_shifted + r.next_index.as_u64()),
                     Some(caller),
                 );
                 r.next_index += U256::one();
@@ -222,14 +223,10 @@ impl Lottery {
 
         let random_number = u64::from_be_bytes(hashed_data[..8].try_into().unwrap()) % max;
 
-        // Combine the round_id (converted to u64) and the random number into a single u64 value
-        // We use bit shifting to achieve the desired placement
+        let round_id_shifted = (round_id as u64) * TICKETS_PER_ROUND;
 
-        // Shift the round_id 16 bits to the left to make space for the random number at the ones place
-        let round_id_shifted = (round_id as u64) << 16;
-
-        // Combine the shifted round_id and the random number using bitwise OR
-        round_id_shifted | random_number
+        // Combine the shifted round_id and the random number
+        round_id_shifted + random_number
     }
 
     fn assert_active(&self, round_id: RoundId) {
@@ -264,10 +261,10 @@ impl Lottery {
 
 #[cfg(test)]
 mod tests {
-    use crate::lottery::{Error, LotteryHostRef, LotteryInitArgs};
+    use crate::lottery::{Error, LotteryHostRef};
     use odra::{
         casper_types::{U256, U512},
-        host::{Deployer, HostRef},
+        host::{Deployer, HostRef, NoArgs},
     };
 
     const ONE_HOUR_IN_MILISECONDS: u64 = 3_600_000;
@@ -277,7 +274,7 @@ mod tests {
     ];
 
     #[test]
-    fn buy_ticket() {
+    fn flow1() {
         let env = odra_test::env();
         let admin = env.get_account(0);
         let alice = env.get_account(1);
@@ -285,51 +282,53 @@ mod tests {
         let charlie = env.get_account(3);
 
         env.set_caller(admin);
-        let mut contract = LotteryHostRef::deploy(
-            &env,
-            LotteryInitArgs {
-                ticket_price: U512::from(5),
-                starts_at: ONE_HOUR_IN_MILISECONDS,
-                ends_at: 3 * ONE_HOUR_IN_MILISECONDS,
-            },
+        let mut contract = LotteryHostRef::deploy(&env, NoArgs);
+        let round_id = contract.create_round(
+            ONE_HOUR_IN_MILISECONDS,
+            3 * ONE_HOUR_IN_MILISECONDS,
+            U512::from(5),
         );
-        assert_eq!(contract.ticket_price(), U512::from(5));
-        assert_eq!(contract.starts_at(), ONE_HOUR_IN_MILISECONDS);
+        assert_eq!(contract.ticket_price(round_id), Some(U512::from(5)));
+        assert_eq!(contract.starts_at(round_id), Some(ONE_HOUR_IN_MILISECONDS));
 
         env.set_caller(alice);
         assert_eq!(
-            contract.with_tokens(U512::from(5)).try_buy_ticket(),
+            contract
+                .with_tokens(U512::from(5))
+                .try_play_lottery(round_id),
             Err(Error::LotteryIsNotActive.into())
         );
 
         env.advance_block_time(ONE_HOUR_IN_MILISECONDS);
 
         assert_eq!(
-            contract.with_tokens(U512::from(1)).try_buy_ticket(),
+            contract
+                .with_tokens(U512::from(1))
+                .try_play_lottery(round_id),
             Err(Error::WrongPayment.into())
         );
 
-        contract.with_tokens(U512::from(5)).buy_ticket();
+        contract.with_tokens(U512::from(5)).play_lottery(round_id);
 
         assert_eq!(contract.balance_of(&alice), U256::one());
-        assert_eq!(contract.owner_of(&U256::zero()), alice);
+        assert_eq!(contract.owner_of(&U256::from(10000)), alice);
 
         env.set_caller(bob);
-        contract.with_tokens(U512::from(5)).buy_ticket();
+        contract.with_tokens(U512::from(5)).play_lottery(round_id);
 
         assert_eq!(contract.balance_of(&bob), U256::one());
-        assert_eq!(contract.owner_of(&U256::one()), bob);
+        assert_eq!(contract.owner_of(&U256::from(10001)), bob);
 
         env.set_caller(charlie);
-        contract.with_tokens(U512::from(5)).buy_ticket();
+        contract.with_tokens(U512::from(5)).play_lottery(round_id);
 
         assert_eq!(contract.balance_of(&charlie), U256::one());
-        assert_eq!(contract.owner_of(&U256::from(2)), charlie);
+        assert_eq!(contract.owner_of(&U256::from(10002)), charlie);
 
         let bob_inital_balance = env.balance_of(&bob);
         env.set_caller(admin);
-        contract.resolve_lottery(SEED);
-        assert_eq!(contract.winner(), bob);
+        contract.resolve_lottery(round_id, SEED);
+        assert_eq!(contract.winner(round_id), Some(bob));
         assert_eq!(bob_inital_balance + 15, env.balance_of(&bob))
     }
 }
