@@ -35,6 +35,7 @@ pub enum Error {
     LotteryInProgress = 3,
     RoundNotFound = 4,
     ContractPaused = 5,
+    InvalidProbabiliy = 6,
 }
 
 #[derive(Event, PartialEq, Eq, Debug)]
@@ -80,7 +81,9 @@ impl Lottery {
         self.lottery_fee.set(U512::from(ONE_CSPR));
         self.ticket_price.set(U512::from(50 * ONE_CSPR));
         self.max_consolation_prize.set(U512::from(50 * ONE_CSPR));
+        self.assert_probability(jackpot_probability);
         self.jackpot_probability.set(jackpot_probability);
+        self.assert_probability(consolation_prize_probability);
         self.consolation_prize_probability
             .set(consolation_prize_probability);
         self.next_play_id.set(U256::one());
@@ -132,6 +135,41 @@ impl Lottery {
         self.active_round.set(current_round);
         current_round
     }
+
+    pub fn configure(
+        &mut self,
+        max_consolation_prize: Option<U512>,
+        lottery_fee: Option<U512>,
+        jackpot_probability: Option<u8>,
+        consolation_prize_probability: Option<u8>,
+        ticket_price: Option<U512>,
+    ) {
+        self.ownable.assert_owner(&self.env().caller());
+        self.assert_not_active();
+
+        if let Some(prize) = max_consolation_prize {
+            self.max_consolation_prize.set(prize);
+        }
+
+        if let Some(fee) = lottery_fee {
+            self.lottery_fee.set(fee);
+        }
+
+        if let Some(probability) = jackpot_probability {
+            self.assert_probability(probability);
+            self.jackpot_probability.set(probability);
+        }
+
+        if let Some(probability) = consolation_prize_probability {
+            self.assert_probability(probability);
+            self.consolation_prize_probability.set(probability);
+        }
+
+        if let Some(price) = ticket_price {
+            self.ticket_price.set(price);
+        }
+    }
+
     #[odra(payable)]
     pub fn top_up_prize_pool(&mut self) {
         self.ownable.assert_owner(&self.env().caller());
@@ -260,6 +298,18 @@ impl Lottery {
         }
     }
 
+    fn assert_not_active(&self) {
+        let current_timestamp = self.env().get_block_time();
+        match self.rounds.get(&self.active_round.get_or_default()) {
+            Some(r) => {
+                if r.starts_at < current_timestamp || r.ends_at > current_timestamp {
+                    self.env().revert(Error::LotteryInProgress);
+                }
+            }
+            None => (),
+        }
+    }
+
     fn assert_not_paused(&self) {
         if self.is_paused.get_or_default() {
             self.env().revert(Error::ContractPaused)
@@ -269,6 +319,12 @@ impl Lottery {
     fn assert_deposit(&self) {
         if self.env().attached_value() != self.ticket_price.get_or_default() {
             self.env().revert(Error::WrongPayment);
+        }
+    }
+
+    fn assert_probability(&self, value: u8) {
+        if value > 100 {
+            self.env().revert(Error::InvalidProbabiliy)
         }
     }
 }

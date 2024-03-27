@@ -6,12 +6,17 @@ edition = "2021"
 [dependencies]
 odra = { version = "0.8.1", features = [], default-features = false }
 odra-modules = "0.8.1"
+odra-casper-livenet-env = { version = "0.8.1", optional = true }
 
 [dev-dependencies]
 odra-test = { version = "0.8.1", features = [], default-features = false }
 
 [build-dependencies]
 odra-build = { version = "0.8.1", features = [], default-features = false }
+
+[features]
+default = []
+livenet = ["odra-casper-livenet-env"]
 
 [[bin]]
 name = "lottery_build_contract"
@@ -21,6 +26,12 @@ test = false
 [[bin]]
 name = "lottery_build_schema"
 path = "bin/build_schema.rs"
+test = false
+
+[[bin]]
+name = "livenet"
+path = "bin/livenet.rs"
+required-features = ["livenet"]
 test = false
 
 [profile.release]
