@@ -1,10 +1,8 @@
 import styled from 'styled-components';
-import desktopBgImage from '../../../images/desktop-bg.svg';
-import jackpotImage from '../../../images/jackpot-text.svg';
-import jackpotFlare from '../../../images/jackpot-flare.svg';
+import jackpotImage from '../../../../images/jackpot-text.svg';
+import jackpotFlare from '../../../../images/jackpot-flare.svg';
 import { useState } from 'react';
-import Modal from './Modal';
-import { SetModalInViewProps } from '../../../App';
+import { SetModalInViewProps } from './Home';
 
 const Container = styled.div(({ theme }) =>
 	theme.withMedia({

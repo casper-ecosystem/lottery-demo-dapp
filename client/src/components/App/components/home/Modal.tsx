@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { IconContainer } from '../../../globalStyles';
-import xButton from '../../../images/x-button.svg';
-import welcomeHand from '../../../images/icons/welcome-hand.svg';
-import twoCoins from '../../../images/icons/two-coins.svg';
-import ticket from '../../../images/icons/ticket.svg';
+import { IconContainer } from '../../../../globalStyles';
+import xButton from '../../../../images/x-button.svg';
+import welcomeHand from '../../../../images/icons/welcome-hand.svg';
+import twoCoins from '../../../../images/icons/two-coins.svg';
+import ticket from '../../../../images/icons/ticket.svg';
 import { useClickRef } from '@make-software/csprclick-ui';
-import { ActiveAccountContext } from '../../../App';
+import { ActiveAccountContext } from '../../../../App';
 import { AccountType } from '@make-software/csprclick-core-types';
 import { csprToMotes, motesToCSPR } from 'casper-js-sdk';
 

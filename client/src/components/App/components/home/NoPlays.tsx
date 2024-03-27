@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import trophy from '../../../images/icons/trophy-bold.svg';
-import { IconContainer } from '../../../globalStyles';
-import { SetModalInViewProps } from '../../../App';
+import trophy from '../../../../images/icons/trophy-bold.svg';
+import { IconContainer } from '../../../../globalStyles';
+import { SetModalInViewProps } from './Home';
 
 const NoPlaysStyled = styled.div(({ theme }) =>
 	theme.withMedia({

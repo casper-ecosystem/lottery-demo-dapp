@@ -1,7 +1,7 @@
 import React from 'react';
-import NoPlays from './components/NoPlays';
+import NoPlays from './NoPlays';
 import styled from 'styled-components';
-import { SetModalInViewProps } from '../../App';
+import { SetModalInViewProps } from './Home';
 
 const StyledLanding = styled.div(({ theme }) =>
 	theme.withMedia({
