@@ -7,7 +7,7 @@ export * from './settings';
 const TopBarSection = styled.section(({ theme }) => ({
 	backgroundColor: theme.topBarBackground,
 	position: 'fixed',
-	zIndex: 1,
+	zIndex: 2,
 	width: '100%',
 }));
 
