@@ -1,21 +1,24 @@
 import { Router, Request, Response } from 'express';
+
 import { Account } from '../models/account';
+import axios from 'axios';
+import url from 'node:url';
 
 const accountsRouter = Router();
 //let accounts: Account[] = [];
-accountsRouter.get('/:account_hash', (req: Request, res: Response) => {
+accountsRouter.get('/:account_hash', async (req: Request, res: Response) => {
     let accountHash = req.params.account_hash;
-    const account: Account = {
-        account_hash: accountHash,
-        balance: 900090090090,
-        main_purse_uref: "main_purse_uref",
-        public_key: "public_key"
-    };
-
-    if (!account) {
-        res.status(404).send('Account not found');
-    } else {
-        res.json(account);
+    const headers = { Authorization: `${process.env.CSPR_CLOUD_API_KEY}` };
+    let urlPath = process.env.CSPR_CLOUD_BASE_URL || "";
+    var url = new URL(urlPath);
+    url.pathname = '/accounts/' + accountHash;
+    // console.log(headers, url);
+    try {
+        const response = await axios.get(url.href, { headers });
+        res.json(response.data);
+    } catch (exception) {
+        process.stderr.write(`ERROR received from ${url}: ${exception}\n`);
     }
 });
 export default accountsRouter;
+
