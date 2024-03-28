@@ -54,7 +54,9 @@ export default function Nav() {
 	return (
 		<StyledNav>
 			<StyledNavDiv>
-				<img src={logo} />
+				<Link to='/'>
+					<img src={logo} />{' '}
+				</Link>
 				<StyledButtons>
 					<StyledLink to={Paths.Home} color={location.pathname === Paths.Home ? activeButtonColor : undefined}>
 						Home
