@@ -1,0 +1,1 @@
+docker build -t lottery-api:0.1.1 .
