@@ -1,4 +1,3 @@
-#Stage 1
 FROM node:18-alpine as builder
 RUN mkdir /lottery-demo-app
 WORKDIR /lottery-demo-app
