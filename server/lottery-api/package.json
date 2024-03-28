@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "description": "API for lottery demo dApp",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node src/app.ts",
     "build": "tsc",
-    "serve": "node dist/index.js"
+    "serve": "node dist/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +15,8 @@
     "express": "^4.19.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }
