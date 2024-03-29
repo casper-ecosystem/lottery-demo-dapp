@@ -1,0 +1,1 @@
+docker build -t lottery-demo-app:0.1.1 .
