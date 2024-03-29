@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS `lottery`;
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
