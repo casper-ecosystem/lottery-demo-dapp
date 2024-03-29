@@ -24,3 +24,5 @@ root.render(
 		</ClickProvider>
 	</React.StrictMode>
 );
+
+console.log({ config });
