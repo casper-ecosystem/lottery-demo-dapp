@@ -8,7 +8,8 @@ import ticket from '../../../../images/icons/ticket.svg';
 import { useClickRef } from '@make-software/csprclick-ui';
 import { ActiveAccountContext } from '../../../../App';
 import { AccountType } from '@make-software/csprclick-core-types';
-import { csprToMotes, motesToCSPR } from 'casper-js-sdk';
+import { CLPublicKey, csprToMotes, motesToCSPR } from 'casper-js-sdk';
+import { preparePlayDeploy, signAndSendDeploy } from '../../../../casper-helper';
 
 const StyledOverlay = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -123,6 +124,20 @@ export default function Modal(props: ModalProps) {
 		console.log(await clickRef?.signIn());
 	}
 
+	function linkToFaucet() {
+		window.open('https://testnet.cspr.live/tools/faucet', '_blank');
+	}
+
+	async function initiatePlay() {
+		if (activeAccountWithBalance?.public_key == null) {
+			// Show error modal page
+			return;
+		}
+		const publicKey = CLPublicKey.fromHex(activeAccountWithBalance.public_key);
+		const deploy = preparePlayDeploy(publicKey);
+		signAndSendDeploy(deploy, publicKey);
+	}
+
 	let ActionButton = <StyledButton onClick={connectWallet}>Connect Wallet</StyledButton>;
 	let Icon = <img src={welcomeHand} />;
 	let MainText = <h3>Welcome!</h3>;
@@ -132,12 +147,12 @@ export default function Modal(props: ModalProps) {
 		activeAccountWithBalance != null &&
 		(activeAccountWithBalance.balance == null || activeAccountWithBalance.balance < csprToMotes(5).toString())
 	) {
-		ActionButton = <StyledButton>Request tokens</StyledButton>;
+		ActionButton = <StyledButton onClick={linkToFaucet}>Request tokens</StyledButton>;
 		Icon = <img src={twoCoins} />;
 		MainText = <h3>Not enough CSPR</h3>;
 		SubText = <p>You don&apos;t have enough CSPR to buy a ticket. Top up your account!</p>;
 	} else if (activeAccountWithBalance != null) {
-		ActionButton = <StyledButton>Play</StyledButton>;
+		ActionButton = <StyledButton onClick={initiatePlay}>Play</StyledButton>;
 		Icon = <img src={ticket} />;
 		MainText = <h3>Buy a ticket</h3>;
 		SubText = <p>Buy a ticket for your chance to win the jackpot!</p>;
