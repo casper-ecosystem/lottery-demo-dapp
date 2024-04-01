@@ -1,12 +1,12 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'plays' })
 export class Round {
   @PrimaryColumn({ name: 'round_id' })
   roundId: string;
 
   @Column({ name: 'plays_num' })
-  playsNum: number;
+  playsNum: string;
 
   @Column({ name: 'jackpot_amount' })
   jackpotAmount: string;

@@ -9,6 +9,8 @@ export const dataSourceOptions: DataSourceOptions = {
   migrationsRun: false, // migrations should run as init container before app starts
   synchronize: false,
   logging: false,
+  supportBigNumbers: true,
+  logger: 'simple-console',
 };
 
 export const AppDataSource = new DataSource(dataSourceOptions);
