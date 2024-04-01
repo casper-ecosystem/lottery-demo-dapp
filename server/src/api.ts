@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import express, { Express, Request, Response } from 'express';
+import cors from "cors";
 import WebSocket from 'ws';
 import { AppDataSource } from './data-source';
 
@@ -8,10 +9,25 @@ import { config } from './config';
 import { PlayRepository } from './repository/play';
 import { CasperClient, DeployUtil } from "casper-js-sdk";
 
+const fs = require("fs");
+
 const app: Express = express();
 const port = config.httpPort;
 
+app.use(express.json({ limit: "1mb" }));
+app.use(cors());
+
+const wss = new WebSocket.Server({ port: 8080 });
+
 const client = new CasperClient("http://135.181.14.226:7777/rpc");
+
+wss.on('connection', (ws: WebSocket) => {
+  console.log('New client connected');
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
 
 (async function () {
   await AppDataSource.initialize();
@@ -27,6 +43,11 @@ const client = new CasperClient("http://135.181.14.226:7777/rpc");
   ws.on('message', async (data: Buffer) => {
     const rawData = data.toString();
     console.log(`Received message from server: ${rawData}`);
+
+    wss.clients.forEach((client) => {
+      client.send(rawData);
+    });
+
     if (rawData === "Ping") {
       return;
     }
@@ -41,21 +62,13 @@ const client = new CasperClient("http://135.181.14.226:7777/rpc");
 
     res.json({ data: plays });
   });
-
-  app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-  });
 })();
 
-app.get('/deploy', async (req: Request, res: Response) => {
-  try {
-		const deploy = DeployUtil.deployFromJson(req.body).unwrap();
-		const deployHash = await client.putDeploy(deploy);
-		res.send(deployHash);
-	} catch (error) {
-		res.status(400).send(error.message);
-	}
+app.get('/getProxyWASM', async (req: Request, res: Response) => {
+  const wasm = new Uint8Array(fs.readFileSync(`../smart-contract/proxy_caller.wasm`));
+  res.send(Buffer.from(wasm));
 });
+
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
