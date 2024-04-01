@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import express, { Express, Request, Response } from 'express';
 import cors from "cors";
 import WebSocket from 'ws';
+
 import { AppDataSource } from './data-source';
 
 import { config } from './config';
@@ -10,8 +11,13 @@ import { PlayRepository } from './repository/play';
 import { CasperClient, DeployUtil } from "casper-js-sdk";
 
 const fs = require("fs");
+import { RoundRepository } from './repository/round';
+import { PaginationParams, pagination } from './middlewares/pagination';
 
 const app: Express = express();
+app.use(cors<Request>());
+app.use(express.json());
+
 const port = config.httpPort;
 
 app.use(express.json({ limit: "1mb" }));
@@ -28,11 +34,28 @@ wss.on('connection', (ws: WebSocket) => {
     console.log('Client disconnected');
   });
 });
+interface FindPlaysQuery extends PaginationParams {
+  player_account_hash: string;
+}
 
 (async function () {
   await AppDataSource.initialize();
 
   const playsRepository = new PlayRepository(AppDataSource);
+  const roundsRepository = new RoundRepository(AppDataSource);
+
+
+  app.get('/plays', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
+    const [plays, total] = await playsRepository.findByPlayer(
+      req.query.player_account_hash,
+      {
+        limit: req.query.limit,
+        offset: req.query.offset,
+      }
+    );
+
+    res.json({ data: plays, total });
+  });
 
   const ws = new WebSocket(`${config.csprCloudStreamingUrl}/contract-events?contract_package_hash=${config.lotteryContractPackageHash}`, {
     headers: {
@@ -59,8 +82,15 @@ wss.on('connection', (ws: WebSocket) => {
 
   app.get('/plays', async (req: Request, res: Response) => {
     const plays = await playsRepository.findAll();
-
     res.json({ data: plays });
+  });
+  app.get('/rounds', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
+    const [rounds, total] = await roundsRepository.getRounds(
+      req.query.limit,
+      req.query.offset,
+    );
+
+    res.json({ data: rounds, total });
   });
 })();
 
