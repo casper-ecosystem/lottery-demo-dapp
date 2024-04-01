@@ -17,16 +17,6 @@ export class PlayRepository {
     });
   }
 
-  findByPlayer(playerAccountHash: string, paginationParams: { limit: number; offset: number }) {
-    return this.repo.findAndCount({
-      where: {
-        playerAccountHash: playerAccountHash,
-      },
-      take: paginationParams.limit,
-      skip: paginationParams.offset,
-    });
-  }
-
   save(play: Play) {
     return this.repo.save(play);
   }
