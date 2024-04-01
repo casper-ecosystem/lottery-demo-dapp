@@ -9,7 +9,7 @@ const CONTRACT_HASH = "hash-1ef74bd21a7bd5352f50202e3d40352a0c209d90114eceee4be6
 
 export function preparePlayDeploy(publicKey: CLPublicKey): Deploy {
     // Look into using useContext for CasperClient / ContractClient
-    const casperClient = new CasperClient("http://NODE_ADDRESS:7777/rpc");
+    const casperClient = new CasperClient("");
     const contractClient = new Contracts.Contract(casperClient);
     contractClient.setContractHash(CONTRACT_HASH);
     const args = RuntimeArgs.fromMap({});
