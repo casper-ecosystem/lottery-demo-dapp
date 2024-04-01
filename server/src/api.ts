@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import express, { Express, Request, Response } from 'express';
-
+import WebSocket from 'ws';
 import { AppDataSource } from './data-source';
 
 import { config } from './config';
@@ -17,6 +17,24 @@ const client = new CasperClient("http://135.181.14.226:7777/rpc");
   await AppDataSource.initialize();
 
   const playsRepository = new PlayRepository(AppDataSource);
+
+  const ws = new WebSocket(`${config.csprCloudStreamingUrl}/contract-events?contract_package_hash=${config.lotteryContractPackageHash}`, {
+    headers: {
+      authorization: config.csprCloudAccessKey,
+    }
+  });
+
+  ws.on('message', async (data: Buffer) => {
+    const rawData = data.toString();
+    console.log(`Received message from server: ${rawData}`);
+    if (rawData === "Ping") {
+      return;
+    }
+  });
+
+  ws.on('close', () => {
+    console.log('Disconnected from Streaming API');
+  });
 
   app.get('/plays', async (req: Request, res: Response) => {
     const plays = await playsRepository.findAll();
