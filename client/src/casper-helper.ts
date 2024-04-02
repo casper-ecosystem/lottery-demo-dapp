@@ -2,7 +2,7 @@ import { RuntimeArgs, CasperClient, Contracts, CLPublicKey, DeployUtil, CLValueB
 import { Deploy, DeployJson } from "casper-js-sdk/dist/lib/DeployUtil";
 import { JsonTypes } from "typedjson";
 
-const CONTRACT_PACKAGE_HASH = ""
+const CONTRACT_PACKAGE_HASH = "40777e199af2ae4756c2a148c24e79885dc062fe4428adf23212dd04fd73187b"
 const CONTRACT_HASH = "hash-1ef74bd21a7bd5352f50202e3d40352a0c209d90114eceee4be6f3c8d4e78998"
 
 async function getProxyWASM(): Promise<Uint8Array> {
@@ -17,13 +17,18 @@ async function getProxyWASM(): Promise<Uint8Array> {
   }
 
 export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy> {
+    const contractPackageHashBytes = (new TextEncoder()).encode(CONTRACT_PACKAGE_HASH);
     const casperClient = new CasperClient("");
     const contractClient = new Contracts.Contract(casperClient);
     const args = RuntimeArgs.fromMap({
-        amount: CLValueBuilder.u512(csprToMotes(50))
+        attached_value: CLValueBuilder.u512(csprToMotes(50)),
+        amount: CLValueBuilder.u512(csprToMotes(50)),
+        entry_point: CLValueBuilder.string("play_lottery"),
+        contract_package_hash: CLValueBuilder.byteArray(contractPackageHashBytes),
+        args: CLValueBuilder.byteArray(RuntimeArgs.fromMap({}).toBytes().unwrap())
     });
 
-    let wasm = await getProxyWASM();
+    const wasm = await getProxyWASM();
 
     return contractClient.install(
         wasm,
