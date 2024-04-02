@@ -1,10 +1,10 @@
 import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
-import { BaseProps } from '../../types';
+//import { BaseProps } from '../../types';
 
 /* eslint-disable-next-line */
-export interface TableRowProps extends BaseProps {
+export interface TableRowProps {
   loading?: boolean;
   isClickable?: boolean;
   onClick?: MouseEventHandler<HTMLTableRowElement>;

@@ -1,9 +1,9 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { BaseProps } from '../../types';
+//import { BaseProps } from '../../types';
 
-export interface TableDataProps extends BaseProps {
+export interface TableDataProps {
   align?: 'left' | 'right' | 'center';
   fitContent?: boolean;
   indented?: boolean;
