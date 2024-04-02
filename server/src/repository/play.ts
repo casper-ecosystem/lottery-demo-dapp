@@ -17,7 +17,7 @@ export class PlayRepository {
     });
   }
 
-  save(play: Play) {
+  save(play: Partial<Play>) {
     return this.repo.save(play);
   }
 }
