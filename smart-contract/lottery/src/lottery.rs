@@ -170,6 +170,12 @@ impl Lottery {
         }
     }
 
+    pub fn transfer_fees_to_account(&mut self, amount: U512, reciver: Address) {
+        self.ownable.assert_owner(&self.env().caller());
+        self.collected_fees.subtract(amount);
+        self.env().transfer_tokens(&reciver, &amount);
+    }
+
     #[odra(payable)]
     pub fn top_up_prize_pool(&mut self) {
         self.ownable.assert_owner(&self.env().caller());
@@ -247,6 +253,10 @@ impl Lottery {
 
     pub fn ticket_price(&self) -> Option<U512> {
         self.ticket_price.get()
+    }
+
+    pub fn prize_pool(&self) -> U512 {
+        self.prize_pool.get_or_default()
     }
 
     // Internal
