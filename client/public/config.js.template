@@ -1,0 +1,5 @@
+const config = {
+  lottery_app_contract_package_hash: '$LOTTERY_APP_CONTRACT_PACKAGE_HASH',
+  lottery_play_payment_amount: '$LOTTERY_PLAY_PAYMENT_AMOUNT',
+  lottery_api_url: '$LOTTERY_API_URL',
+};
