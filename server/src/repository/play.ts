@@ -3,12 +3,8 @@ import { Play } from '../entity/play.entity';
 
 export class PlayRepository {
   private repo: Repository<Play>;
-  constructor(private dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     this.repo = dataSource.getRepository(Play);
-  }
-
-  findAll() {
-    return this.repo.find({});
   }
 
   findByPlayer(playerAccountHash: string, paginationParams: { limit: number; offset: number }) {
@@ -21,7 +17,7 @@ export class PlayRepository {
     });
   }
 
-  save(play: Play) {
+  save(play: Partial<Play>) {
     return this.repo.save(play);
   }
 }

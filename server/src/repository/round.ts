@@ -4,7 +4,7 @@ import { Round } from '../entity/round.entity';
 
 export class RoundRepository {
   private repo: Repository<Round>;
-  constructor(private dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     this.repo = dataSource.getRepository(Round);
   }
 
@@ -30,9 +30,6 @@ export class RoundRepository {
       .orderBy('p.round_id', 'DESC')
       .limit(limit)
       .offset(offset);
-
-    const query = queryBuilder.getQueryAndParameters();
-    console.log({ query });
 
     const [res, total] = await Promise.all([queryBuilder.getRawMany(), queryBuilder.getCount()]);
 

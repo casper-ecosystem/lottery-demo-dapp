@@ -18,4 +18,12 @@ export class Round {
 
   @Column({ name: 'ended_at' })
   endedAt: Date;
+
+  getAccountHash() {
+    return this.winnerAccountHash;
+  }
+
+  setPublicKey(publicKey: string) {
+    this.winnerPublicKey = publicKey;
+  }
 }

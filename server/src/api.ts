@@ -13,6 +13,7 @@ import { CasperClient, DeployUtil } from "casper-js-sdk";
 const fs = require("fs");
 import { RoundRepository } from './repository/round';
 import { PaginationParams, pagination } from './middlewares/pagination';
+import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
 
 const app: Express = express();
 app.use(cors<Request>());
@@ -44,6 +45,7 @@ interface FindPlaysQuery extends PaginationParams {
   const playsRepository = new PlayRepository(AppDataSource);
   const roundsRepository = new RoundRepository(AppDataSource);
 
+  const csprCloudClient = new CSPRCloudAPIClient(config.csprCloudApiUrl, config.csprCloudAccessKey);
 
   app.get('/plays', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
     const [plays, total] = await playsRepository.findByPlayer(
@@ -53,6 +55,8 @@ interface FindPlaysQuery extends PaginationParams {
         offset: req.query.offset,
       }
     );
+
+    await csprCloudClient.withPublicKeys(plays);
 
     res.json({ data: plays, total });
   });
@@ -89,6 +93,8 @@ interface FindPlaysQuery extends PaginationParams {
       req.query.limit,
       req.query.offset,
     );
+
+    await csprCloudClient.withPublicKeys(rounds);
 
     res.json({ data: rounds, total });
   });

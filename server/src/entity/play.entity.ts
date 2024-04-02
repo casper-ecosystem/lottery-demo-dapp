@@ -24,4 +24,12 @@ export class Play {
 
   @Column({ name: 'timestamp' })
   timestamp: Date;
+
+  getAccountHash() {
+    return this.playerAccountHash;
+  }
+
+  setPublicKey(publicKey: string) {
+    this.playerPublicKey = publicKey;
+  }
 }
