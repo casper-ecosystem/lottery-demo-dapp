@@ -22,6 +22,7 @@ These functionalities can only be called by the contract owner (designated durin
   * `pause()`: Pauses the contract, preventing user interaction.
   * `unpause()`: Unpauses the contract, allowing user interaction again.
   * `top_up_prize_pool()`: Allows the owner to add funds to the prize pool.
+  * `transfer_fees_to_account(amount: U512, reciver: Address)`: Transfers the requested amount to reciver`s address. Reverts if the requested amount bigger than collected fees.
 
 ### User
 
@@ -32,6 +33,7 @@ These functionalities can only be called by the contract owner (designated durin
 * `starts_at(round_id: Option<RoundId>)`: Retrieves the start timestamp of a specific round (optional parameter for round ID, defaults to the active round).
 * `ends_at(round_id: Option<RoundId>)`: Retrieves the end timestamp of a specific round (optional parameter for round ID, defaults to the active round).
 * `ticket_price()`: Returns the current ticket price.
+* `prize_pool()`: Returns the current prize pool balance.
 
 ## Interaction Example
 
