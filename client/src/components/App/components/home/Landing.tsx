@@ -2,6 +2,7 @@ import React from 'react';
 import NoPlays from './NoPlays';
 import styled from 'styled-components';
 import { SetModalInViewProps } from './Home';
+import PlaysTable from './PlaysTable';
 
 const StyledLanding = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -30,6 +31,7 @@ export default function Landing(props: SetModalInViewProps) {
 			<h3>Plays</h3>
 			<Plays>
 				<NoPlays setModalInView={props.setModalInView} />
+				<PlaysTable></PlaysTable>
 			</Plays>
 		</StyledLanding>
 	);

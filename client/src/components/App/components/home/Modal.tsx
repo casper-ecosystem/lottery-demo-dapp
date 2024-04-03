@@ -134,7 +134,7 @@ export default function Modal(props: ModalProps) {
 			return;
 		}
 		const publicKey = CLPublicKey.fromHex(activeAccountWithBalance.public_key);
-		const deploy = preparePlayDeploy(publicKey);
+		const deploy = await preparePlayDeploy(publicKey);
 		signAndSendDeploy(deploy, publicKey);
 	}
 
@@ -145,7 +145,7 @@ export default function Modal(props: ModalProps) {
 
 	if (
 		activeAccountWithBalance != null &&
-		(activeAccountWithBalance.balance == null || activeAccountWithBalance.balance < csprToMotes(5).toString())
+		(activeAccountWithBalance.balance == null || parseInt(activeAccountWithBalance.balance) < csprToMotes(5).toNumber())
 	) {
 		ActionButton = <StyledButton onClick={linkToFaucet}>Request tokens</StyledButton>;
 		Icon = <img src={twoCoins} />;

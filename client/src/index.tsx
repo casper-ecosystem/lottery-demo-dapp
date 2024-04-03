@@ -25,4 +25,3 @@ root.render(
 	</React.StrictMode>
 );
 
-console.log({ config });
