@@ -1,10 +1,51 @@
 import 'reflect-metadata';
 
 import { config } from './config';
+import WebSocket from 'ws';
 
 import { Play } from './entity/play.entity';
 import { PlayRepository } from './repository/play';
-import { Event, PlayEventPayload } from './events';
+import { PlayEventPayload, isEvent, isPlayEventPayload, Event } from './events';
+import { AppDataSource } from './data-source';
+
+async function initDB() {
+  await AppDataSource.initialize();
+  const playsRepository = new PlayRepository(AppDataSource);
+  initWebSocketClient(playsRepository);
+}
+
+function initWebSocketClient(playsRepository) {
+  const ws = new WebSocket(
+    `${config.csprCloudStreamingUrl}/contract-events?contract_package_hash=${config.lotteryContractPackageHash}`,
+    {
+      headers: {
+        authorization: config.csprCloudAccessKey,
+      },
+    },
+  );
+
+  ws.on('message', async (data: Buffer) => {
+    const rawData = data.toString();
+    if (rawData === 'Ping') {
+      return;
+    }
+
+    try {
+      const event = JSON.parse(rawData);
+      if (isEvent<PlayEventPayload>(event, isPlayEventPayload)) {
+        await trackPlay(event, playsRepository);
+      } else {
+        console.log('Received an unexpected message format:', event);
+      }
+    } catch (error) {
+      console.error('Error parsing message:', error);
+    }
+  });
+
+  ws.on('close', () => {
+    console.log('Disconnected from Streaming API');
+  });
+}
 
 export async function trackPlay(event: Event<PlayEventPayload>, playsRepository: PlayRepository) {
   const play: Partial<Play> = {
@@ -19,3 +60,5 @@ export async function trackPlay(event: Event<PlayEventPayload>, playsRepository:
 
   return playsRepository.save(play);
 }
+
+initDB();
