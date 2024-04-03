@@ -8,13 +8,13 @@ import { Event, PlayEventPayload } from './events';
 
 export async function trackPlay(event: Event<PlayEventPayload>, playsRepository: PlayRepository) {
   const play: Partial<Play> = {
-    playId: Math.floor(Math.random() * 999999999).toString(),
-    roundId: Math.floor(Math.random() * 999999999).toString(),
-    playerAccountHash: '17fd44a38b0c7366c8a234e285c5a3dd046e9699ee4dff0249bb3f2989e17cf4',
-    prizeAmount: '100000044',
-    isJackpot: false,
+    playId: event.data.data.play_id,
+    roundId: event.data.data.round_id.toString(),
+    playerAccountHash: event.data.data.player,
+    prizeAmount: event.data.data.prize,
+    isJackpot: event.data.data.is_jackpot,
     deployHash: event.extra.deploy_hash,
-    timestamp: new Date(),
+    timestamp: new Date(event.data.data.timestamp * 1000),
   };
 
   return playsRepository.save(play);
