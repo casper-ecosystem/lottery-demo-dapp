@@ -5,11 +5,14 @@ import xButton from '../../../../images/x-button.svg';
 import welcomeHand from '../../../../images/icons/welcome-hand.svg';
 import twoCoins from '../../../../images/icons/two-coins.svg';
 import ticket from '../../../../images/icons/ticket.svg';
+import disconnectedPlug from '../../../../images/icons/disconnected-plug.svg';
+import loading from '../../../../images/loading.svg';
 import { useClickRef } from '@make-software/csprclick-ui';
 import { ActiveAccountContext } from '../../../../App';
 import { AccountType } from '@make-software/csprclick-core-types';
 import { CLPublicKey, csprToMotes, motesToCSPR } from 'casper-js-sdk';
-import { preparePlayDeploy, signAndSendDeploy } from '../../../../casper-helper';
+import { initiateDeployListener, preparePlayDeploy, signAndSendDeploy } from '../../../../casper-helper';
+import { useWebSocketDeployData, DeployMessage } from '../../../WebSocketProvider';
 
 const StyledOverlay = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -62,6 +65,20 @@ const StyledModalContentContainer = styled.div(({ theme }) =>
 	})
 );
 
+const StyledModalLoadingContent = styled.div(({ theme }) =>
+	theme.withMedia({
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		height: '100%',
+		justifyContent: 'space-around',
+		img: {
+			height: 60,
+			width: 60,
+		},
+	})
+);
+
 const ExtendedIconContainer = styled(IconContainer)`
 	${({ theme }) => `
     margin: auto;
@@ -90,6 +107,9 @@ export default function Modal(props: ModalProps) {
 	const activeAccountContext = React.useContext(ActiveAccountContext);
 	const clickRef = useClickRef();
 	const [activeAccountWithBalance, setActiveAccountWithBalance] = React.useState<AccountType | null>(null);
+	const [errorOccurred, setErrorOccurred] = React.useState<boolean>(false);
+	const [awaitingPlayResult, setAwaitingPlayResult] = React.useState<boolean>(false);
+	const { deploy } = useWebSocketDeployData();
 	function disableModal() {
 		props.setModalInView(false);
 	}
@@ -116,6 +136,12 @@ export default function Modal(props: ModalProps) {
 		});
 	}, [activeAccountContext]);
 
+	useEffect(() => {
+		if (deploy !== null) {
+			handleDeployProcessed(deploy);
+		}
+	}, [deploy]);
+
 	if (!props.modalInView) {
 		return null;
 	}
@@ -130,12 +156,21 @@ export default function Modal(props: ModalProps) {
 
 	async function initiatePlay() {
 		if (activeAccountWithBalance?.public_key == null) {
-			// Show error modal page
+			setErrorOccurred(true);
 			return;
 		}
 		const publicKey = CLPublicKey.fromHex(activeAccountWithBalance.public_key);
 		const deploy = await preparePlayDeploy(publicKey);
+		setAwaitingPlayResult(true);
+		initiateDeployListener(publicKey);
 		signAndSendDeploy(deploy, publicKey);
+	}
+
+	function handleDeployProcessed(deploy: DeployMessage) {
+		setAwaitingPlayResult(false);
+		if (deploy.detected_deploy.error === null) {
+			console.log('No error');
+		}
 	}
 
 	let ActionButton = <StyledButton onClick={connectWallet}>Connect Wallet</StyledButton>;
@@ -143,7 +178,20 @@ export default function Modal(props: ModalProps) {
 	let MainText = <h3>Welcome!</h3>;
 	let SubText = <p>Please connect your Casper account to play</p>;
 
-	if (
+	if (errorOccurred) {
+		ActionButton = (
+			<StyledButton
+				onClick={() => {
+					window.location.reload();
+				}}
+			>
+				Refresh
+			</StyledButton>
+		);
+		Icon = <img src={disconnectedPlug} />;
+		MainText = <h3>Something went wrong</h3>;
+		SubText = <p>Please refresh the page.</p>;
+	} else if (
 		activeAccountWithBalance != null &&
 		(activeAccountWithBalance.balance == null || parseInt(activeAccountWithBalance.balance) < csprToMotes(5).toNumber())
 	) {
@@ -158,16 +206,29 @@ export default function Modal(props: ModalProps) {
 		SubText = <p>Buy a ticket for your chance to win the jackpot!</p>;
 	}
 
+	let modalContent = (
+		<>
+			<ExtendedIconContainer>{Icon}</ExtendedIconContainer>
+			{MainText}
+			{SubText}
+			{ActionButton}
+		</>
+	);
+
+	if (awaitingPlayResult) {
+		modalContent = (
+			<StyledModalLoadingContent>
+				<img src={loading} />
+				<h3>Waiting for the results of your play...</h3>
+			</StyledModalLoadingContent>
+		);
+	}
+
 	return (
 		<StyledOverlay onClick={disableModal}>
 			<StyledModal onClick={handleModalClick}>
 				<StyledxButton src={xButton} onClick={disableModal}></StyledxButton>
-				<StyledModalContentContainer>
-					<ExtendedIconContainer>{Icon}</ExtendedIconContainer>
-					{MainText}
-					{SubText}
-					{ActionButton}
-				</StyledModalContentContainer>
+				<StyledModalContentContainer>{modalContent}</StyledModalContentContainer>
 			</StyledModal>
 		</StyledOverlay>
 	);

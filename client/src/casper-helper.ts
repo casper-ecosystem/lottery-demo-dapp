@@ -45,7 +45,7 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 	return contractClient.install(
 		wasm,
 		args,
-		csprToMotes(10).toString(), // 4 CSPR - Make this contextual, maybe use spec exec
+		csprToMotes(1).toString(), // Make this contextual
 		publicKey,
 		'casper-test' // Make this configural
 	);
@@ -54,4 +54,11 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 export function signAndSendDeploy(deploy: Deploy, publicKey: CLPublicKey) {
 	const deployJson = DeployUtil.deployToJson(deploy);
 	window.csprclick.send(JSON.stringify(deployJson.deploy), publicKey.toHex().toLowerCase());
+}
+
+export async function initiateDeployListener(publicKey: CLPublicKey) {
+	const result = await fetch(`http://localhost:3001/initDeployListener?publicKey=${publicKey.toHex()}`);
+	if (!result.ok) {
+		throw new Error(await result.text());
+	}
 }

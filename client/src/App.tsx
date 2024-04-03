@@ -8,6 +8,7 @@ import Container from './components/container';
 import Home from './components/App/components/home/Home';
 import { Route, Routes } from 'react-router-dom';
 import About from './components/App/components/about/About';
+import { WebSocketProvider } from './components/WebSocketProvider';
 
 export const ActiveAccountContext = createContext(null);
 
@@ -40,10 +41,12 @@ const App = () => {
 			<ActiveAccountContext.Provider value={activeAccount}>
 				<Container>
 					<Nav />
-					<Routes>
-						<Route path='/' element={<Home />} />
-						<Route path='/about' element={<About />} />
-					</Routes>
+					<WebSocketProvider>
+						<Routes>
+							<Route path='/' element={<Home />} />
+							<Route path='/about' element={<About />} />
+						</Routes>
+					</WebSocketProvider>
 				</Container>
 			</ActiveAccountContext.Provider>
 		</ThemeProvider>
