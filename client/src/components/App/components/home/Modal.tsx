@@ -36,7 +36,7 @@ const StyledOverlay = styled.div(({ theme }) =>
 
 const StyledModal = styled.div(({ theme }) =>
 	theme.withMedia({
-		backgroundColor: '#FFFFFF',
+		backgroundColor: theme.backgroundPrimary,
 		boxShadow: '0px 16px 48px 0px #1A191933',
 		width: ['80%', '40%', '30%'],
 		aspectRatio: ['1/1', '1/1'],
