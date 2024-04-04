@@ -1,19 +1,15 @@
 use core::cmp::min;
 
-use odra::casper_types::bytesrepr::Bytes;
 use odra::casper_types::U256;
 use odra::casper_types::U512;
 use odra::prelude::*;
 use odra::Address;
-use odra::Event;
 use odra::Mapping;
-use odra::OdraError;
-use odra::OdraType;
 use odra::SubModule;
 use odra::Var;
+use odra_cep47;
+use odra_cep47::cep47::Meta;
 use odra_modules::access::Ownable;
-use odra_modules::erc721::erc721_base::Erc721Base;
-use odra_modules::erc721::Erc721;
 
 pub type RoundId = u32;
 const ONE_CSPR: u64 = 1_000_000_000;
@@ -22,13 +18,13 @@ const SEED: [u8; 32] = [
     27, 28, 29, 30, 31, 32,
 ];
 
-#[derive(OdraType, PartialEq, Debug)]
+#[odra::odra_type]
 pub struct Round {
     starts_at: u64,
     ends_at: u64,
 }
 
-#[derive(OdraError)]
+#[odra::odra_error]
 pub enum Error {
     LotteryIsNotActive = 1,
     WrongPayment = 2,
@@ -38,7 +34,7 @@ pub enum Error {
     InvalidProbabiliy = 6,
 }
 
-#[derive(Event, PartialEq, Eq, Debug)]
+#[odra::event]
 pub struct Play {
     pub round_id: RoundId,
     pub player: Address,
@@ -56,7 +52,7 @@ enum Outcome {
 #[odra::module(events = [Play])]
 pub struct Lottery {
     ownable: SubModule<Ownable>,
-    erc721: SubModule<Erc721Base>,
+    cep47: SubModule<odra_cep47::cep47::Cep47>,
     rounds: Mapping<RoundId, Round>,
     next_round: Var<u32>,
     next_play_id: Var<U256>,
@@ -75,6 +71,9 @@ pub struct Lottery {
 impl Lottery {
     pub fn init(&mut self, jackpot_probability: u8, consolation_prize_probability: u8) {
         self.ownable.init();
+        let meta = self.nft_meta();
+        self.cep47
+            .init(String::from("test_name"), String::from("TEST_SYMBOL"), meta);
         self.next_round.set(1);
         self.collected_fees.set(U512::zero());
         self.prize_pool.set(U512::zero());
@@ -90,22 +89,15 @@ impl Lottery {
     }
 
     delegate! {
-        to self.erc721 {
-            fn balance_of(&self, owner: &Address) -> U256;
-            fn owner_of(&self, token_id: &U256) -> Address;
-            fn safe_transfer_from(&mut self, from: &Address, to: &Address, token_id: &U256);
-            fn safe_transfer_from_with_data(
-                &mut self,
-                from: &Address,
-                to: &Address,
-                token_id: &U256,
-                data: &Bytes
-            );
-            fn transfer_from(&mut self, from: &Address, to: &Address, token_id: &U256);
-            fn approve(&mut self, approved: &Option<Address>, token_id: &U256);
-            fn set_approval_for_all(&mut self, operator: &Address, approved: bool);
-            fn get_approved(&self, token_id: &U256) -> Option<Address>;
-            fn is_approved_for_all(&self, owner: &Address, operator: &Address) -> bool;
+        to self.cep47 {
+            fn name(&self) -> String;
+            fn symbol(&self) -> String;
+            fn meta(&self) -> BTreeMap<String, String>;
+            fn total_supply(&self) -> U256;
+            fn balance_of(&self, owner: Address)-> > U256;
+            fn owner_of(&self, token_id: TokenId) -> Option<Address>;
+            fn token_meta(&self, token_id: TokenId) -> Option<Meta>;
+            fn get_token_by_index(&self, owner: Address, index: U256) -> Option<TokenId>;
         }
 
         to self.ownable {
@@ -188,8 +180,8 @@ impl Lottery {
         self.collected_fees.add(self.lottery_fee.get_or_default());
         self.prize_pool
             .add(self.env().attached_value() - self.lottery_fee.get_or_default());
-        self.erc721.balances.add(&caller, U256::one());
-        self.erc721.owners.set(&play_id, Some(caller));
+        let meta = self.nft_meta();
+        self.cep47.mint(caller, vec![play_id], vec![meta]);
         self.next_play_id.add(U256::one());
         match self.determine_outcome() {
             Outcome::Jackpot => {
@@ -298,6 +290,12 @@ impl Lottery {
         }
     }
 
+    fn nft_meta(&self) -> Meta {
+        let mut meta = BTreeMap::new();
+        meta.insert("color".to_string(), "red".to_string());
+        meta
+    }
+
     fn assert_not_active(&self) {
         let current_timestamp = self.env().get_block_time();
         match self.rounds.get(&self.active_round.get_or_default()) {
@@ -392,7 +390,7 @@ mod tests {
             },
         ));
         assert_eq!(env.events_count(contract.address()), 2);
-        assert_eq!(contract.balance_of(&alice), U256::one());
+        assert_eq!(contract.balance_of(alice), U256::one());
         assert_eq!(contract.owner_of(&U256::from(1)), alice);
 
         env.set_caller(bob);
