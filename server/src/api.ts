@@ -2,14 +2,13 @@ import 'reflect-metadata';
 
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
-import WebSocket, { WebSocketServer } from 'ws';
+import WebSocket from 'ws';
 import http from 'http';
 
 import { AppDataSource } from './data-source';
 
 import { config } from './config';
 import { PlayRepository } from './repository/play';
-import { CasperClient, DeployUtil } from 'casper-js-sdk';
 
 import fs from 'fs';
 import { RoundRepository } from './repository/round';
@@ -28,7 +27,6 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({ server });
 
-const client = new CasperClient('http://135.181.14.226:7777/rpc');
 
 interface FindPlaysQuery extends PaginationParams {
   player_account_hash: string;
@@ -68,7 +66,7 @@ interface FindPlaysQuery extends PaginationParams {
 
   initWebSocketClient(playsRepository);
 
-  server.listen(3001, () => console.log(`Server running on http://localhost:3001`));
+  server.listen(port, () => console.log(`Server running on http://localhost:${port.toString()}`));
 })();
 
 async function initWebSocketClient(playsRepository) {

@@ -1,7 +1,5 @@
 import 'reflect-metadata';
 
-import { config } from './config';
-
 import { Play } from './entity/play.entity';
 import { PlayRepository } from './repository/play';
 import { Event, PlayEventPayload } from './events';

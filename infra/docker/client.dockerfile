@@ -4,7 +4,7 @@ WORKDIR /app/builder
 
 COPY client/package*.json ./
 
-RUN npm ci \
+RUN npm ci --force \
     && npm cache clean --force
 
 COPY client/. .
