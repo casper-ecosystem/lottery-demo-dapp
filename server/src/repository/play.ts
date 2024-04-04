@@ -17,6 +17,24 @@ export class PlayRepository {
     });
   }
 
+  findByDeployHash(deployHash: string): Promise<Play | null> {
+    return this.repo.findOne({
+      where: {
+        deployHash: deployHash,
+      },
+    });
+  }
+
+  getPaginatedPlays(paginationParams: { limit: number; offset: number }): Promise<[Play[], number]> {
+    return this.repo.findAndCount({
+      take: paginationParams.limit,
+      skip: paginationParams.offset,
+      order: {
+        timestamp: 'DESC', // This will order the results by timestamp in descending order
+      },
+    });
+  }
+
   save(play: Partial<Play>) {
     return this.repo.save(play);
   }
