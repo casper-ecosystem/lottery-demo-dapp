@@ -6,7 +6,7 @@ export const dataSourceOptions: DataSourceOptions = {
   url: config.dbURI,
   entities: [__dirname + '/entity/**/*{.ts,.js}'],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-  migrationsRun: false, // migrations should run as init container before app starts
+  migrationsRun: true, // migrations should run as init container before app starts
   synchronize: false,
   logging: false,
   supportBigNumbers: true,

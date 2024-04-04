@@ -51,14 +51,19 @@ export async function trackPlay(event: Event<PlayEventPayload>, playsRepository:
   const play: Partial<Play> = {
     playId: event.data.data.play_id,
     roundId: event.data.data.round_id.toString(),
-    playerAccountHash: event.data.data.player,
+    playerAccountHash: toRawAccountHashStr(event.data.data.player),
     prizeAmount: event.data.data.prize,
     isJackpot: event.data.data.is_jackpot,
     deployHash: event.extra.deploy_hash,
-    timestamp: new Date(event.data.data.timestamp * 1000),
+    timestamp: new Date(event.data.data.timestamp),
   };
 
   return playsRepository.save(play);
+}
+
+function toRawAccountHashStr(text: string): string {
+  const pattern = /^account-hash-/;
+  return text.replace(pattern, '');
 }
 
 initDB();

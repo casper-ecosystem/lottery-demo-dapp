@@ -18,6 +18,7 @@ import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
 import { PlayEventPayload, isPlayDeploy, isEvent, isPlayEventPayload } from './events';
 import { trackPlay } from './event-handler';
 import { raw } from 'mysql2';
+import { Play } from './entity/play.entity';
 
 const app: Express = express();
 app.use(cors<Request>());
@@ -41,8 +42,19 @@ async function initAPI() {
 
   const csprCloudClient = new CSPRCloudAPIClient(config.csprCloudApiUrl, config.csprCloudAccessKey);
 
-  app.get('/plays', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
+  app.get('/playsByPlayer', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
     const [plays, total] = await playsRepository.findByPlayer(req.query.player_account_hash, {
+      limit: req.query.limit,
+      offset: req.query.offset,
+    });
+
+    await csprCloudClient.withPublicKeys(plays);
+
+    res.json({ data: plays, total });
+  });
+
+  app.get('/plays', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
+    const [plays, total] = await playsRepository.getPaginatedPlays({
       limit: req.query.limit,
       offset: req.query.offset,
     });
@@ -78,6 +90,20 @@ async function initAPI() {
     }
   });
 
+  app.get('/playByDeployHash', async (req: Request, res: Response) => {
+    if (req.query.deployHash === null) {
+      res.status(400).send('No deploy hash provided');
+      return;
+    }
+    try {
+      const play: Play = await playsRepository.findByDeployHash(req.query.deployHash as string);
+      res.send(JSON.stringify(play));
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error getting deploy by deploy hash');
+    }
+  });
+
   server.listen(port, () => console.log(`Server running on http://localhost:${port}`));
 }
 
@@ -107,7 +133,9 @@ async function initWebSocketClient(publicKey) {
     }
     const deploy = JSON.parse(rawData);
     if (isPlayDeploy(deploy) && deploy.data.args.contract_package_hash.parsed === config.lotteryContractPackageHash) {
-      notifyClients(JSON.stringify({ detected_deploy: { error: deploy.data.error_message } }));
+      notifyClients(
+        JSON.stringify({ detected_deploy: { error: deploy.data.error_message, deployHash: deploy.data.deploy_hash } }),
+      );
       clearTimeout(ttl);
       ws.close();
     } else {
