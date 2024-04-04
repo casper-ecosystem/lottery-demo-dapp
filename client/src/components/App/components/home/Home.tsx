@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Welcome } from './Welcome';
 import Modal from './Modal';
 import Landing from './Landing';
+import { PlaysProvider } from './PlaysContext';
 
 const ContentContainer = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -21,11 +22,12 @@ export default function Home() {
 	return (
 		<>
 			<Welcome setModalInView={setModalInView} />
-
-			<ContentContainer>
-				<Landing setModalInView={setModalInView} />
-			</ContentContainer>
-			<Modal modalInView={modalInView} setModalInView={setModalInView} />
+			<PlaysProvider>
+				<ContentContainer>
+					<Landing setModalInView={setModalInView} />
+				</ContentContainer>
+				<Modal modalInView={modalInView} setModalInView={setModalInView} />
+			</PlaysProvider>
 		</>
 	);
 }

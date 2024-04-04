@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 
-export const IconContainer = styled.div(({ theme }) =>
+interface IconContainerProps {
+	backgroundColor?: string;
+}
+
+export const IconContainer = styled.div<IconContainerProps>(({ theme, backgroundColor = '#ECF3FD' }) =>
 	theme.withMedia({
 		width: '80px',
 		height: '80px',
 		borderRadius: '40px',
-		backgroundColor: '#ECF3FD',
+		backgroundColor: backgroundColor,
 		img: {
 			width: '40px',
 			height: '40px',

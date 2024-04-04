@@ -12,7 +12,13 @@ import {
 	CLU8,
 } from 'casper-js-sdk';
 import { Deploy, DeployJson } from 'casper-js-sdk/dist/lib/DeployUtil';
-import { JsonTypes } from 'typedjson';
+import axios from 'axios';
+
+export enum DeployFailed {
+	Failed,
+}
+
+export const ONE_CSPR = 1_000_000_000;
 
 const CONTRACT_PACKAGE_HASH = '40777e199af2ae4756c2a148c24e79885dc062fe4428adf23212dd04fd73187b';
 const CONTRACT_HASH = 'hash-1ef74bd21a7bd5352f50202e3d40352a0c209d90114eceee4be6f3c8d4e78998';
@@ -33,7 +39,7 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 	const casperClient = new CasperClient('');
 	const contractClient = new Contracts.Contract(casperClient);
 	const args = RuntimeArgs.fromMap({
-		attached_value: CLValueBuilder.u512(csprToMotes(50)),
+		attached_value: CLValueBuilder.u512(csprToMotes(50)), // Should be configural
 		amount: CLValueBuilder.u512(csprToMotes(50)),
 		entry_point: CLValueBuilder.string('play_lottery'),
 		contract_package_hash: contractPackageHashBytes,
@@ -45,15 +51,15 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 	return contractClient.install(
 		wasm,
 		args,
-		csprToMotes(1).toString(), // Make this contextual
+		csprToMotes(10).toString(), // Make this contextual
 		publicKey,
 		'casper-test' // Make this configural
 	);
 }
 
-export function signAndSendDeploy(deploy: Deploy, publicKey: CLPublicKey) {
+export async function signAndSendDeploy(deploy: Deploy, publicKey: CLPublicKey) {
 	const deployJson = DeployUtil.deployToJson(deploy);
-	window.csprclick.send(JSON.stringify(deployJson.deploy), publicKey.toHex().toLowerCase());
+	await window.csprclick.send(JSON.stringify(deployJson.deploy), publicKey.toHex().toLowerCase());
 }
 
 export async function initiateDeployListener(publicKey: CLPublicKey) {
@@ -61,4 +67,13 @@ export async function initiateDeployListener(publicKey: CLPublicKey) {
 	if (!result.ok) {
 		throw new Error(await result.text());
 	}
+}
+
+export async function getPlayByDeployHash(deployHash: string) {
+	return axios.get('http://localhost:3001/playByDeployHash', { params: { deployHash: deployHash } });
+}
+
+export function truncateHash(hash: string) {
+	const keepLength = 5;
+	return `${hash.substring(0, keepLength)}...${hash.substring(hash.length - keepLength)}`;
 }

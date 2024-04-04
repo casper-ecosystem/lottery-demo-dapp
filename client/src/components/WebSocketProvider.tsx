@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 export interface DeployMessage {
 	detected_deploy: {
 		error: string | null;
+		deployHash: string;
 	};
 }
 
@@ -19,7 +20,8 @@ interface WebSocketProviderProps {
 function isDeploy(object: DeployMessage) {
 	return (
 		object.detected_deploy !== null &&
-		(object.detected_deploy.error === null || typeof object.detected_deploy.error === 'string')
+		(object.detected_deploy.error === null || typeof object.detected_deploy.error === 'string') &&
+		typeof object.detected_deploy.deployHash === 'string'
 	);
 }
 
