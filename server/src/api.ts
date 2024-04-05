@@ -4,6 +4,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import WebSocket from 'ws';
 import http from 'http';
+import path from 'path';
 
 import { AppDataSource } from './data-source';
 
@@ -76,7 +77,7 @@ async function initAPI() {
   });
 
   app.get('/proxy-wasm', async (req: Request, res: Response) => {
-    const wasm = new Uint8Array(fs.readFileSync(`../proxy_caller.wasm`));
+    const wasm = new Uint8Array(fs.readFileSync(path.resolve(__dirname, `../proxy_caller.wasm`)));
     res.send(Buffer.from(wasm));
   });
 
