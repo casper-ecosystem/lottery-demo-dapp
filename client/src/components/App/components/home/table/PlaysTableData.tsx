@@ -7,6 +7,7 @@ import { motesToCSPR } from 'casper-js-sdk';
 
 const StyledTableData = styled.td(({ theme }) =>
 	theme.withMedia({
+    fontSize: 14,
 		height: 48,
 		padding: 8,
 		textAlign: 'left',
