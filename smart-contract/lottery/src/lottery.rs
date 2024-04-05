@@ -217,6 +217,14 @@ impl Lottery {
         self.token_meta.set(meta);
     }
 
+    /// Withdraws the collected fees
+    /// This function requires ownership.
+    pub fn transfer_fees_to_account(&mut self, amount: U512, reciver: Address) {
+        self.ownable.assert_owner(&self.env().caller());
+        self.collected_fees.subtract(amount);
+        self.env().transfer_tokens(&reciver, &amount);
+    }
+
     /// Adds the attached value to the prize pool.
     /// This function requires ownership.
     #[odra(payable)]

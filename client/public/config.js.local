@@ -1,0 +1,7 @@
+const config = {
+  lottery_app_contract_package_hash: 'b02e848ea6a8c3fa0aed417d5908610e5baca91f76994c15d5a556c71c344dac',
+  lottery_play_payment_amount: '1000000',
+  lottery_api_url: 'http://example.com',
+  cspr_click_app_name: 'Lottery Demo',
+  cspr_click_app_app_id: 'csprclick-template',
+};

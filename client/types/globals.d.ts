@@ -1,0 +1,9 @@
+type GlobalConfig = {
+  lottery_app_contract_package_hash: string;
+  lottery_play_payment_amount: string;
+  lottery_api_url: string;
+  cspr_click_app_name: string;
+  cspr_click_app_id: string;
+};
+
+declare const config: GlobalConfig;
