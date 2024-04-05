@@ -29,7 +29,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 	const [deploy, setDeploy] = useState<DeployMessage | null>(null);
 
 	useEffect(() => {
-		const ws = new WebSocket(`ws://${config.lottery_api_ws_url}`);
+		const ws = new WebSocket(`${config.lottery_api_ws_url}`);
 
 		ws.onopen = () => {
 			console.log('Connected to the server');
