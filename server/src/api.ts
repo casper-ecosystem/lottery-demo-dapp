@@ -20,7 +20,11 @@ import { raw } from 'mysql2';
 import { Play } from './entity/play.entity';
 
 const app: Express = express();
-app.use(cors<Request>());
+app.use(
+  cors<Request>({
+    origin: config.clientURI,
+  }),
+);
 app.use(express.json({ limit: '1mb' }));
 
 const port = config.httpPort;

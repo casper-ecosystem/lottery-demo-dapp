@@ -10,6 +10,7 @@ interface Config {
   csprCloudAccessKey: string;
   lotteryContractPackageHash: string;
   dbURI: string;
+  clientURI: string;
 }
 
 export const config: Config = {
@@ -19,4 +20,5 @@ export const config: Config = {
   csprCloudAccessKey: process.env.CSPR_CLOUD_ACCESS_KEY as string,
   lotteryContractPackageHash: process.env.LOTTERY_CONTRACT_PACKAGE_HASH as string,
   dbURI: process.env.DB_URI as string,
+  clientURI: process.env.CLIENT_URI as string,
 };
