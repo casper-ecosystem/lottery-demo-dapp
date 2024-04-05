@@ -8,10 +8,10 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 
 const clickOptions: CsprClickInitOptions = {
-	appName: 'CSPR.app',
+	appName: config.cspr_click_app_name,
 	contentMode: CONTENT_MODE.IFRAME,
 	providers: ['casper-wallet', 'ledger', 'torus-wallet', 'casperdash', 'metamask-snap', 'casper-signer'],
-	appId: 'csprclick-template',
+	appId: config.cspr_click_app_id,
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);

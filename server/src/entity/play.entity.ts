@@ -19,7 +19,7 @@ export class Play {
   @Column({ name: 'is_jackpot' })
   isJackpot: boolean;
 
-  @Column({ name: 'deploy_hash' })
+  @Column({ name: 'deploy_hash', unique: true })
   deployHash: string;
 
   @Column({ name: 'timestamp' })
