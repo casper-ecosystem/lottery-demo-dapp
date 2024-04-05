@@ -8,6 +8,11 @@ export class RoundRepository {
     this.repo = dataSource.getRepository(Round);
   }
 
+  /**
+   * @todo Switch to paginationParams (same as in the play repository)
+   * @param limit
+   * @param offset
+   */
   async getRounds(limit: number, offset: number): Promise<[Round[], number]> {
     const queryBuilder = this.repo
       .createQueryBuilder('p')

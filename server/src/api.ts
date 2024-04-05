@@ -14,9 +14,7 @@ import fs from 'fs';
 import { RoundRepository } from './repository/round';
 import { PaginationParams, pagination } from './middlewares/pagination';
 import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
-import { PlayEventPayload, isPlayDeploy, isEvent, isPlayEventPayload } from './events';
-import { trackPlay } from './event-handler';
-import { raw } from 'mysql2';
+import { isPlayDeploy } from './events';
 import { Play } from './entity/play.entity';
 
 const app: Express = express();
@@ -31,6 +29,7 @@ const wss = new WebSocket.Server({ server });
 
 interface FindPlaysQuery extends PaginationParams {
   player_account_hash: string;
+  deploy_hash: string;
 }
 
 async function initAPI() {
@@ -41,6 +40,9 @@ async function initAPI() {
 
   const csprCloudClient = new CSPRCloudAPIClient(config.csprCloudApiUrl, config.csprCloudAccessKey);
 
+  /**
+   * @deprecated Use GET /plays?player_account_hash=...
+   */
   app.get('/playsByPlayer', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
     const [plays, total] = await playsRepository.findByPlayer(req.query.player_account_hash, {
       limit: req.query.limit,
@@ -53,7 +55,16 @@ async function initAPI() {
   });
 
   app.get('/plays', pagination(), async (req: Request<never, never, never, FindPlaysQuery>, res: Response) => {
-    const [plays, total] = await playsRepository.getPaginatedPlays({
+    const filters = {};
+    if (req.query.player_account_hash) {
+      filters['playerAccountHash'] = req.query.player_account_hash;
+    }
+
+    if (req.query.deploy_hash) {
+      filters['deployHash'] = req.query.deploy_hash;
+    }
+
+    const [plays, total] = await playsRepository.getPaginatedPlays(filters, {
       limit: req.query.limit,
       offset: req.query.offset,
     });
@@ -89,6 +100,9 @@ async function initAPI() {
     }
   });
 
+  /**
+   * @deprecated Use GET /plays?deploy_hash=...
+   */
   app.get('/playByDeployHash', async (req: Request, res: Response) => {
     if (req.query.deployHash === null) {
       res.status(400).send('No deploy hash provided');
