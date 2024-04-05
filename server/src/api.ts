@@ -72,8 +72,8 @@ async function initAPI() {
     res.json({ data: rounds, total });
   });
 
-  app.get('/getProxyWASM', async (req: Request, res: Response) => {
-    const wasm = new Uint8Array(fs.readFileSync(`../smart-contract/lottery/proxy_caller.wasm`));
+  app.get('/proxy-wasm', async (req: Request, res: Response) => {
+    const wasm = new Uint8Array(fs.readFileSync(`../proxy_caller.wasm`));
     res.send(Buffer.from(wasm));
   });
 
