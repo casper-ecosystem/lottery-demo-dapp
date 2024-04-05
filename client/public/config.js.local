@@ -3,5 +3,5 @@ const config = {
   lottery_play_payment_amount: '1000000',
   lottery_api_url: 'http://example.com',
   cspr_click_app_name: 'Lottery Demo',
-  cspr_click_app_app_id: 'csprclick-template',
+  cspr_click_app_id: 'csprclick-template',
 };

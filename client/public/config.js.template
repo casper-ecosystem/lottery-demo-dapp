@@ -3,5 +3,5 @@ const config = {
   lottery_play_payment_amount: '$LOTTERY_PLAY_PAYMENT_AMOUNT',
   lottery_api_url: '$LOTTERY_API_URL',
   cspr_click_app_name: '$CSPR_CLICK_APP_NAME',
-  cspr_click_app_app_id: '$CSPR_CLICK_APP_ID',
+  cspr_click_app_id: '$CSPR_CLICK_APP_ID',
 };
