@@ -23,7 +23,7 @@ import { Play } from './entity/play.entity';
 const app: Express = express();
 app.use(
   cors<Request>({
-    origin: config.clientURI,
+    origin: config.clientURL,
   }),
 );
 app.use(express.json({ limit: '1mb' }));
