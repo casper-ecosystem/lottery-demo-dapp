@@ -11,7 +11,7 @@ import {
 	CLList,
 	CLU8,
 } from 'casper-js-sdk';
-import { Deploy, DeployJson } from 'casper-js-sdk/dist/lib/DeployUtil';
+import { Deploy } from 'casper-js-sdk/dist/lib/DeployUtil';
 import axios from 'axios';
 
 export enum DeployFailed {
@@ -20,11 +20,8 @@ export enum DeployFailed {
 
 export const ONE_CSPR = 1_000_000_000;
 
-const CONTRACT_PACKAGE_HASH = '40777e199af2ae4756c2a148c24e79885dc062fe4428adf23212dd04fd73187b';
-const CONTRACT_HASH = 'hash-1ef74bd21a7bd5352f50202e3d40352a0c209d90114eceee4be6f3c8d4e78998';
-
 async function getProxyWASM(): Promise<Uint8Array> {
-	const result = await fetch('http://localhost:3001/getProxyWASM');
+	const result = await fetch(`${config.lottery_api_url}/proxy-wasm`);
 	if (!result.ok) {
 		throw new Error(await result.text());
 	}
@@ -33,7 +30,7 @@ async function getProxyWASM(): Promise<Uint8Array> {
 }
 
 export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy> {
-	const contractPackageHashBytes = new CLByteArray(decodeBase16(CONTRACT_PACKAGE_HASH));
+	const contractPackageHashBytes = new CLByteArray(decodeBase16(config.lottery_app_contract_package_hash));
 	const args_bytes: Uint8Array = RuntimeArgs.fromMap({}).toBytes().unwrap();
 	const serialized_args = new CLList(Array.from(args_bytes).map(value => new CLU8(value)));
 	const casperClient = new CasperClient('');
@@ -63,14 +60,14 @@ export async function signAndSendDeploy(deploy: Deploy, publicKey: CLPublicKey) 
 }
 
 export async function initiateDeployListener(publicKey: CLPublicKey) {
-	const result = await fetch(`http://localhost:3001/initDeployListener?publicKey=${publicKey.toHex()}`);
+	const result = await fetch(`${config.lottery_api_url}/initDeployListener?publicKey=${publicKey.toHex()}`);
 	if (!result.ok) {
 		throw new Error(await result.text());
 	}
 }
 
 export async function getPlayByDeployHash(deployHash: string) {
-	return axios.get('http://localhost:3001/playByDeployHash', { params: { deployHash: deployHash } });
+	return axios.get(`${config.lottery_api_url}/playByDeployHash`, { params: { deployHash: deployHash } });
 }
 
 export function truncateHash(hash: string) {
