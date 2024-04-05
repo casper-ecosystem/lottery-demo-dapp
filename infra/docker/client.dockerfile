@@ -1,17 +1,17 @@
-FROM node:18-alpine3.18 as builder
+FROM public.ecr.aws/docker/library/node:18-alpine3.18 as builder
 
 WORKDIR /app/builder
 
 COPY client/package*.json ./
 
-RUN npm ci \
+RUN npm ci --force \
     && npm cache clean --force
 
 COPY client/. .
 
 RUN npm run build
 
-FROM nginx:1.22.0
+FROM public.ecr.aws/nginx/nginx:1.22.0
 
 WORKDIR /usr/share/nginx/html
 

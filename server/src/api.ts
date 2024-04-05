@@ -2,14 +2,13 @@ import 'reflect-metadata';
 
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
-import WebSocket, { WebSocketServer } from 'ws';
+import WebSocket from 'ws';
 import http from 'http';
 
 import { AppDataSource } from './data-source';
 
 import { config } from './config';
 import { PlayRepository } from './repository/play';
-import { CasperClient, DeployUtil } from 'casper-js-sdk';
 
 import fs from 'fs';
 import { RoundRepository } from './repository/round';
