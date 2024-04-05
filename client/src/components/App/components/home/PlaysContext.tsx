@@ -27,7 +27,7 @@ export const PlaysProvider: React.FC<PlaysProviderProps> = ({ children }) => {
 
 	function getAndSetPlays() {
 		axios
-			.get('http://localhost:3001/plays', { params: { limit: 10, offset: 0 } })
+			.get(`${config.lottery_api_url}/plays`, { params: { limit: 10, offset: 0 } })
 			.then(value => {
 				setPlays(value.data.data as Play[]);
 			})
