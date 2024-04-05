@@ -22,7 +22,7 @@ import { Play } from './entity/play.entity';
 const app: Express = express();
 app.use(
   cors<Request>({
-    origin: 'https://lottery-demo.casper.network',
+    origin: config.clientURI,
   }),
 );
 app.use(express.json({ limit: '1mb' }));
