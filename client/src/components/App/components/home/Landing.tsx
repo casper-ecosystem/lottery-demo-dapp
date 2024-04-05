@@ -3,6 +3,7 @@ import NoPlays from './NoPlays';
 import styled from 'styled-components';
 import { SetModalInViewProps } from './Home';
 import PlaysTable from './PlaysTable';
+import { usePlays } from './PlaysContext';
 
 const StyledLanding = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -15,10 +16,14 @@ const StyledLanding = styled.div(({ theme }) =>
 	})
 );
 
-const Plays = styled.div(({ theme }) =>
+interface StyledPlaysProps {
+	paddingBlock: number;
+}
+
+const StyledPlays = styled.div<StyledPlaysProps>(({ theme, paddingBlock = 60 }) =>
 	theme.withMedia({
 		width: '100%',
-		paddingBlock: '60px',
+		paddingBlock: paddingBlock,
 		backgroundColor: theme.backgroundPrimary,
 		boxShadow: '0px 2px 4px 0px #84868C1F',
 		borderRadius: '4px',
@@ -26,13 +31,17 @@ const Plays = styled.div(({ theme }) =>
 );
 
 export default function Landing(props: SetModalInViewProps) {
+	const { plays } = usePlays();
+
+	let playsContent = <NoPlays setModalInView={props.setModalInView} />;
+
+	if (plays.length > 0) {
+		playsContent = <PlaysTable />;
+	}
 	return (
 		<StyledLanding>
 			<h3>Plays</h3>
-			<Plays>
-				<NoPlays setModalInView={props.setModalInView} />
-				<PlaysTable></PlaysTable>
-			</Plays>
+			<StyledPlays paddingBlock={plays.length == 0 ? 60 : 0}>{playsContent}</StyledPlays>
 		</StyledLanding>
 	);
 }
