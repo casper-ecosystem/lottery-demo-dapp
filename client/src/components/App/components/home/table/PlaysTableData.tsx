@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import TableRow from './table-row';
 import StyledIdenticon from './StyledIdenticon';
-import Identicon from 'react-identicons';
+import { truncateHash } from '../../../../../casper-helper';
+import trophy from '../../../../../images/icons/trophy-bold.svg';
+import { motesToCSPR } from 'casper-js-sdk';
 
 const StyledTableData = styled.td(({ theme }) =>
 	theme.withMedia({
@@ -27,18 +29,37 @@ const StyledIdentifier = styled.div(({ theme }) =>
 	})
 );
 
-export default function PlaysTableData() {
+const StyledAccountHash = styled.a(({ theme }) =>
+	theme.withMedia({
+		fontFamily: '"JetBrains Mono", serif',
+		color: `${theme.fillPrimaryBlue} !important`,
+	})
+);
+
+interface PlaysTableDataProps {
+	accountHash: string;
+	prize: string;
+	timestamp: string;
+	isJackpot: boolean;
+}
+
+export default function PlaysTableData(props: PlaysTableDataProps) {
 	return (
 		<>
 			<TableRow>
 				<StyledTableData>
 					<StyledIdentifier>
-						<StyledIdenticon size={32} string='test' />
-						<span>Account hashneoifnoenfnef</span>
+						<StyledIdenticon size={32} string={props.accountHash} />
+						<span>
+							{props.isJackpot && <img src={trophy} />}
+							<StyledAccountHash href={`https://testnet.cspr.live/account/${props.accountHash}`} target='_blank'>
+								{truncateHash(props.accountHash)}
+							</StyledAccountHash>
+						</span>
 					</StyledIdentifier>
 				</StyledTableData>
-				<StyledTableData>123456789 CSPR</StyledTableData>
-				<StyledTableData>04-02-24 11:24:19</StyledTableData>
+				<StyledTableData>{motesToCSPR(props.prize).toString()} CSPR</StyledTableData>
+				<StyledTableData>{props.timestamp}</StyledTableData>
 			</TableRow>
 		</>
 	);

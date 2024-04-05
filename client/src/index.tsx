@@ -24,4 +24,3 @@ root.render(
 		</ClickProvider>
 	</React.StrictMode>
 );
-

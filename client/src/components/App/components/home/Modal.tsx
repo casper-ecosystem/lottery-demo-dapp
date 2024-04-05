@@ -1,15 +1,23 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { IconContainer } from '../../../../globalStyles';
+
 import xButton from '../../../../images/x-button.svg';
-import welcomeHand from '../../../../images/icons/welcome-hand.svg';
-import twoCoins from '../../../../images/icons/two-coins.svg';
-import ticket from '../../../../images/icons/ticket.svg';
+
 import { useClickRef } from '@make-software/csprclick-ui';
 import { ActiveAccountContext } from '../../../../App';
 import { AccountType } from '@make-software/csprclick-core-types';
-import { CLPublicKey, csprToMotes, motesToCSPR } from 'casper-js-sdk';
-import { preparePlayDeploy, signAndSendDeploy } from '../../../../casper-helper';
+import { CLPublicKey } from 'casper-js-sdk';
+import {
+	getPlayByDeployHash,
+	initiateDeployListener,
+	preparePlayDeploy,
+	signAndSendDeploy,
+} from '../../../../casper-helper';
+import { useWebSocketDeployData, DeployMessage } from '../../../WebSocketProvider';
+import ModalContent from './ModalContent';
+import { Play } from '../../../../play.interface';
+import { DeployFailed } from '../../../../casper-helper';
+import { usePlays } from './PlaysContext';
 
 const StyledOverlay = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -28,7 +36,7 @@ const StyledOverlay = styled.div(({ theme }) =>
 
 const StyledModal = styled.div(({ theme }) =>
 	theme.withMedia({
-		backgroundColor: '#FFFFFF',
+		backgroundColor: theme.backgroundPrimary,
 		boxShadow: '0px 16px 48px 0px #1A191933',
 		width: ['80%', '40%', '30%'],
 		aspectRatio: ['1/1', '1/1'],
@@ -47,40 +55,6 @@ const StyledxButton = styled.img(({ theme }) =>
 	})
 );
 
-const StyledModalContentContainer = styled.div(({ theme }) =>
-	theme.withMedia({
-		width: '100%',
-		height: '100%',
-		position: 'relative',
-		h3: {
-			marginBlock: '1em',
-			fontWeight: 700,
-		},
-		'h3, p': {
-			textAlign: 'center',
-		},
-	})
-);
-
-const ExtendedIconContainer = styled(IconContainer)`
-	${({ theme }) => `
-    margin: auto;
-  `}
-`;
-
-const StyledButton = styled.button(({ theme }) =>
-	theme.withMedia({
-		border: 'none',
-		borderRadius: '4px',
-		backgroundColor: theme.fillPrimaryBlue + '!important',
-		justifySelf: 'end',
-		width: '100%',
-		position: 'absolute',
-		bottom: 0,
-		cursor: 'pointer',
-	})
-);
-
 interface ModalProps {
 	modalInView: boolean;
 	setModalInView: React.Dispatch<React.SetStateAction<boolean>>;
@@ -90,6 +64,11 @@ export default function Modal(props: ModalProps) {
 	const activeAccountContext = React.useContext(ActiveAccountContext);
 	const clickRef = useClickRef();
 	const [activeAccountWithBalance, setActiveAccountWithBalance] = React.useState<AccountType | null>(null);
+	const [clientErrorOccurred, setClientErrorOccurred] = React.useState<boolean>(false);
+	const [awaitingPlayResult, setAwaitingPlayResult] = React.useState<boolean>(false);
+	const [playResult, setPlayResult] = React.useState<Play | DeployFailed | null>(null);
+	const { deploy } = useWebSocketDeployData();
+	const { addPlay } = usePlays();
 	function disableModal() {
 		props.setModalInView(false);
 	}
@@ -116,6 +95,12 @@ export default function Modal(props: ModalProps) {
 		});
 	}, [activeAccountContext]);
 
+	useEffect(() => {
+		if (deploy !== null) {
+			handleDeployProcessed(deploy);
+		}
+	}, [deploy]);
+
 	if (!props.modalInView) {
 		return null;
 	}
@@ -130,44 +115,48 @@ export default function Modal(props: ModalProps) {
 
 	async function initiatePlay() {
 		if (activeAccountWithBalance?.public_key == null) {
-			// Show error modal page
+			setClientErrorOccurred(true);
 			return;
 		}
 		const publicKey = CLPublicKey.fromHex(activeAccountWithBalance.public_key);
 		const deploy = await preparePlayDeploy(publicKey);
-		signAndSendDeploy(deploy, publicKey);
+		await signAndSendDeploy(deploy, publicKey);
+		setAwaitingPlayResult(true);
+		initiateDeployListener(publicKey);
 	}
 
-	let ActionButton = <StyledButton onClick={connectWallet}>Connect Wallet</StyledButton>;
-	let Icon = <img src={welcomeHand} />;
-	let MainText = <h3>Welcome!</h3>;
-	let SubText = <p>Please connect your Casper account to play</p>;
-
-	if (
-		activeAccountWithBalance != null &&
-		(activeAccountWithBalance.balance == null || parseInt(activeAccountWithBalance.balance) < csprToMotes(5).toNumber())
-	) {
-		ActionButton = <StyledButton onClick={linkToFaucet}>Request tokens</StyledButton>;
-		Icon = <img src={twoCoins} />;
-		MainText = <h3>Not enough CSPR</h3>;
-		SubText = <p>You don&apos;t have enough CSPR to buy a ticket. Top up your account!</p>;
-	} else if (activeAccountWithBalance != null) {
-		ActionButton = <StyledButton onClick={initiatePlay}>Play</StyledButton>;
-		Icon = <img src={ticket} />;
-		MainText = <h3>Buy a ticket</h3>;
-		SubText = <p>Buy a ticket for your chance to win the jackpot!</p>;
+	async function handleDeployProcessed(deploy: DeployMessage) {
+		if (deploy.detected_deploy.error === null) {
+			try {
+				await new Promise(r => setTimeout(r, 1000)); // Delay due to race condition
+				const response = await getPlayByDeployHash(deploy.detected_deploy.deployHash);
+				const play = response.data as Play;
+				console.log(play);
+				setPlayResult(play);
+				addPlay(play);
+			} catch (error) {
+				setClientErrorOccurred(true);
+			}
+		} else {
+			console.error(`Deploy failed: ${deploy.detected_deploy.error}`);
+			setPlayResult(DeployFailed.Failed);
+		}
+		setAwaitingPlayResult(false);
 	}
 
 	return (
 		<StyledOverlay onClick={disableModal}>
 			<StyledModal onClick={handleModalClick}>
 				<StyledxButton src={xButton} onClick={disableModal}></StyledxButton>
-				<StyledModalContentContainer>
-					<ExtendedIconContainer>{Icon}</ExtendedIconContainer>
-					{MainText}
-					{SubText}
-					{ActionButton}
-				</StyledModalContentContainer>
+				<ModalContent
+					connectWallet={connectWallet}
+					linkToFaucet={linkToFaucet}
+					initiatePlay={initiatePlay}
+					clientErrorOccurred={clientErrorOccurred}
+					awaitingPlayResult={awaitingPlayResult}
+					activeAccountWithBalance={activeAccountWithBalance}
+					playResult={playResult}
+				/>
 			</StyledModal>
 		</StyledOverlay>
 	);
