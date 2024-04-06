@@ -37,11 +37,25 @@ const StyledAccountHash = styled.a(({ theme }) =>
 	})
 );
 
+const DeployLink = styled.a(({ theme }) =>
+  theme.withMedia({
+    color: `${theme.fillPrimaryBlue} !important`,
+  })
+);
+
+const PrizeContainer = styled.div(({ theme }) =>
+  theme.withMedia({
+    display: 'flex',
+    alignItems: 'center'
+  })
+);
+
 interface PlaysTableDataProps {
 	accountHash: string;
 	prize: string;
 	timestamp: string;
 	isJackpot: boolean;
+  deployHash: string;
 }
 
 export default function PlaysTableData(props: PlaysTableDataProps) {
@@ -50,17 +64,23 @@ export default function PlaysTableData(props: PlaysTableDataProps) {
 			<TableRow>
 				<StyledTableData>
 					<StyledIdentifier>
-						<StyledIdenticon size={32} string={props.accountHash} />
-						<span>
-							{props.isJackpot && <img src={trophy} />}
-							<StyledAccountHash href={`https://testnet.cspr.live/account/${props.accountHash}`} target='_blank'>
-								{truncateHash(props.accountHash)}
-							</StyledAccountHash>
-						</span>
+						<StyledIdenticon size={24} string={props.accountHash} />&nbsp;
+            <StyledAccountHash href={`https://testnet.cspr.live/account/${props.accountHash}`} target='_blank'>
+              {truncateHash(props.accountHash)}
+            </StyledAccountHash>
 					</StyledIdentifier>
 				</StyledTableData>
-				<StyledTableData>{motesToCSPR(props.prize).toString()} CSPR</StyledTableData>
-				<StyledTableData>{props.timestamp}</StyledTableData>
+				<StyledTableData>
+          <PrizeContainer>
+            {motesToCSPR(props.prize).toString()} CSPR&nbsp;
+            {props.isJackpot && <img src={trophy} width={32} />}
+          </PrizeContainer>
+        </StyledTableData>
+				<StyledTableData>
+          <DeployLink href={`https://testnet.cspr.live/deploy/${props.deployHash}`} target='_blank'>
+            {(new Date(props.timestamp)).toUTCString()}
+          </DeployLink>
+        </StyledTableData>
 			</TableRow>
 		</>
 	);

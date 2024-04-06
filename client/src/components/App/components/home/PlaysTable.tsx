@@ -34,6 +34,7 @@ export default function PlaysTable() {
 							prize={play.prizeAmount}
 							timestamp={play.timestamp}
 							isJackpot={play.isJackpot}
+              deployHash={play.deployHash}
 						/>
 					);
 				})}
