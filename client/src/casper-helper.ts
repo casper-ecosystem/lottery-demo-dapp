@@ -71,6 +71,9 @@ export async function getPlayByDeployHash(deployHash: string) {
 }
 
 export function truncateHash(hash: string) {
+  if (!hash) {
+    return ''; // @todo Fix parsing public key from the account hash in the client plays
+  }
 	const keepLength = 5;
 	return `${hash.substring(0, keepLength)}...${hash.substring(hash.length - keepLength)}`;
 }
