@@ -30,7 +30,8 @@ export default function PlaysTable() {
 					return (
 						<PlaysTableData
 							key={play.playId}
-							accountHash={play.playerPublicKey}
+              // @todo De-anonimize account hash to public key in client received events
+							accountHash={play.playerPublicKey || play.playerAccountHash}
 							prize={play.prizeAmount}
 							timestamp={play.timestamp}
 							isJackpot={play.isJackpot}
