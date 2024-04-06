@@ -21,7 +21,7 @@ const Container = styled.div(({ theme }) =>
 			cursor: 'pointer',
 		},
 		span: {
-			fontSize: '16px',
+			fontSize: '14px',
 			fontWeight: '400',
 			lineHeight: '24px',
 		},

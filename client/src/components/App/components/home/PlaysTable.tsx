@@ -30,7 +30,7 @@ export default function PlaysTable() {
 					return (
 						<PlaysTableData
 							key={play.playId}
-							accountHash={play.playerAccountHash}
+							accountHash={play.playerPublicKey}
 							prize={play.prizeAmount}
 							timestamp={play.timestamp}
 							isJackpot={play.isJackpot}
