@@ -44,6 +44,7 @@ function initWebSocketClient(playsRepository) {
 
   ws.on('close', () => {
     console.log('Disconnected from Streaming API');
+    process.exit(1);
   });
 }
 

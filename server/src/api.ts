@@ -4,6 +4,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import WebSocket from 'ws';
 import http from 'http';
+import path from 'path';
 
 import { AppDataSource } from './data-source';
 
@@ -20,7 +21,11 @@ import { raw } from 'mysql2';
 import { Play } from './entity/play.entity';
 
 const app: Express = express();
-app.use(cors<Request>());
+app.use(
+  cors<Request>({
+    origin: config.clientURL,
+  }),
+);
 app.use(express.json({ limit: '1mb' }));
 
 const port = config.httpPort;
@@ -71,8 +76,8 @@ async function initAPI() {
     res.json({ data: rounds, total });
   });
 
-  app.get('/getProxyWASM', async (req: Request, res: Response) => {
-    const wasm = new Uint8Array(fs.readFileSync(`../smart-contract/lottery/proxy_caller.wasm`));
+  app.get('/proxy-wasm', async (req: Request, res: Response) => {
+    const wasm = new Uint8Array(fs.readFileSync(path.resolve(__dirname, `../proxy_caller.wasm`)));
     res.send(Buffer.from(wasm));
   });
 
