@@ -7,6 +7,9 @@ export class PlayRepository {
     this.repo = dataSource.getRepository(Play);
   }
 
+  /**
+   * @deprecated Use getPaginatedPlays
+   */
   findByPlayer(playerAccountHash: string, paginationParams: { limit: number; offset: number }) {
     return this.repo.findAndCount({
       where: {
@@ -17,6 +20,9 @@ export class PlayRepository {
     });
   }
 
+  /**
+   * @deprecated Use getPaginatedPlays
+   */
   findByDeployHash(deployHash: string): Promise<Play | null> {
     return this.repo.findOne({
       where: {
@@ -25,8 +31,9 @@ export class PlayRepository {
     });
   }
 
-  getPaginatedPlays(paginationParams: { limit: number; offset: number }): Promise<[Play[], number]> {
+  getPaginatedPlays(filters, paginationParams: { limit: number; offset: number }): Promise<[Play[], number]> {
     return this.repo.findAndCount({
+      where: filters,
       take: paginationParams.limit,
       skip: paginationParams.offset,
       order: {
