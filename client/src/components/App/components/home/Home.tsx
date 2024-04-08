@@ -21,8 +21,8 @@ export default function Home() {
 	const [modalInView, setModalInView] = React.useState<boolean>(false);
 	return (
 		<>
-			<Welcome setModalInView={setModalInView} />
 			<PlaysProvider>
+				<Welcome setModalInView={setModalInView} />
 				<ContentContainer>
 					<Landing setModalInView={setModalInView} />
 				</ContentContainer>
