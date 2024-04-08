@@ -36,8 +36,8 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 	const casperClient = new CasperClient('');
 	const contractClient = new Contracts.Contract(casperClient);
 	const args = RuntimeArgs.fromMap({
-		attached_value: CLValueBuilder.u512(csprToMotes(50)), // Should be configural
-		amount: CLValueBuilder.u512(csprToMotes(50)),
+		attached_value: CLValueBuilder.u512(config.lottery_play_payment_amount),
+		amount: CLValueBuilder.u512(config.lottery_play_payment_amount),
 		entry_point: CLValueBuilder.string('play_lottery'),
 		contract_package_hash: contractPackageHashBytes,
 		args: serialized_args,
@@ -45,13 +45,7 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 
 	const wasm = await getProxyWASM();
 
-	return contractClient.install(
-		wasm,
-		args,
-		csprToMotes(10).toString(), // Make this contextual
-		publicKey,
-		'casper-test' // Make this configural
-	);
+	return contractClient.install(wasm, args, csprToMotes(30).toString(), publicKey, config.network);
 }
 
 export async function signAndSendDeploy(deploy: Deploy, publicKey: CLPublicKey) {
@@ -70,10 +64,16 @@ export async function getPlayByDeployHash(deployHash: string) {
 	return axios.get(`${config.lottery_api_url}/playByDeployHash`, { params: { deployHash: deployHash } });
 }
 
+export async function getCurrentJackpot() {
+	const response = await axios.get(`${config.lottery_api_url}/currentJackpot`);
+	const result = response.data;
+	return result;
+}
+
 export function truncateHash(hash: string) {
-  if (!hash) {
-    return ''; // @todo Fix parsing public key from the account hash in the client plays
-  }
+	if (!hash) {
+		return ''; // @todo Fix parsing public key from the account hash in the client plays
+	}
 	const keepLength = 5;
 	return `${hash.substring(0, keepLength)}...${hash.substring(hash.length - keepLength)}`;
 }

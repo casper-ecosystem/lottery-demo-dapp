@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import jackpotImage from '../../../../images/jackpot-text.svg';
 import jackpotFlare from '../../../../images/jackpot-flare.svg';
-import { useState } from 'react';
+import { motesToCSPR } from 'casper-js-sdk';
 import { SetModalInViewProps } from './Home';
+import { usePlays } from './PlaysContext';
+import { useEffect, useState } from 'react';
 
 const Container = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -150,6 +152,8 @@ const CurrentPlays = styled.div(({ theme }) =>
 );
 
 export const Welcome = (props: SetModalInViewProps) => {
+	const { totalPlays, jackpot } = usePlays();
+
 	const handlePlayNow = () => {
 		props.setModalInView(true);
 	};
@@ -166,7 +170,7 @@ export const Welcome = (props: SetModalInViewProps) => {
 							part in the lottery now and let luck be on your side!
 						</Description>
 						<ShotWrapper>
-							<ShotCost>1 shot = 5 CSPR</ShotCost>
+							<ShotCost>1 shot = {motesToCSPR(config.lottery_play_payment_amount).toNumber()} CSPR</ShotCost>
 						</ShotWrapper>
 						<PlayNowButton onClick={handlePlayNow}>Play Now</PlayNowButton>
 					</IntroductoryContent>
@@ -174,12 +178,12 @@ export const Welcome = (props: SetModalInViewProps) => {
 						<JackpotFlare src={jackpotFlare} />
 						<JackpotImageText src={jackpotImage} />
 						<JackpotText>
-							<h2>1,027.44</h2>
+							<h2>{motesToCSPR(jackpot).toString()}</h2>
 							&nbsp;
 							<h3>CSPR</h3>
 						</JackpotText>
 						<CurrentPlays>
-							<p>Current Plays: 234</p>
+							<p>Current Plays: {totalPlays}</p>
 						</CurrentPlays>
 					</JackpotContainer>
 				</ContentWrapper>

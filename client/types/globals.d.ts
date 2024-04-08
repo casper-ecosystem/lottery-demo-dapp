@@ -3,8 +3,9 @@ type GlobalConfig = {
 	lottery_play_payment_amount: string;
 	lottery_api_url: string;
 	lottery_api_ws_url: string;
-  cspr_click_app_name: string;
-  cspr_click_app_id: string;
+	cspr_click_app_name: string;
+	cspr_click_app_id: string;
+	network: string;
 };
 
 declare const config: GlobalConfig;

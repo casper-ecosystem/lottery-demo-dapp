@@ -68,7 +68,7 @@ export default function Modal(props: ModalProps) {
 	const [awaitingPlayResult, setAwaitingPlayResult] = React.useState<boolean>(false);
 	const [playResult, setPlayResult] = React.useState<Play | DeployFailed | null>(null);
 	const { deploy } = useWebSocketDeployData();
-	const { addPlay } = usePlays();
+	const { addPlay, getAndSetJackpot } = usePlays();
 	function disableModal() {
 		props.setModalInView(false);
 	}
@@ -134,6 +134,7 @@ export default function Modal(props: ModalProps) {
 				console.log(play);
 				setPlayResult(play);
 				addPlay(play);
+				getAndSetJackpot();
 			} catch (error) {
 				setClientErrorOccurred(true);
 			}
