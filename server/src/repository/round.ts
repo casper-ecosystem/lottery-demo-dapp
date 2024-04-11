@@ -8,7 +8,7 @@ export class RoundRepository {
     this.repo = dataSource.getRepository(Round);
   }
 
-  async getRounds(limit: number, offset: number): Promise<[Round[], number]> {
+  async getPaginatedRounds(pagination: { limit: number; offset: number }): Promise<[Round[], number]> {
     const queryBuilder = this.repo
       .createQueryBuilder('p')
       .select('p.round_id', 'round_id')
@@ -28,8 +28,8 @@ export class RoundRepository {
         'w.play_id = p.play_id',
       )
       .orderBy('p.round_id', 'DESC')
-      .limit(limit)
-      .offset(offset);
+      .limit(pagination.limit)
+      .offset(pagination.offset);
 
     const [res, total] = await Promise.all([queryBuilder.getRawMany(), queryBuilder.getCount()]);
 

@@ -34,6 +34,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-ws": "^5.0.2",
+    "http-proxy-middleware": "^3.0.0",
     "mysql2": "^3.9.3",
     "typeorm": "^0.3.20",
     "ws": "^8.16.0"
