@@ -1,9 +1,11 @@
 import 'reflect-metadata';
 
-import express, { Express, Request, Response } from 'express';
-import cors from 'cors';
 import http from 'http';
 import path from 'path';
+
+import cors from 'cors';
+import express, { Express, Request, Response } from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 import { AppDataSource } from './data-source';
 
@@ -12,7 +14,7 @@ import { PlayRepository } from './repository/play';
 
 import fs from 'fs';
 import { RoundRepository } from './repository/round';
-import { PaginationParams, pagination } from './middlewares/pagination';
+import { PaginationParams, pagination } from './middleware/pagination';
 import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
 
 const app: Express = express();
@@ -41,20 +43,19 @@ async function main() {
 
   const csprCloudClient = new CSPRCloudAPIClient(config.csprCloudApiUrl, config.csprCloudAccessKey);
 
+  const csprCloudAPIProxy = createProxyMiddleware({
+    target: config.csprCloudApiUrl,
+    changeOrigin: true,
+    headers: {
+      authorization: config.csprCloudAccessKey,
+    },
+  });
+  app.get('/accounts/:account_hash', csprCloudAPIProxy);
+
   app.get('/players/:player_account_hash/plays', pagination(), async (req: Request<FindPlaysByPlayerParams, never, never, PaginationParams>, res: Response) => {
     const [plays, total] = await playsRepository.getPaginatedPlays({
-      limit: req.query.limit,
-      offset: req.query.offset,
       playerAccountHash: req.params.player_account_hash,
-    });
-
-    await csprCloudClient.withPublicKeys(plays);
-
-    res.json({ data: plays, total });
-  });
-
-  app.get('/plays', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
-    const [plays, total] = await playsRepository.getPaginatedPlays({
+    },{
       limit: req.query.limit,
       offset: req.query.offset,
     });
@@ -66,9 +67,10 @@ async function main() {
 
   app.get('/rounds/:round_id/plays', pagination(), async (req: Request<FindPlaysByRoundParams, never, never, PaginationParams>, res: Response) => {
     const [plays, total] = await playsRepository.getPaginatedPlays({
+      roundId: req.params.round_id,
+    },{
       limit: req.query.limit,
       offset: req.query.offset,
-      roundId: req.params.round_id,
     });
 
     await csprCloudClient.withPublicKeys(plays);
@@ -88,7 +90,10 @@ async function main() {
   });
 
   app.get('/rounds', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
-    const [rounds, total] = await roundsRepository.getPaginatedRounds(req.query.limit, req.query.offset);
+    const [rounds, total] = await roundsRepository.getPaginatedRounds({
+      limit: req.query.limit,
+      offset: req.query.offset,
+    });
 
     await csprCloudClient.withPublicKeys(rounds);
 

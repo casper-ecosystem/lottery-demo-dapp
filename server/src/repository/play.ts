@@ -1,9 +1,7 @@
 import { DataSource, FindManyOptions, Repository } from 'typeorm';
 import { Play } from '../entity/play.entity';
 
-interface FindManyParams {
-  limit: number;
-  offset: number;
+interface FindPlaysFilters {
   playerAccountHash?: string;
   roundId?: string;
 }
@@ -14,31 +12,31 @@ export class PlayRepository {
     this.repo = dataSource.getRepository(Play);
   }
 
-  getPaginatedPlays(params: FindManyParams): Promise<[Play[], number]> {
+  getPaginatedPlays(filters: FindPlaysFilters, pagination: { limit: number; offset: number }): Promise<[Play[], number]> {
     const options: FindManyOptions<Play> = {
-      take: params.limit,
-      skip: params.offset,
+      take: pagination.limit,
+      skip: pagination.offset,
       order: {
         timestamp: 'DESC',
       },
     };
 
-    if (params.playerAccountHash) {
+    if (filters.playerAccountHash) {
       options.where = {
-        playerAccountHash: params.playerAccountHash,
+        playerAccountHash: filters.playerAccountHash,
       }
     }
 
-    if (params.roundId) {
+    if (filters.roundId) {
       options.where = {
-        roundId: params.roundId,
+        roundId: filters.roundId,
       }
     }
 
     return this.repo.findAndCount(options);
   }
 
-  getLatestRoundPlays(params: { limit: number; offset: number }) {
+  getLatestRoundPlays(pagination: { limit: number; offset: number }) {
     const queryBuilder = this.repo.createQueryBuilder()
       .where((qb) => {
         const subQuery = qb
@@ -48,8 +46,8 @@ export class PlayRepository {
           .getQuery();
         return "round_id = " + subQuery;
       })
-      .limit(params.limit)
-      .offset(params.offset)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
       .orderBy('timestamp', 'DESC');
 
     return queryBuilder.getManyAndCount();
