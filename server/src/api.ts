@@ -6,6 +6,7 @@ import path from 'path';
 import cors from 'cors';
 import express, { Express, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import WebSocket from 'ws';
 
 import { AppDataSource } from './data-source';
 
@@ -42,6 +43,16 @@ async function main() {
   const roundsRepository = new RoundRepository(AppDataSource);
 
   const csprCloudClient = new CSPRCloudAPIClient(config.csprCloudApiUrl, config.csprCloudAccessKey);
+
+  const csprCloudStreamingProxy = createProxyMiddleware({
+    target: config.csprCloudStreamingUrl,
+    ws: true,
+    changeOrigin: true,
+    headers: {
+      authorization: config.csprCloudAccessKey,
+    },
+  });
+  app.get('/deploys', csprCloudStreamingProxy);
 
   const csprCloudAPIProxy = createProxyMiddleware({
     target: config.csprCloudApiUrl,
