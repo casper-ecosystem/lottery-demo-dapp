@@ -8,6 +8,7 @@
     "format": "eslint 'src/**/*.ts' --fix && prettier src/**/*.ts --write",
     "api:dev": "ts-node src/api.ts",
     "event-handler:dev": "ts-node src/event-handler.ts",
+    "seed": "ts-node src/seeds/seed.ts",
     "typeorm": "./node_modules/ts-node/dist/bin.js ./node_modules/typeorm/cli.js -d dist/data-source.js"
   },
   "keywords": [],

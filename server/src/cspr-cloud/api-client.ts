@@ -28,7 +28,7 @@ interface AccountHashGatter {
 }
 
 interface PublicKeySetter {
-  setPublicKey(publicKey: string)
+  setPublicKey(publicKey: string): void
 }
 
 export class CSPRCloudAPIClient {
@@ -52,6 +52,10 @@ export class CSPRCloudAPIClient {
   }
 
   async withPublicKeys(data: (AccountHashGatter & PublicKeySetter)[]) {
+    if (data.length === 0) {
+      return;
+    }
+
     const accountHashes = new Set<string>();
     for (const el of data) {
       accountHashes.add(el.getAccountHash());

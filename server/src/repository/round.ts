@@ -8,7 +8,7 @@ export class RoundRepository {
     this.repo = dataSource.getRepository(Round);
   }
 
-  async getRounds(limit: number, offset: number): Promise<[Round[], number]> {
+  async getPaginatedRounds(limit: number, offset: number): Promise<[Round[], number]> {
     const queryBuilder = this.repo
       .createQueryBuilder('p')
       .select('p.round_id', 'round_id')
