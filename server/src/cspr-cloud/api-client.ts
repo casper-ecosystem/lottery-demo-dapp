@@ -10,7 +10,7 @@ export interface PaginationParams {
   page?: number;
   page_size?: number;
   order_by?: string[];
-  order_direction?: OrderDirection
+  order_direction?: OrderDirection;
 }
 
 export interface GetAccountsParams extends PaginationParams {
@@ -24,11 +24,11 @@ export interface PaginatedResponse<T> {
 }
 
 interface AccountHashGatter {
-  getAccountHash(): string
+  getAccountHash(): string;
 }
 
 interface PublicKeySetter {
-  setPublicKey(publicKey: string): void
+  setPublicKey(publicKey: string): void;
 }
 
 export class CSPRCloudAPIClient {
@@ -43,7 +43,7 @@ export class CSPRCloudAPIClient {
 
   async getAccounts(params: GetAccountsParams): Promise<PaginatedResponse<Account[]>> {
     const query = new URLSearchParams(params as Record<string, string>);
-    
+
     const response = await this.client.get<PaginatedResponse<Account[]>>(`/accounts?${query.toString()}`);
 
     const result = response.data;

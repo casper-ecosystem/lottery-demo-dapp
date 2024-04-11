@@ -1,5 +1,5 @@
 import { DataSource, Repository } from 'typeorm';
-import "reflect-metadata";
+import 'reflect-metadata';
 import { Round } from '../entity/round.entity';
 
 export class RoundRepository {

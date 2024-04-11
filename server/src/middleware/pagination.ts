@@ -12,16 +12,8 @@ interface PaginationRequest {
 
 export function pagination(
   maxLimit = 100,
-): (
-    req: Request<never, never, never, PaginationParams>,
-  _: Response,
-  next: NextFunction,
-) => void {
-  return (
-    req: Request<never, never, never, PaginationRequest & PaginationParams>,
-    _: Response,
-    next: NextFunction,
-  ) => {
+): (req: Request<never, never, never, PaginationParams>, _: Response, next: NextFunction) => void {
+  return (req: Request<never, never, never, PaginationRequest & PaginationParams>, _: Response, next: NextFunction) => {
     const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 10;
     req.query.limit = pageSize >= 0 ? pageSize : 10;
 
@@ -30,7 +22,7 @@ export function pagination(
     }
 
     const page = parseInt(req.query.page);
-    req.query.offset = page >= 1 ? (page-1) * req.query.limit : 0;
+    req.query.offset = page >= 1 ? (page - 1) * req.query.limit : 0;
 
     next();
   };

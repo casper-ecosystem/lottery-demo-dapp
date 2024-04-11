@@ -12,7 +12,10 @@ export class PlayRepository {
     this.repo = dataSource.getRepository(Play);
   }
 
-  getPaginatedPlays(filters: FindPlaysFilters, pagination: { limit: number; offset: number }): Promise<[Play[], number]> {
+  getPaginatedPlays(
+    filters: FindPlaysFilters,
+    pagination: { limit: number; offset: number },
+  ): Promise<[Play[], number]> {
     const options: FindManyOptions<Play> = {
       take: pagination.limit,
       skip: pagination.offset,
@@ -24,27 +27,24 @@ export class PlayRepository {
     if (filters.playerAccountHash) {
       options.where = {
         playerAccountHash: filters.playerAccountHash,
-      }
+      };
     }
 
     if (filters.roundId) {
       options.where = {
         roundId: filters.roundId,
-      }
+      };
     }
 
     return this.repo.findAndCount(options);
   }
 
   getLatestRoundPlays(pagination: { limit: number; offset: number }) {
-    const queryBuilder = this.repo.createQueryBuilder()
+    const queryBuilder = this.repo
+      .createQueryBuilder()
       .where((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("max(round_id)")
-          .from(Play, 'maxp')
-          .getQuery();
-        return "round_id = " + subQuery;
+        const subQuery = qb.subQuery().select('max(round_id)').from(Play, 'maxp').getQuery();
+        return 'round_id = ' + subQuery;
       })
       .limit(pagination.limit)
       .offset(pagination.offset)
