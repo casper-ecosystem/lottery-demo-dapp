@@ -99,6 +99,14 @@ async function main() {
     res.json({ data: plays, total });
   });
 
+  app.get('/rounds/latest', async (req: Request, res: Response) => {
+    const round = await roundsRepository.getLatest();
+
+    await csprCloudClient.withPublicKeys([round]);
+
+    res.json({ data: round });
+  });
+
   app.get('/rounds', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
     const [rounds, total] = await roundsRepository.getPaginatedRounds({
       limit: req.query.limit,
