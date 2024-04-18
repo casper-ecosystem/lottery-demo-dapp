@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'plays' })
+@Entity({ name: 'rounds' })
 export class Round {
   @PrimaryColumn({ name: 'round_id' })
   roundId: string;
