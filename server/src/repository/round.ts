@@ -8,9 +8,7 @@ export class RoundRepository {
     this.repo = dataSource.getRepository(Round);
   }
 
-  async getPaginatedRounds(
-    pagination: { limit: number; offset: number },
-  ): Promise<[Round[], number]> {
+  async getPaginatedRounds(pagination: { limit: number; offset: number }): Promise<[Round[], number]> {
     const options: FindManyOptions<Round> = {
       take: pagination.limit,
       skip: pagination.offset,
@@ -23,10 +21,7 @@ export class RoundRepository {
   }
 
   async getLatest(): Promise<Round> {
-    const queryBuilder = this.repo
-      .createQueryBuilder()
-      .orderBy('round_id', 'DESC')
-      .limit(1);
+    const queryBuilder = this.repo.createQueryBuilder().orderBy('round_id', 'DESC').limit(1);
 
     return queryBuilder.getOne();
   }

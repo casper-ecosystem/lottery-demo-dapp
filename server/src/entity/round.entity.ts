@@ -1,22 +1,22 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { ViewColumn, ViewEntity } from 'typeorm';
 
-@Entity({ name: 'rounds' })
+@ViewEntity({ name: 'rounds' })
 export class Round {
-  @PrimaryColumn({ name: 'round_id' })
+  @ViewColumn({ name: 'round_id' })
   roundId: string;
 
-  @Column({ name: 'plays_num' })
+  @ViewColumn({ name: 'plays_num' })
   playsNum: string;
 
-  @Column({ name: 'jackpot_amount' })
+  @ViewColumn({ name: 'jackpot_amount' })
   jackpotAmount: string;
 
-  @Column({ name: 'winner_account_hash' })
+  @ViewColumn({ name: 'winner_account_hash' })
   winnerAccountHash: string;
 
   winnerPublicKey?: string;
 
-  @Column({ name: 'ended_at' })
+  @ViewColumn({ name: 'ended_at' })
   endedAt: Date;
 
   getAccountHash() {
