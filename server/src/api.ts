@@ -18,11 +18,7 @@ import { PaginationParams, pagination } from './middleware/pagination';
 import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
 
 const app: Express = express();
-app.use(
-  cors<Request>({
-    origin: config.clientURL,
-  }),
-);
+app.use(cors<Request>());
 app.use(express.json({ limit: '1mb' }));
 
 const server = http.createServer(app);
