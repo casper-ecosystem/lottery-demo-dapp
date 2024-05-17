@@ -16,7 +16,7 @@ const HomeScene = () => {
 			<JackpotInfo />
 			<StyledPageLayout title={'Casper Lottery'}>
 				<Plays />
-				<Modal isOpen />
+				<Modal isOpen={false} />
 			</StyledPageLayout>
 		</>
 	);

@@ -5,7 +5,6 @@ import { CsprClickInitOptions } from '@make-software/csprclick-core-client';
 import { ClickProvider } from '@make-software/csprclick-ui';
 import { CONTENT_MODE } from '@make-software/csprclick-core-types';
 import App from './App';
-import { BrowserRouter } from 'react-router-dom';
 
 const clickOptions: CsprClickInitOptions = {
 	appName: config.cspr_click_app_name,
@@ -18,9 +17,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<React.StrictMode>
 		<ClickProvider options={clickOptions}>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
+			<App />
 		</ClickProvider>
 	</React.StrictMode>
 );
