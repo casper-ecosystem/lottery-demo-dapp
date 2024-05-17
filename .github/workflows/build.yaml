@@ -1,0 +1,65 @@
+name: Build images
+
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build Images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: api
+            repository: ECR_REPOSITORY_LOTTERY_DEMO_API
+            dockerfile: api.dockerfile
+            context: .
+          - name: client
+            repository: ECR_REPOSITORY_LOTTERY_DEMO_CLIENT
+            dockerfile: client.dockerfile
+            context: .
+          - name: handler
+            repository: ECR_REPOSITORY_LOTTERY_DEMO_EVENT_HANDLER
+            dockerfile: event-handler.dockerfile
+            context: .
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ACCESS_ROLE_DEV }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: |
+          ${{ steps.login-ecr.outputs.registry }}/${{ secrets[format('{0}', matrix.repository)] }}
+        tags: |
+          type=sha
+          type=raw,value=latest
+
+    - name: Build and push up
+      uses: docker/build-push-action@v4
+      with:
+        file: infra/docker/${{ matrix.dockerfile }}
+        context: ${{ matrix.context }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/amd64
+        push: true
