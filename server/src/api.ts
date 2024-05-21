@@ -71,10 +71,8 @@ async function main() {
     res.json({ data: plays, total });
   });
 
-  app.get('/rounds/:round_id/plays', pagination(), async (req: Request<FindPlaysByRoundParams, never, never, PaginationParams>, res: Response) => {
-    const [plays, total] = await playsRepository.getPaginatedPlays({
-      roundId: req.params.round_id,
-    },{
+  app.get('/rounds/latest/plays', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
+    const [plays, total] = await playsRepository.getLatestRoundPlays({
       limit: req.query.limit,
       offset: req.query.offset,
     });
@@ -84,8 +82,10 @@ async function main() {
     res.json({ data: plays, total });
   });
 
-  app.get('/rounds/latest/plays', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
-    const [plays, total] = await playsRepository.getLatestRoundPlays({
+  app.get('/rounds/:round_id/plays', pagination(), async (req: Request<FindPlaysByRoundParams, never, never, PaginationParams>, res: Response) => {
+    const [plays, total] = await playsRepository.getPaginatedPlays({
+      roundId: req.params.round_id,
+    },{
       limit: req.query.limit,
       offset: req.query.offset,
     });
