@@ -1,24 +1,29 @@
-import { PageTile, BodyText } from '@make-software/cspr-ui';
-import Table from '../../components/table/table';
+import { PageTile } from '@make-software/cspr-ui';
+import {
+	NoData,
+	ErrorTile,
+	TableTile,
+	PageLayout,
+	TableLoader,
+	Table,
+} from '../../components';
 import { useFetch } from '../../services/use-fetch';
-import TableLoader from '../../components/table/table-loader';
 import JackpotsDataHeaders from './JackpotsDataHeaders';
 import JackpotTableRow from './JackpotTableRow';
-import TableTile from '../../components/table-tile/table-tile';
-import PageLayout from '../../components/page-layout/page-layout';
 
 const JackpotsTable = () => {
 	const {
 		data: jackpots,
 		loading,
+		error,
 		total,
 	} = useFetch({
 		url: '/rounds',
 		limit: 10,
 	});
 
-	if (!jackpots) {
-		return <BodyText size={1}>No data</BodyText>;
+	if (!jackpots || !jackpots.length) {
+		return <NoData />;
 	}
 
 	if (loading) {
@@ -27,6 +32,10 @@ const JackpotsTable = () => {
 				<TableLoader columnsLength={1} />
 			</PageTile>
 		);
+	}
+
+	if (error) {
+		return <ErrorTile message={error} />;
 	}
 
 	return (

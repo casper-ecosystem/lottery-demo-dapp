@@ -44,7 +44,7 @@ const StyledSvgIcon = styled(SvgIcon)<{ status: IconStatus }>(
 	})
 );
 
-const Icon = ({
+export const Icon = ({
 	src,
 	status = IconStatus.default,
 }: {

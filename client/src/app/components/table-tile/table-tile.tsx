@@ -14,7 +14,7 @@ interface TableTileProps {
 	children: any;
 }
 
-const TableTile = ({ title, children }: TableTileProps) => {
+export const TableTile = ({ title, children }: TableTileProps) => {
 	return (
 		<FlexColumn itemsSpacing={24}>
 			<TitleText size={4} scale={'sm'}>

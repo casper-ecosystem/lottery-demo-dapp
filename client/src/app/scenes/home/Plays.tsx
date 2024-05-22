@@ -1,5 +1,4 @@
 import { PageTile } from '@make-software/cspr-ui';
-import styled from 'styled-components';
 import NoPlays from './NoPlays';
 import Table from '../../components/table/table';
 import { useFetch } from '../../services/use-fetch';
@@ -7,30 +6,21 @@ import TableLoader from '../../components/table/table-loader';
 import PlaysDataHeaders from './PlaysDataHeaders';
 import PlaysTableRow from './PlaysTableRow';
 import TableTile from '../../components/table-tile/table-tile';
-import { useState } from 'react';
-
-const StyledPageTile = styled(PageTile)(() => ({
-	padding: '60px 0',
-}));
+import { ErrorTile } from '../../components/error-tile/error-tile';
 
 const PlaysTable = () => {
-	const [limit, setLimit] = useState(10);
 	const {
 		data: plays,
 		loading,
+		error,
 		total,
 	} = useFetch({
 		url: '/rounds/latest/plays',
-		limit,
+		limit: 10,
 	});
 
-	// @ts-ignore
 	if (!plays) {
-		return (
-			<StyledPageTile>
-				<NoPlays />
-			</StyledPageTile>
-		);
+		return <NoPlays />;
 	}
 
 	if (loading) {
@@ -39,6 +29,10 @@ const PlaysTable = () => {
 				<TableLoader columnsLength={1} />
 			</PageTile>
 		);
+	}
+
+	if (error) {
+		return <ErrorTile message={error} />;
 	}
 
 	return (

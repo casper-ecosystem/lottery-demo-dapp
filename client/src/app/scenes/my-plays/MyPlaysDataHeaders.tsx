@@ -1,21 +1,15 @@
 import { BodyText, TableRow } from '@make-software/cspr-ui';
 import { StyledTableDataHeader } from '../../components';
 
-const JackpotsDataHeaders = () => (
+const MyPlaysDataHeaders = () => (
 	<TableRow>
-		<StyledTableDataHeader fixedWidthRem={19.3}>
+		<StyledTableDataHeader fixedWidthRem={22}>
 			<BodyText size={1} scale={'xs'}>
 				Round
 			</BodyText>
 		</StyledTableDataHeader>
 
-		<StyledTableDataHeader fixedWidthRem={14}>
-			<BodyText size={1} scale={'xs'}>
-				Winner
-			</BodyText>
-		</StyledTableDataHeader>
-
-		<StyledTableDataHeader align={'right'} fixedWidthRem={16.4}>
+		<StyledTableDataHeader align={'right'} fixedWidthRem={20}>
 			<BodyText size={1} scale={'xs'}>
 				Prize
 			</BodyText>
@@ -30,4 +24,4 @@ const JackpotsDataHeaders = () => (
 	</TableRow>
 );
 
-export default JackpotsDataHeaders;
+export default MyPlaysDataHeaders;

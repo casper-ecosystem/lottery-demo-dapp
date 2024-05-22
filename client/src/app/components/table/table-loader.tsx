@@ -8,7 +8,10 @@ type Props = {
 	rowsLength?: number;
 };
 
-const TableLoader = ({ columnsLength, rowsLength = 10 }: Props) => {
+export const TableLoader = ({
+	columnsLength,
+	rowsLength = 10,
+}: Props) => {
 	const tableData = Array(rowsLength).fill(undefined);
 	const columnsRow = Array(columnsLength).fill(null);
 

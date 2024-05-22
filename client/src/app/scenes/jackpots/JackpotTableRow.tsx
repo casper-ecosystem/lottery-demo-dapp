@@ -9,20 +9,12 @@ import {
 	PrizeCell,
 } from '../../components';
 import { formatIsoTimestamp } from '../../utils/casper-helper';
-
-export interface Round {
-	endedAt: string;
-	jackpotAmount: string;
-	playsNum: string;
-	roundId: string;
-	winnerAccountHash: string;
-	winnerPublicKey: string;
-}
+import { Round } from '../../types';
 
 const JackpotTableRow = ({ round }: { round: Round }) => {
 	const { roundId, winnerPublicKey, jackpotAmount, endedAt } = round;
 
-	const roundPath = `/jackpots/${roundId}`;
+	const roundPath = `/jackpot/${roundId}`;
 
 	return (
 		<TableRow key={roundId}>

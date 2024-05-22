@@ -75,7 +75,7 @@ export interface TableProps {
 	handleLoadMore?: () => void;
 }
 
-const Table = (props: TableProps) => {
+export const Table = (props: TableProps) => {
 	const { renderData, renderHeaders, itemCount, handleLoadMore } =
 		props;
 

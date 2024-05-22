@@ -1,14 +1,20 @@
+import styled from 'styled-components';
 import {
 	BodyText,
 	Button,
 	FlexColumn,
 	FlexRow,
 	HeaderText,
+	PageTile,
 } from '@make-software/cspr-ui';
 // @ts-ignore
 import CupIcon from '../../../assets/icons/cup.svg';
-import styled from 'styled-components';
-import Icon from '../../components/icon/icon';
+import { Icon } from '../../components';
+
+const StyledPageTile = styled(PageTile)(() => ({
+	padding: '60px 0',
+	boxShadow: 'none',
+}));
 
 const StyledFlexColumn = styled(FlexColumn)(() => ({
 	width: '400px',
@@ -24,35 +30,37 @@ const NoPlays = () => {
 	};
 
 	return (
-		<FlexRow align={'center'} justify={'center'}>
-			<StyledFlexColumn
-				itemsSpacing={24}
-				align={'center'}
-				justify={'center'}
-			>
-				<Icon src={CupIcon} />
-				<FlexColumn
-					itemsSpacing={16}
+		<StyledPageTile>
+			<FlexRow align={'center'} justify={'center'}>
+				<StyledFlexColumn
+					itemsSpacing={24}
 					align={'center'}
 					justify={'center'}
 				>
-					<HeaderText size={3} scale={'xs'} variation={'black'}>
-						No plays yet
-					</HeaderText>
-					<StyledBodyText
-						size={3}
-						scale={'sm'}
-						variation={'darkGray'}
+					<Icon src={CupIcon} />
+					<FlexColumn
+						itemsSpacing={16}
+						align={'center'}
+						justify={'center'}
 					>
-						Purchase your ticket now to stand a chance of seeing your
-						name on this list of winners.
-					</StyledBodyText>
-				</FlexColumn>
-				<Button color={'primaryBlue'} onClick={handlePlay}>
-					Play
-				</Button>
-			</StyledFlexColumn>
-		</FlexRow>
+						<HeaderText size={3} scale={'xs'} variation={'black'}>
+							No plays yet
+						</HeaderText>
+						<StyledBodyText
+							size={3}
+							scale={'sm'}
+							variation={'darkGray'}
+						>
+							Purchase your ticket now to stand a chance of seeing
+							your name on this list of winners.
+						</StyledBodyText>
+					</FlexColumn>
+					<Button color={'primaryBlue'} onClick={handlePlay}>
+						Play
+					</Button>
+				</StyledFlexColumn>
+			</FlexRow>
+		</StyledPageTile>
 	);
 };
 

@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import {
 	BodyText,
 	FlexColumn,
@@ -5,10 +6,9 @@ import {
 	HeaderText,
 	PageTile,
 } from '@make-software/cspr-ui';
-import PageLayout from '../../components/page-layout/page-layout';
+import { PageLayout } from '../../components';
 // @ts-ignore
 import CsprClickSchemeImg from '../../../assets/images/cspr-click-scheme.png';
-import styled from 'styled-components';
 
 const StyledPageTile = styled(PageTile)(() => ({
 	marginTop: '48px',
