@@ -23,10 +23,6 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 		limit: 10,
 	});
 
-	if (!plays || !plays.length) {
-		return <NoData />;
-	}
-
 	if (loading) {
 		return (
 			<PageTile>
@@ -38,6 +34,10 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 	if (error) {
 		return <ErrorTile message={error} />;
 	}
+
+    if (!plays || !plays.length) {
+        return <NoData />;
+    }
 
 	return (
 		<Table

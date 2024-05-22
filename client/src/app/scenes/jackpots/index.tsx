@@ -22,10 +22,6 @@ const JackpotsTable = () => {
 		limit: 10,
 	});
 
-	if (!jackpots || !jackpots.length) {
-		return <NoData />;
-	}
-
 	if (loading) {
 		return (
 			<PageTile>
@@ -36,6 +32,10 @@ const JackpotsTable = () => {
 
 	if (error) {
 		return <ErrorTile message={error} />;
+	}
+
+	if (!jackpots || !jackpots.length) {
+		return <NoData />;
 	}
 
 	return (

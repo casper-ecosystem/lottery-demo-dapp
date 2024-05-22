@@ -26,10 +26,6 @@ const MyPlaysTable = () => {
 		limit: 10,
 	});
 
-	if (!myPlays || !myPlays.length) {
-		return <NoData />;
-	}
-
 	if (loading) {
 		return (
 			<PageTile>
@@ -40,6 +36,10 @@ const MyPlaysTable = () => {
 
 	if (error) {
 		return <ErrorTile message={error} />;
+	}
+
+	if (!myPlays || !myPlays.length) {
+		return <NoData />;
 	}
 
 	return (
