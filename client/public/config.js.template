@@ -5,4 +5,5 @@ const config = {
   lottery_api_ws_url: '$LOTTERY_API_WS_URL',
   cspr_click_app_name: '$CSPR_CLICK_APP_NAME',
   cspr_click_app_id: '$CSPR_CLICK_APP_ID',
+  cspr_live_url: '$CSPR_LIVE_URL'
 };

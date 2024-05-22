@@ -2,3 +2,5 @@
 /build
 /coverage
 *.yaml
+*.css
+*.json

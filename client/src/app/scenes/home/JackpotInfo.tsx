@@ -13,6 +13,8 @@ import Badge, { BadgePadding } from '../../components/badge/badge';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 // @ts-ignore
 import ShineImg from '../../../assets/images/shine.png';
+import { useFetch } from '../../services/use-fetch';
+import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
@@ -78,9 +80,18 @@ const JackpotTitle = styled(JackpotText)(({ theme }) => ({
 }));
 
 const JackpotInfo = () => {
+	const { data: latestRounds } = useFetch({
+		url: '/rounds/latest',
+		limit: 1,
+	});
 	const handlePlay = () => {
 		console.log('play now');
 	};
+
+	const jackpotSum = motesToCSPR(
+		// @ts-ignore
+		latestRounds?.jackpotAmount || '0'
+	);
 
 	return (
 		<HomeHeaderContainer>
@@ -107,11 +118,14 @@ const JackpotInfo = () => {
 					<ShineBg src={ShineImg} />
 					<SvgIcon src={JackpotSvg} width={218} height={58} />
 					<FlexRow itemsSpacing={20} align={'baseline'}>
-						<JackpotTitle>1,027.44</JackpotTitle>
+						<JackpotTitle>{jackpotSum}</JackpotTitle>
 						<JackpotText>CSPR</JackpotText>
 					</FlexRow>
 					<Badge
-						label={'Current Plays: 234'}
+						label={`Current Plays: ${
+							// @ts-ignore
+							latestRounds?.playsNum || 0
+						}`}
 						padding={BadgePadding.big}
 					/>
 				</RightContainer>

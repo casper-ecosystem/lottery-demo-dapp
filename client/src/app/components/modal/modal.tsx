@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import ReactModal from 'react-modal';
 import { FlexColumn } from '@make-software/cspr-ui';
-import {BuyTicketContent} from './modal-content';
+import { BuyTicketContent } from './modal-content';
 
 const modalStyles = {
 	left: '50%',

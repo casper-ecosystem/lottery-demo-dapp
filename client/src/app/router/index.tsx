@@ -10,6 +10,7 @@ import {
 } from './paths';
 import { FlexColumn } from '@make-software/cspr-ui';
 import AboutScene from '../scenes/about';
+import JackpotsScene from '../scenes/jackpots';
 
 export const Container = styled(FlexColumn)(({ theme }) => ({
 	minWidth: theme.minWidth,
@@ -26,7 +27,7 @@ const Router = () => {
 				<Routes>
 					<Route path={HOME_PATH} element={<HomeScene />} />
 					<Route path={ABOUT_PATH} element={<AboutScene />} />
-					<Route path={JACKPOTS_PATH} element={<HomeScene />} />
+					<Route path={JACKPOTS_PATH} element={<JackpotsScene />} />
 					<Route path={MY_PLAYS_PATH} element={<HomeScene />} />
 				</Routes>
 			</Container>

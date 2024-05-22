@@ -32,7 +32,7 @@ import LoadingIcon from '../../../assets/icons/loading.svg';
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
 		textAlign: 'center',
-		height: 'inherit'
+		height: 'inherit',
 	})
 );
 

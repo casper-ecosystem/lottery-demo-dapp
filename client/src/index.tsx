@@ -9,11 +9,20 @@ import App from './App';
 const clickOptions: CsprClickInitOptions = {
 	appName: config.cspr_click_app_name,
 	contentMode: CONTENT_MODE.IFRAME,
-	providers: ['casper-wallet', 'ledger', 'torus-wallet', 'casperdash', 'metamask-snap', 'casper-signer'],
+	providers: [
+		'casper-wallet',
+		'ledger',
+		'torus-wallet',
+		'casperdash',
+		'metamask-snap',
+		'casper-signer',
+	],
 	appId: config.cspr_click_app_id,
 };
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = ReactDOM.createRoot(
+	document.getElementById('root') as HTMLElement
+);
 root.render(
 	<React.StrictMode>
 		<ClickProvider options={clickOptions}>

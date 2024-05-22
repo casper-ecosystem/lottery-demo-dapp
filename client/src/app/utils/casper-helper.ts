@@ -29,10 +29,18 @@ async function getProxyWASM(): Promise<Uint8Array> {
 	return new Uint8Array(buffer);
 }
 
-export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy> {
-	const contractPackageHashBytes = new CLByteArray(decodeBase16(config.lottery_app_contract_package_hash));
-	const args_bytes: Uint8Array = RuntimeArgs.fromMap({}).toBytes().unwrap();
-	const serialized_args = new CLList(Array.from(args_bytes).map(value => new CLU8(value)));
+export async function preparePlayDeploy(
+	publicKey: CLPublicKey
+): Promise<Deploy> {
+	const contractPackageHashBytes = new CLByteArray(
+		decodeBase16(config.lottery_app_contract_package_hash)
+	);
+	const args_bytes: Uint8Array = RuntimeArgs.fromMap({})
+		.toBytes()
+		.unwrap();
+	const serialized_args = new CLList(
+		Array.from(args_bytes).map(value => new CLU8(value))
+	);
 	const casperClient = new CasperClient('');
 	const contractClient = new Contracts.Contract(casperClient);
 	const args = RuntimeArgs.fromMap({
@@ -54,26 +62,36 @@ export async function preparePlayDeploy(publicKey: CLPublicKey): Promise<Deploy>
 	);
 }
 
-export async function signAndSendDeploy(deploy: Deploy, publicKey: CLPublicKey) {
+export async function signAndSendDeploy(
+	deploy: Deploy,
+	publicKey: CLPublicKey
+) {
 	const deployJson = DeployUtil.deployToJson(deploy);
-	await window.csprclick.send(JSON.stringify(deployJson.deploy), publicKey.toHex().toLowerCase());
+	await window.csprclick.send(
+		JSON.stringify(deployJson.deploy),
+		publicKey.toHex().toLowerCase()
+	);
 }
 
 export async function initiateDeployListener(publicKey: CLPublicKey) {
-	const result = await fetch(`${config.lottery_api_url}/initDeployListener?publicKey=${publicKey.toHex()}`);
+	const result = await fetch(
+		`${
+			config.lottery_api_url
+		}/initDeployListener?publicKey=${publicKey.toHex()}`
+	);
 	if (!result.ok) {
 		throw new Error(await result.text());
 	}
 }
 
 export async function getPlayByDeployHash(deployHash: string) {
-	return axios.get(`${config.lottery_api_url}/playByDeployHash`, { params: { deployHash: deployHash } });
+	return axios.get(`${config.lottery_api_url}/playByDeployHash`, {
+		params: { deployHash: deployHash },
+	});
 }
 
-export function truncateHash(hash: string) {
-  if (!hash) {
-    return ''; // @todo Fix parsing public key from the account hash in the client plays
-  }
-	const keepLength = 5;
-	return `${hash.substring(0, keepLength)}...${hash.substring(hash.length - keepLength)}`;
-}
+export const formatIsoTimestamp = (value: string): string => {
+	const [date, time] = value.split('T');
+
+	return `${date} ${time.split('.')[0]}`;
+};
