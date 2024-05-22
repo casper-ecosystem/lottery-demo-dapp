@@ -44,7 +44,7 @@ const PageHeader = () => {
 	const [menuVisible, setMenuVisible] = useState(false);
 
 	const onMobile = (
-		<FlexRow justify={'center'}>
+		<FlexColumn justify={'center'}>
 			<NavBarContainer>
 				<SvgIcon src={Logo} width={162} height={72} />
 				<HamburgerButton
@@ -56,7 +56,7 @@ const PageHeader = () => {
 				/>
 			</NavBarContainer>
 			{menuVisible && <NavigationMenu />}
-		</FlexRow>
+		</FlexColumn>
 	);
 
 	const onAbove = (

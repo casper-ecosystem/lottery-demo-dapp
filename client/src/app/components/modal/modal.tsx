@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import ReactModal from 'react-modal';
 import { FlexColumn } from '@make-software/cspr-ui';
-import { BuyTicketContent } from './modal-content';
+import { BuyTicketContent, LoadingContent } from './modal-content';
 
 const modalStyles = {
 	left: '50%',
@@ -17,8 +17,8 @@ const modalStyles = {
 
 const ModalContainer = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
-		width: ['261px', '400px', '496px'],
-		height: ['240px', '380px', '456px'],
+		width: ['300px', '400px', '400px', '496px'],
+		height: ['400px', '380px', '380px', '456px'],
 		background: theme.styleguideColors.backgroundPrimary,
 		borderColor: theme.styleguideColors.backgroundPrimary,
 	})
@@ -54,7 +54,7 @@ export const Modal = ({ isOpen }: ModalProps) => {
 					portalClassName={'portal'}
 				>
 					<ModalContainer>
-						<BuyTicketContent />
+						<LoadingContent />
 					</ModalContainer>
 				</ReactModal>
 			)}

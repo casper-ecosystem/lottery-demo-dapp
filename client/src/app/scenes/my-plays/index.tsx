@@ -38,7 +38,7 @@ const MyPlaysTable = () => {
 		return <ErrorTile message={error} />;
 	}
 
-	if (!myPlays || !myPlays.length) {
+	if (!myPlays || myPlays.length < 1) {
 		return <NoData />;
 	}
 

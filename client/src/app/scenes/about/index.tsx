@@ -10,15 +10,19 @@ import { PageLayout } from '../../components';
 // @ts-ignore
 import CsprClickSchemeImg from '../../../assets/images/cspr-click-scheme.png';
 
-const StyledPageTile = styled(PageTile)(() => ({
-	marginTop: '48px',
-	padding: '60px 100px 100px',
-}));
+const StyledPageTile = styled(PageTile)(({ theme }) =>
+	theme.withMedia({
+		marginTop: '48px',
+		padding: ['40px 30px', '50px 40px', '50px', '60px 100px 100px'],
+	})
+);
 
-const StyledImg = styled.img(() => ({
-	width: '900px',
-	marginBottom: '32px',
-}));
+const StyledImg = styled.img(({ theme }) =>
+	theme.withMedia({
+		width: '100%',
+		marginBottom: '32px',
+	})
+);
 
 const StyledA = styled.a(() => ({
 	textDecoration: 'underline',

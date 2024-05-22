@@ -34,7 +34,7 @@ const JackpotsTable = () => {
 		return <ErrorTile message={error} />;
 	}
 
-	if (!jackpots || !jackpots.length) {
+	if (!jackpots || jackpots.length < 1) {
 		return <NoData />;
 	}
 

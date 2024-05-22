@@ -35,9 +35,9 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 		return <ErrorTile message={error} />;
 	}
 
-    if (!plays || !plays.length) {
-        return <NoData />;
-    }
+	if (!plays || plays.length < 1) {
+		return <NoData />;
+	}
 
 	return (
 		<Table

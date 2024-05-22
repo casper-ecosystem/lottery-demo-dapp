@@ -31,7 +31,7 @@ const PlaysTable = () => {
 		return <ErrorTile message={error} />;
 	}
 
-	if (!plays || !plays.length) {
+	if (!plays || plays.length < 1) {
 		return <NoPlays />;
 	}
 
