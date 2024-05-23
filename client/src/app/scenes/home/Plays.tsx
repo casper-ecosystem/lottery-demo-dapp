@@ -1,12 +1,15 @@
 import { PageTile } from '@make-software/cspr-ui';
-import NoPlays from './NoPlays';
-import Table from '../../components/table/table';
 import { useFetch } from '../../services/use-fetch';
-import TableLoader from '../../components/table/table-loader';
+import {
+	ErrorTile,
+	LoadMoreButton,
+	TableLoader,
+	TableTile,
+	Table,
+} from '../../components';
 import PlaysDataHeaders from './PlaysDataHeaders';
 import PlaysTableRow from './PlaysTableRow';
-import TableTile from '../../components/table-tile/table-tile';
-import { ErrorTile } from '../../components/error-tile/error-tile';
+import NoPlays from './NoPlays';
 
 const PlaysTable = () => {
 	const {
@@ -14,9 +17,10 @@ const PlaysTable = () => {
 		loading,
 		error,
 		total,
+		loadAllData,
+		resetLimit,
 	} = useFetch({
 		url: '/rounds/latest/plays',
-		limit: 10,
 	});
 
 	if (loading) {
@@ -44,6 +48,13 @@ const PlaysTable = () => {
 					<PlaysTableRow play={play} key={play.playId} />
 				))
 			}
+			renderFooterButton={() => (
+				<LoadMoreButton
+					isCollapsed={plays.length < total}
+					handleLoadMore={loadAllData}
+					handleReset={resetLimit}
+				/>
+			)}
 		/>
 	);
 };

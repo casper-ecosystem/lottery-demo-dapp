@@ -1,14 +1,14 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-
 import {
 	BodyText,
-	Button,
 	FlexRow,
 	formatNumber,
 	TableBody,
 	TableHead,
 } from '@make-software/cspr-ui';
+
+export const VISIBLE_TABLE_DATA_LENGTH = 10;
 
 export const TableContainer = styled.div(({ theme }) => ({
 	overflowX: 'auto',
@@ -27,21 +27,6 @@ const PaginationContainer = styled(FlexRow)(({ theme }) =>
 		justifyContent: 'space-between',
 		padding: '12px 20px',
 		margin: 0,
-	})
-);
-
-const ButtonContainer = styled(FlexRow)(({ theme }) =>
-	theme.withMedia({
-		padding: '20px',
-		position: 'relative',
-		':after': {
-			content: "''",
-			position: 'absolute',
-			left: 20,
-			right: 20,
-			top: 0,
-			borderTop: theme.border.tableRowSeparator,
-		},
 	})
 );
 
@@ -71,15 +56,13 @@ export const StyledTableDataHeader = styled.th<TableDataHeaderProps>(
 export interface TableProps {
 	renderHeaders?: () => ReactNode;
 	renderData?: () => ReactNode;
+	renderFooterButton?: () => ReactNode;
 	itemCount?: number;
-	handleLoadMore?: () => void;
 }
 
 export const Table = (props: TableProps) => {
-	const { renderData, renderHeaders, itemCount, handleLoadMore } =
+	const { renderData, renderHeaders, renderFooterButton, itemCount } =
 		props;
-
-	const showLoadMore = (itemCount || 0) > 10;
 
 	return (
 		<>
@@ -94,16 +77,9 @@ export const Table = (props: TableProps) => {
 					{renderData && <TableBody>{renderData()}</TableBody>}
 				</StyledTable>
 			</TableContainer>
-			{showLoadMore && (
-				<ButtonContainer>
-					<Button
-						color={'secondaryRed'}
-						onClick={handleLoadMore && handleLoadMore}
-					>
-						Load more
-					</Button>
-				</ButtonContainer>
-			)}
+			{renderFooterButton &&
+				(itemCount || 0) > VISIBLE_TABLE_DATA_LENGTH &&
+				renderFooterButton()}
 		</>
 	);
 };

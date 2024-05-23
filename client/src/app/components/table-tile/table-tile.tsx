@@ -11,7 +11,7 @@ const TitleText = styled(HeaderText)(() => ({
 
 interface TableTileProps {
 	title: string;
-	children: any;
+	children: React.ReactNode;
 }
 
 export const TableTile = ({ title, children }: TableTileProps) => {

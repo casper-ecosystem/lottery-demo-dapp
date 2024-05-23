@@ -5,7 +5,7 @@ import {
 	JACKPOTS_PATH,
 } from '../../router/paths';
 import styled from 'styled-components';
-import MenuLink from './menu-link';
+import { Link } from '../link/link';
 
 const MainMenuContainer = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -26,13 +26,13 @@ const NavigationMenu = () => {
 		<MainMenuContainer>
 			<MainMenu>
 				<MainMenuItem>
-					<MenuLink to={HOME_PATH}>Home</MenuLink>
+					<Link to={HOME_PATH}>Home</Link>
 				</MainMenuItem>
 				<MainMenuItem>
-					<MenuLink to={ABOUT_PATH}>About</MenuLink>
+					<Link to={ABOUT_PATH}>About</Link>
 				</MainMenuItem>
 				<MainMenuItem>
-					<MenuLink to={JACKPOTS_PATH}>Jackpots</MenuLink>
+					<Link to={JACKPOTS_PATH}>Jackpots</Link>
 				</MainMenuItem>
 			</MainMenu>
 		</MainMenuContainer>

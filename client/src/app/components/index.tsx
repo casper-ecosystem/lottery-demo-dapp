@@ -10,3 +10,6 @@ export * from './page-header/page-header';
 export * from './page-layout/page-layout';
 export * from './table/table-loader';
 export * from './modal/modal';
+export * from './table/load-more-button';
+export * from './link/link';
+export * from './link/router-link';

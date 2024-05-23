@@ -97,8 +97,8 @@ const JackpotTitle = styled(JackpotText)(({ theme }) => ({
 const JackpotInfo = () => {
 	const { data: latestRounds } = useFetch({
 		url: '/rounds/latest',
-		limit: 1,
 	});
+
 	const handlePlay = () => {
 		console.log('play now');
 	};

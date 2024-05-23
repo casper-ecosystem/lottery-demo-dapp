@@ -7,6 +7,7 @@ import {
 	PageLayout,
 	NoData,
 	ErrorTile,
+	LoadMoreButton,
 } from '../../components';
 import { useFetch } from '../../services/use-fetch';
 import MyPlaysDataHeaders from './MyPlaysDataHeaders';
@@ -21,9 +22,10 @@ const MyPlaysTable = () => {
 		loading,
 		error,
 		total,
+		loadAllData,
+		resetLimit,
 	} = useFetch({
 		url: `/players/${activePublicKey}/plays`,
-		limit: 10,
 	});
 
 	if (loading) {
@@ -51,6 +53,13 @@ const MyPlaysTable = () => {
 					<MyPlaysTableRow play={play} key={play.roundId} />
 				))
 			}
+			renderFooterButton={() => (
+				<LoadMoreButton
+					isCollapsed={myPlays.length < total}
+					handleLoadMore={loadAllData}
+					handleReset={resetLimit}
+				/>
+			)}
 		/>
 	);
 };

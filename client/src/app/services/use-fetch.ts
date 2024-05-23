@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { VISIBLE_TABLE_DATA_LENGTH } from '../components';
 
 interface InitialState {
 	data: any[] | null;
@@ -10,10 +11,10 @@ interface InitialState {
 
 interface UseFetchProps {
 	url: string;
-	limit: number;
 }
 
-export const useFetch = ({ url, limit }: UseFetchProps) => {
+export const useFetch = ({ url }: UseFetchProps) => {
+	const [limit, setLimit] = useState(10);
 	const [state, setState] = useState<InitialState>({
 		data: null,
 		loading: true,
@@ -24,7 +25,7 @@ export const useFetch = ({ url, limit }: UseFetchProps) => {
 	const fetchData = async () => {
 		axios
 			.get(`${config.lottery_api_url}${url}`, {
-				params: { limit: limit, offset: 0 },
+				params: { pageSize: limit },
 			})
 			.then(response => {
 				setState({
@@ -47,9 +48,19 @@ export const useFetch = ({ url, limit }: UseFetchProps) => {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [limit]);
+
+	const loadAllData = () => {
+		setLimit(1000);
+	};
+
+	const resetLimit = () => {
+		setLimit(VISIBLE_TABLE_DATA_LENGTH);
+	};
 
 	return {
 		...state,
+		loadAllData,
+		resetLimit,
 	};
 };

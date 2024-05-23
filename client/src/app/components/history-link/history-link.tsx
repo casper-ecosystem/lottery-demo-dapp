@@ -17,7 +17,7 @@ const StyledWrapper = styled.span(({ theme }) => ({
 interface HistoryLinkProps {
 	href: string;
 	target?: string;
-	children: any;
+	children: React.ReactNode;
 	monotype?: boolean;
 }
 

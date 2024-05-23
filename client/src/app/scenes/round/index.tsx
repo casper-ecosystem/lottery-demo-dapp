@@ -8,6 +8,7 @@ import {
 	PageLayout,
 	TableLoader,
 	Table,
+	LoadMoreButton,
 } from '../../components';
 import PlaysDataHeaders from '../home/PlaysDataHeaders';
 import PlaysTableRow from '../home/PlaysTableRow';
@@ -18,9 +19,10 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 		loading,
 		error,
 		total,
+		loadAllData,
+		resetLimit,
 	} = useFetch({
 		url: `/rounds/${id}/plays`,
-		limit: 10,
 	});
 
 	if (loading) {
@@ -48,6 +50,13 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 					<PlaysTableRow key={play.playId} play={play} />
 				))
 			}
+			renderFooterButton={() => (
+				<LoadMoreButton
+					isCollapsed={plays.length < total}
+					handleLoadMore={loadAllData}
+					handleReset={resetLimit}
+				/>
+			)}
 		/>
 	);
 };

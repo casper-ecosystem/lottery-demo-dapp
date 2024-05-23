@@ -6,6 +6,7 @@ import {
 	PageLayout,
 	TableLoader,
 	Table,
+	LoadMoreButton,
 } from '../../components';
 import { useFetch } from '../../services/use-fetch';
 import JackpotsDataHeaders from './JackpotsDataHeaders';
@@ -17,9 +18,10 @@ const JackpotsTable = () => {
 		loading,
 		error,
 		total,
+		loadAllData,
+		resetLimit,
 	} = useFetch({
 		url: '/rounds',
-		limit: 10,
 	});
 
 	if (loading) {
@@ -47,6 +49,13 @@ const JackpotsTable = () => {
 					<JackpotTableRow round={round} key={round.roundId} />
 				))
 			}
+			renderFooterButton={() => (
+				<LoadMoreButton
+					isCollapsed={jackpots.length < total}
+					handleLoadMore={loadAllData}
+					handleReset={resetLimit}
+				/>
+			)}
 		/>
 	);
 };

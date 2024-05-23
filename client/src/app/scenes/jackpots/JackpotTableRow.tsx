@@ -5,7 +5,8 @@ import {
 } from '@make-software/cspr-ui';
 import {
 	AccountInfoCell,
-	HistoryLink,
+	Link,
+	LinkVariation,
 	PrizeCell,
 } from '../../components';
 import { formatIsoTimestamp } from '../../utils/casper-helper';
@@ -20,7 +21,9 @@ const JackpotTableRow = ({ round }: { round: Round }) => {
 		<TableRow key={roundId}>
 			<TableData>
 				<BodyText size={3}>
-					<HistoryLink href={roundPath}>Round {roundId}</HistoryLink>
+					<Link to={roundPath} variation={LinkVariation.blue}>
+						Round {roundId}
+					</Link>
 				</BodyText>
 			</TableData>
 			<AccountInfoCell publicKey={winnerPublicKey} />
