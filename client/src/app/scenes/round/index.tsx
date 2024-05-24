@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { PageTile } from '@make-software/cspr-ui';
-import { useFetch } from '../../services/use-fetch';
+import { useGetTableData } from '../../services/use-get-table-data';
 import {
 	NoData,
 	ErrorTile,
@@ -21,7 +21,7 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useFetch({
+	} = useGetTableData({
 		url: `/rounds/${id}/plays`,
 	});
 

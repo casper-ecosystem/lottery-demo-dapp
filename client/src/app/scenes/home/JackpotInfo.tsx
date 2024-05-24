@@ -14,7 +14,7 @@ import Badge, { BadgePadding } from '../../components/badge/badge';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 // @ts-ignore
 import ShineImg from '../../../assets/images/shine.png';
-import { useFetch } from '../../services/use-fetch';
+import { useGetTableData } from '../../services/use-get-table-data';
 import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
@@ -94,13 +94,17 @@ const JackpotTitle = styled(JackpotText)(({ theme }) => ({
 	fontWeight: 900,
 }));
 
-const JackpotInfo = () => {
-	const { data: latestRounds } = useFetch({
+interface JackpotInfoProps {
+	setModalOpen: (isOpen: boolean) => void;
+}
+
+const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
+	const { data: latestRounds } = useGetTableData({
 		url: '/rounds/latest',
 	});
 
 	const handlePlay = () => {
-		console.log('play now');
+		setModalOpen(true);
 	};
 
 	const jackpotSum = motesToCSPR(

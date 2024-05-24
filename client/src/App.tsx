@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
 import {
 	useClickRef,
@@ -6,6 +6,9 @@ import {
 } from '@make-software/csprclick-ui';
 import { AppTheme } from './app/theme';
 import Router from './app/router';
+import { WebSocketProvider } from './app/services/WebSocketProvider';
+
+export const ActiveAccountContext = createContext(null);
 
 const App = () => {
 	const clickRef = useClickRef();
@@ -28,7 +31,11 @@ const App = () => {
 
 	return (
 		<ThemeProvider theme={AppTheme[ThemeModeType.light]}>
-			<Router />
+			<ActiveAccountContext.Provider value={activeAccount}>
+				<WebSocketProvider>
+					<Router />
+				</WebSocketProvider>
+			</ActiveAccountContext.Provider>
 		</ThemeProvider>
 	);
 };

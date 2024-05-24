@@ -60,12 +60,16 @@ const LoadingSvgIcon = styled(SvgIcon)(({ theme }) => ({
 	animationTimingFunction: 'linear',
 }));
 
-interface ModalContentProps {
+interface CustomModalContentProps {
+	handleButtonAction: () => void;
+	closeModal: () => void;
+}
+
+interface ModalContentProps extends CustomModalContentProps {
 	title: string;
 	logo: React.ReactElement;
 	description: React.ReactElement | string;
 	buttonText: string;
-	handleButtonAction: () => void;
 }
 
 export const ModalContent = ({
@@ -74,10 +78,11 @@ export const ModalContent = ({
 	description,
 	buttonText,
 	handleButtonAction,
+	closeModal,
 }: ModalContentProps) => {
 	return (
 		<>
-			<ModalHeader onClose={() => console.log('dismiss')} />
+			<ModalHeader onClose={closeModal} />
 			<StyledFlexColumn itemsSpacing={16}>
 				<LogoContainer justify={'center'}>{logo}</LogoContainer>
 				<StyledTitle size={1} scale='lg'>
@@ -94,10 +99,14 @@ export const ModalContent = ({
 	);
 };
 
-export const LoadingContent = () => {
+export const LoadingContent = ({
+	closeModal,
+}: {
+	closeModal: () => void;
+}) => {
 	return (
 		<>
-			<ModalHeader onClose={() => console.log('dismiss')} />
+			<ModalHeader onClose={closeModal} />
 			<FlexRow justify={'center'}>
 				<LoadingContainer itemsSpacing={54} align={'center'}>
 					<LoadingSvgIcon
@@ -114,19 +123,21 @@ export const LoadingContent = () => {
 	);
 };
 
-export const WelcomeModalContent = () => {
+export const WelcomeModalContent = (
+	props: CustomModalContentProps
+) => {
 	return (
 		<ModalContent
 			logo={<Icon src={HandIcon} />}
 			title={'Welcome!'}
 			description={'Please connect your Casper account to play'}
 			buttonText={'Connect Wallet'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };
 
-export const BuyTicketContent = () => {
+export const BuyTicketContent = (props: CustomModalContentProps) => {
 	return (
 		<ModalContent
 			logo={<Icon src={TicketIcon} />}
@@ -148,12 +159,14 @@ export const BuyTicketContent = () => {
 				</FlexColumn>
 			}
 			buttonText={'Play'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };
 
-export const NotEnoughCsprContent = () => {
+export const NotEnoughCsprContent = (
+	props: CustomModalContentProps
+) => {
 	return (
 		<ModalContent
 			logo={<Icon src={CoinsIcon} />}
@@ -162,24 +175,40 @@ export const NotEnoughCsprContent = () => {
 				'You don’t have enough CSPR to buy a ticket. Top up your account!'
 			}
 			buttonText={'Request tokens'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };
 
-export const SomethingWentWrongContent = () => {
+export const SomethingWentWrongContent = (
+	props: CustomModalContentProps
+) => {
 	return (
 		<ModalContent
 			logo={<Icon src={ConnectionIcon} />}
 			title={'Something went wrong'}
 			description={'Please refresh the page.'}
 			buttonText={'Refresh'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };
 
-export const JackpotContent = () => {
+export const DeployFailedContent = (
+	props: CustomModalContentProps
+) => {
+	return (
+		<ModalContent
+			logo={<Icon src={ConnectionIcon} />}
+			title={'Deploy Failed'}
+			description={'Please try again.'}
+			buttonText={'Play'}
+			{...props}
+		/>
+	);
+};
+
+export const JackpotContent = (props: CustomModalContentProps) => {
 	return (
 		<ModalContent
 			logo={<Icon src={CupIcon} status={IconStatus.success} />}
@@ -188,31 +217,31 @@ export const JackpotContent = () => {
 				'Congratulations, you have won the jackpot of 20,000 CSPR!'
 			}
 			buttonText={'Play More'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };
 
-export const YouWonContent = () => {
+export const YouWonContent = (props: CustomModalContentProps) => {
 	return (
 		<ModalContent
 			logo={<Icon src={HappyIcon} status={IconStatus.success} />}
 			title={'You Won!'}
 			description={'Congratulations, you have won 1,000 CSPR!'}
 			buttonText={'Play More'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };
 
-export const UnluckyContent = () => {
+export const UnluckyContent = (props: CustomModalContentProps) => {
 	return (
 		<ModalContent
 			logo={<Icon src={SadIcon} status={IconStatus.error} />}
 			title={'Unlucky this Time'}
 			description={'You did not win this time. Try again!'}
 			buttonText={'Try Again'}
-			handleButtonAction={() => console.log('123')}
+			{...props}
 		/>
 	);
 };

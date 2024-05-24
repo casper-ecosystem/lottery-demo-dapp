@@ -1,5 +1,5 @@
 import { PageTile } from '@make-software/cspr-ui';
-import { useFetch } from '../../services/use-fetch';
+import { useGetTableData } from '../../services/use-get-table-data';
 import {
 	ErrorTile,
 	LoadMoreButton,
@@ -11,7 +11,11 @@ import PlaysDataHeaders from './PlaysDataHeaders';
 import PlaysTableRow from './PlaysTableRow';
 import NoPlays from './NoPlays';
 
-const PlaysTable = () => {
+interface PlaysTableProps {
+	setModalOpen: (isOpen: boolean) => void;
+}
+
+const PlaysTable = ({ setModalOpen }: PlaysTableProps) => {
 	const {
 		data: plays,
 		loading,
@@ -19,7 +23,7 @@ const PlaysTable = () => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useFetch({
+	} = useGetTableData({
 		url: '/rounds/latest/plays',
 	});
 
@@ -36,7 +40,7 @@ const PlaysTable = () => {
 	}
 
 	if (!plays || plays.length < 1) {
-		return <NoPlays />;
+		return <NoPlays setModalOpen={setModalOpen} />;
 	}
 
 	return (
@@ -59,10 +63,14 @@ const PlaysTable = () => {
 	);
 };
 
-const Plays = () => {
+interface PlaysProps {
+	setModalOpen: (isOpen: boolean) => void;
+}
+
+const Plays = (props: PlaysProps) => {
 	return (
 		<TableTile title={'Plays'}>
-			<PlaysTable />
+			<PlaysTable {...props} />
 		</TableTile>
 	);
 };

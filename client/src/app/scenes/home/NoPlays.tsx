@@ -24,9 +24,13 @@ const StyledBodyText = styled(BodyText)(({ theme }) => ({
 	textAlign: 'center',
 }));
 
-const NoPlays = () => {
+interface NoPlaysProps {
+	setModalOpen: (isOpen: boolean) => void;
+}
+
+const NoPlays = ({ setModalOpen }: NoPlaysProps) => {
 	const handlePlay = () => {
-		console.log('play now');
+		setModalOpen(true);
 	};
 
 	return (

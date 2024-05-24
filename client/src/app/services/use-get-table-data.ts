@@ -9,11 +9,11 @@ interface InitialState {
 	total: number;
 }
 
-interface UseFetchProps {
+interface GetTableDataProps {
 	url: string;
 }
 
-export const useFetch = ({ url }: UseFetchProps) => {
+export const useGetTableData = ({ url }: GetTableDataProps) => {
 	const [limit, setLimit] = useState(10);
 	const [state, setState] = useState<InitialState>({
 		data: null,

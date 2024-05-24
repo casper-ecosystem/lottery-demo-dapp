@@ -9,7 +9,7 @@ export * from './table-tile/table-tile';
 export * from './page-header/page-header';
 export * from './page-layout/page-layout';
 export * from './table/table-loader';
-export * from './modal/modal';
+export * from './modal/modal-content';
 export * from './table/load-more-button';
 export * from './link/link';
 export * from './link/router-link';

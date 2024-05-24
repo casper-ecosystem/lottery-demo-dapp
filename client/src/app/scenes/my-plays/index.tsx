@@ -9,7 +9,7 @@ import {
 	ErrorTile,
 	LoadMoreButton,
 } from '../../components';
-import { useFetch } from '../../services/use-fetch';
+import { useGetTableData } from '../../services/use-get-table-data';
 import MyPlaysDataHeaders from './MyPlaysDataHeaders';
 import MyPlaysTableRow from './MyPlaysTableRow';
 
@@ -24,7 +24,7 @@ const MyPlaysTable = () => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useFetch({
+	} = useGetTableData({
 		url: `/players/${activePublicKey}/plays`,
 	});
 

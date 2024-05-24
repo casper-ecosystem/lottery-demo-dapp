@@ -8,7 +8,7 @@ import {
 	Table,
 	LoadMoreButton,
 } from '../../components';
-import { useFetch } from '../../services/use-fetch';
+import { useGetTableData } from '../../services/use-get-table-data';
 import JackpotsDataHeaders from './JackpotsDataHeaders';
 import JackpotTableRow from './JackpotTableRow';
 
@@ -20,7 +20,7 @@ const JackpotsTable = () => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useFetch({
+	} = useGetTableData({
 		url: '/rounds',
 	});
 
