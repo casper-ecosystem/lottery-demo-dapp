@@ -172,16 +172,16 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 
 	const { deploy } = useWebSocketDeployData();
 
-	const closeModal = () => {
-		setModalOpen(false);
-	};
-
 	useEffect(() => {
-		clickRef
-			?.getActiveAccountWithBalance()
-			?.then(activeAccountWithBalanceReturned => {
-				setActiveAccountWithBalance(activeAccountWithBalanceReturned);
-			});
+		if (activeAccountContext && clickRef) {
+			clickRef
+				.getActiveAccountWithBalance()
+				.then(accountWithBalance => {
+					setActiveAccountWithBalance(accountWithBalance);
+				});
+		} else {
+			setActiveAccountWithBalance(null);
+		}
 	}, [activeAccountContext]);
 
 	useEffect(() => {
@@ -194,14 +194,20 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 		await clickRef?.signIn();
 	};
 
+	const closeModal = () => {
+		setModalOpen(false);
+	};
+
 	const initiatePlay = async () => {
-		if (activeAccountWithBalance?.public_key == null) {
+		if (!activeAccountWithBalance?.public_key) {
 			setClientErrorOccurred(true);
 			return;
 		}
+
 		const publicKey = CLPublicKey.fromHex(
 			activeAccountWithBalance.public_key
 		);
+
 		const deploy = await preparePlayDeploy(publicKey);
 		await signAndSendDeploy(deploy, publicKey);
 		setAwaitingPlayResult(true);
@@ -209,12 +215,13 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 	};
 
 	const handleDeployProcessed = async (deploy: DeployMessage) => {
-		if (deploy.detected_deploy.error === null) {
+		if (!deploy.detected_deploy.error) {
 			try {
 				await new Promise(r => setTimeout(r, 1000)); // Delay due to race condition
 				const response = await getPlayByDeployHash(
 					deploy.detected_deploy.deployHash
 				);
+
 				const play = response.data as Play;
 				setPlayResult(play);
 			} catch (error) {

@@ -8,7 +8,20 @@ import { AppTheme } from './app/theme';
 import Router from './app/router';
 import { WebSocketProvider } from './app/services/WebSocketProvider';
 
-export const ActiveAccountContext = createContext(null);
+type ActiveAccountContextType = {
+	balance: string;
+	connected_at: number;
+	last_used: number;
+	liquid_balance: string;
+	logo: string | undefined;
+	name: string | null;
+	provider: string;
+	public_key: string;
+	token: string | null;
+};
+
+export const ActiveAccountContext =
+	createContext<ActiveAccountContextType | null>(null);
 
 const App = () => {
 	const clickRef = useClickRef();

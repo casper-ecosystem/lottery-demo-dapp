@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	ReactNode,
 } from 'react';
+import { ActiveAccountContext } from '../../App';
 
 export interface DeployMessage {
 	detected_deploy: {
@@ -37,10 +38,14 @@ function isDeploy(object: DeployMessage) {
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 	children,
 }) => {
+	const activeAccountContext = useContext(ActiveAccountContext);
+
 	const [deploy, setDeploy] = useState<DeployMessage | null>(null);
 
 	useEffect(() => {
-		const ws = new WebSocket(`${config.lottery_api_ws_url}`);
+		const ws = new WebSocket(
+			`${config.lottery_api_ws_url}?caller_public_key=${activeAccountContext?.public_key}`
+		);
 
 		ws.onopen = () => {
 			console.log('Connected to the server');
