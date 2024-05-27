@@ -1,15 +1,15 @@
 import {
-	RuntimeArgs,
 	CasperClient,
-	Contracts,
-	CLPublicKey,
-	DeployUtil,
-	CLValueBuilder,
-	csprToMotes,
 	CLByteArray,
-	decodeBase16,
 	CLList,
+	CLPublicKey,
 	CLU8,
+	CLValueBuilder,
+	Contracts,
+	csprToMotes,
+	decodeBase16,
+	DeployUtil,
+	RuntimeArgs,
 } from 'casper-js-sdk';
 import { Deploy } from 'casper-js-sdk/dist/lib/DeployUtil';
 import axios from 'axios';
@@ -18,20 +18,18 @@ export enum DeployFailed {
 	Failed,
 }
 
-export const ONE_CSPR = 1_000_000_000;
-
-async function getProxyWASM(): Promise<Uint8Array> {
+export const getProxyWASM = async (): Promise<Uint8Array> => {
 	const result = await fetch(`${config.lottery_api_url}/proxy-wasm`);
 	if (!result.ok) {
 		throw new Error(await result.text());
 	}
 	const buffer = await result.arrayBuffer();
 	return new Uint8Array(buffer);
-}
+};
 
-export async function preparePlayDeploy(
+export const preparePlayDeploy = async (
 	publicKey: CLPublicKey
-): Promise<Deploy> {
+): Promise<Deploy> => {
 	const contractPackageHashBytes = new CLByteArray(
 		decodeBase16(config.lottery_app_contract_package_hash)
 	);
@@ -60,38 +58,35 @@ export async function preparePlayDeploy(
 		publicKey,
 		'casper-test' // Make this configural
 	);
-}
+};
 
-export async function signAndSendDeploy(
+export const signAndSendDeploy = async (
 	deploy: Deploy,
 	publicKey: CLPublicKey
-) {
+) => {
 	const deployJson = DeployUtil.deployToJson(deploy);
 	await window.csprclick.send(
 		JSON.stringify(deployJson.deploy),
 		publicKey.toHex().toLowerCase()
 	);
-}
+};
 
-export async function initiateDeployListener(publicKey: CLPublicKey) {
+export const initiateDeployListener = async (
+	publicKey: CLPublicKey
+) => {
 	const result = await fetch(
 		`${
 			config.lottery_api_url
-		}/initDeployListener?publicKey=${publicKey.toHex()}`
+		}/deploy?caller_public_key=${publicKey.toHex()}`
 	);
 	if (!result.ok) {
+		console.log('result', result);
 		throw new Error(await result.text());
 	}
-}
+};
 
-export async function getPlayByDeployHash(deployHash: string) {
+export const getPlayByDeployHash = async (deployHash: string) => {
 	return axios.get(`${config.lottery_api_url}/playByDeployHash`, {
 		params: { deployHash: deployHash },
 	});
-}
-
-export const formatIsoTimestamp = (value: string): string => {
-	const [date, time] = value.split('T');
-
-	return `${date} ${time.split('.')[0]}`;
 };

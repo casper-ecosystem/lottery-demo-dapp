@@ -4,7 +4,7 @@ import {
 	TableRow,
 } from '@make-software/cspr-ui';
 import { AccountInfoCell, PrizeCell } from '../../components';
-import { formatIsoTimestamp } from '../../utils/casper-helper';
+import { formatIsoTimestamp } from '../../utils/helpers';
 import { Play } from '../../types';
 
 const PlaysTableRow = ({ play }: { play: Play }) => {

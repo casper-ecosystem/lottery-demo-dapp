@@ -7,21 +7,10 @@ import {
 import { AppTheme } from './app/theme';
 import Router from './app/router';
 import { WebSocketProvider } from './app/services/WebSocketProvider';
-
-type ActiveAccountContextType = {
-	balance: string;
-	connected_at: number;
-	last_used: number;
-	liquid_balance: string;
-	logo: string | undefined;
-	name: string | null;
-	provider: string;
-	public_key: string;
-	token: string | null;
-};
+import { ActiveAccountType } from './app/types';
 
 export const ActiveAccountContext =
-	createContext<ActiveAccountContextType | null>(null);
+	createContext<ActiveAccountType | null>(null);
 
 const App = () => {
 	const clickRef = useClickRef();

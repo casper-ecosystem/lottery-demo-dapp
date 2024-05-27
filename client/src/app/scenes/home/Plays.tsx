@@ -1,5 +1,5 @@
 import { PageTile } from '@make-software/cspr-ui';
-import { useGetTableData } from '../../services/use-get-table-data';
+import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import {
 	ErrorTile,
 	LoadMoreButton,

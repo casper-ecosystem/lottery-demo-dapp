@@ -9,7 +9,7 @@ import {
 	LinkVariation,
 	PrizeCell,
 } from '../../components';
-import { formatIsoTimestamp } from '../../utils/casper-helper';
+import { formatIsoTimestamp } from '../../utils/helpers';
 import { Round } from '../../types';
 
 const JackpotTableRow = ({ round }: { round: Round }) => {

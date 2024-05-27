@@ -8,7 +8,7 @@ import {
 	Table,
 	LoadMoreButton,
 } from '../../components';
-import { useGetTableData } from '../../services/use-get-table-data';
+import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import JackpotsDataHeaders from './JackpotsDataHeaders';
 import JackpotTableRow from './JackpotTableRow';
 

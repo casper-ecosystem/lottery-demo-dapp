@@ -1,36 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import ReactModal from 'react-modal';
-import { useClickRef } from '@make-software/csprclick-ui';
-import { AccountType } from '@make-software/csprclick-core-types';
-import { CLPublicKey, csprToMotes } from 'casper-js-sdk';
 import { FlexColumn } from '@make-software/cspr-ui';
 
-import {
-	getPlayByDeployHash,
-	initiateDeployListener,
-	preparePlayDeploy,
-	signAndSendDeploy,
-	DeployFailed,
-} from '../../utils/casper-helper';
-import {
-	useWebSocketDeployData,
-	DeployMessage,
-} from '../../services/WebSocketProvider';
-
-import { Play } from '../../types';
-import {
-	DeployFailedContent,
-	JackpotContent,
-	NotEnoughCsprContent,
-	SomethingWentWrongContent,
-	UnluckyContent,
-	WelcomeModalContent,
-	YouWonContent,
-	BuyTicketContent,
-	LoadingContent,
-} from '../../components';
-import { ActiveAccountContext } from '../../../App';
+import useManagePlay from '../../services/hooks/use-manage-play';
+import ModalState from './ModalState';
 
 const modalStyles = {
 	left: '50%',
@@ -52,103 +26,6 @@ const ModalContainer = styled(FlexColumn)(({ theme }) =>
 	})
 );
 
-interface ModalContentProps {
-	connectWallet: () => void;
-	initiatePlay: () => void;
-	clientErrorOccurred: boolean;
-	awaitingPlayResult: boolean;
-	activeAccountWithBalance: AccountType | null;
-	playResult: Play | DeployFailed | null;
-	closeModal: () => void;
-}
-
-const ModalContent = (props: ModalContentProps) => {
-	const {
-		connectWallet,
-		initiatePlay,
-		clientErrorOccurred,
-		awaitingPlayResult,
-		activeAccountWithBalance,
-		playResult,
-		closeModal,
-	} = props;
-
-	const refreshPage = () => window.location.reload();
-	const goToFaucet = () => {
-		window.open('https://testnet.cspr.live/tools/faucet', '_blank');
-	};
-
-	if (clientErrorOccurred) {
-		return (
-			<SomethingWentWrongContent
-				handleButtonAction={refreshPage}
-				closeModal={closeModal}
-			/>
-		);
-	} else if (playResult == DeployFailed.Failed) {
-		return (
-			<DeployFailedContent
-				handleButtonAction={initiatePlay}
-				closeModal={closeModal}
-			/>
-		);
-	} else if (playResult !== null) {
-		const prize = playResult.prizeAmount;
-
-		if (!prize) {
-			return (
-				<UnluckyContent
-					handleButtonAction={initiatePlay}
-					closeModal={closeModal}
-				/>
-			);
-		} else if (playResult.isJackpot) {
-			return (
-				<JackpotContent
-					handleButtonAction={initiatePlay}
-					closeModal={closeModal}
-				/>
-			);
-		} else if (!playResult.isJackpot) {
-			return (
-				<YouWonContent
-					handleButtonAction={initiatePlay}
-					closeModal={closeModal}
-				/>
-			);
-		}
-	} else if (
-		activeAccountWithBalance != null &&
-		(activeAccountWithBalance.balance == null ||
-			parseInt(activeAccountWithBalance.balance) <
-				csprToMotes(5).toNumber())
-	) {
-		return (
-			<NotEnoughCsprContent
-				handleButtonAction={goToFaucet}
-				closeModal={closeModal}
-			/>
-		);
-	} else if (activeAccountWithBalance != null) {
-		return (
-			<BuyTicketContent
-				handleButtonAction={initiatePlay}
-				closeModal={closeModal}
-			/>
-		);
-	}
-
-	if (awaitingPlayResult && !clientErrorOccurred) {
-		return <LoadingContent closeModal={closeModal} />;
-	}
-	return (
-		<WelcomeModalContent
-			handleButtonAction={connectWallet}
-			closeModal={closeModal}
-		/>
-	);
-};
-
 export interface ModalProps {
 	isOpen: boolean;
 	setModalOpen: (isOpen: boolean) => void;
@@ -156,83 +33,14 @@ export interface ModalProps {
 
 export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 	const theme = useTheme();
-
-	const clickRef = useClickRef();
-	const activeAccountContext = useContext(ActiveAccountContext);
-
-	const [activeAccountWithBalance, setActiveAccountWithBalance] =
-		useState<AccountType | null>(null);
-	const [clientErrorOccurred, setClientErrorOccurred] =
-		useState<boolean>(false);
-	const [awaitingPlayResult, setAwaitingPlayResult] =
-		useState<boolean>(false);
-	const [playResult, setPlayResult] = useState<
-		Play | DeployFailed | null
-	>(null);
-
-	const { deploy } = useWebSocketDeployData();
-
-	useEffect(() => {
-		if (activeAccountContext && clickRef) {
-			clickRef
-				.getActiveAccountWithBalance()
-				.then(accountWithBalance => {
-					setActiveAccountWithBalance(accountWithBalance);
-				});
-		} else {
-			setActiveAccountWithBalance(null);
-		}
-	}, [activeAccountContext]);
-
-	useEffect(() => {
-		if (deploy !== null) {
-			handleDeployProcessed(deploy);
-		}
-	}, [deploy]);
-
-	const connectWallet = async () => {
-		await clickRef?.signIn();
-	};
-
-	const closeModal = () => {
-		setModalOpen(false);
-	};
-
-	const initiatePlay = async () => {
-		if (!activeAccountWithBalance?.public_key) {
-			setClientErrorOccurred(true);
-			return;
-		}
-
-		const publicKey = CLPublicKey.fromHex(
-			activeAccountWithBalance.public_key
-		);
-
-		const deploy = await preparePlayDeploy(publicKey);
-		await signAndSendDeploy(deploy, publicKey);
-		setAwaitingPlayResult(true);
-		initiateDeployListener(publicKey);
-	};
-
-	const handleDeployProcessed = async (deploy: DeployMessage) => {
-		if (!deploy.detected_deploy.error) {
-			try {
-				await new Promise(r => setTimeout(r, 1000)); // Delay due to race condition
-				const response = await getPlayByDeployHash(
-					deploy.detected_deploy.deployHash
-				);
-
-				const play = response.data as Play;
-				setPlayResult(play);
-			} catch (error) {
-				setClientErrorOccurred(true);
-			}
-		} else {
-			console.error(`Deploy failed: ${deploy.detected_deploy.error}`);
-			setPlayResult(DeployFailed.Failed);
-		}
-		setAwaitingPlayResult(false);
-	};
+	const {
+		activeAccountWithBalance,
+		playResult,
+		awaitingPlayResult,
+		clientErrorOccurred,
+		connectWallet,
+		initiatePlay,
+	} = useManagePlay();
 
 	const modalStyle = {
 		overlay: {
@@ -248,6 +56,10 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 		},
 	};
 
+	const closeModal = () => {
+		setModalOpen(false);
+	};
+
 	return (
 		<>
 			{isOpen && (
@@ -257,7 +69,7 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 					portalClassName={'portal'}
 				>
 					<ModalContainer>
-						<ModalContent
+						<ModalState
 							connectWallet={connectWallet}
 							initiatePlay={initiatePlay}
 							clientErrorOccurred={clientErrorOccurred}

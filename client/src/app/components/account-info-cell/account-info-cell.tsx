@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { AccountIdenticon } from '@make-software/csprclick-ui';
+// import { AccountIdenticon } from '@make-software/csprclick-ui';
 import {
 	BodyText,
 	formatHash,
@@ -28,7 +28,7 @@ export const AccountInfoCell = ({
 	return (
 		<StyledTableData>
 			<FlexRow align='center' itemsSpacing={12}>
-				<AccountIdenticon hex={hash} size='m' />
+				{/*<AccountIdenticon hex={hash} size='m' />*/}
 				<BodyText variation='darkGray' size={3} scale={'sm'}>
 					<HistoryLink href={accountPath} target={'_blank'} monotype>
 						{formatHash(hash, HashLength.TINY)}

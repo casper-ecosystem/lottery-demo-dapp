@@ -14,7 +14,7 @@ import Badge, { BadgePadding } from '../../components/badge/badge';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 // @ts-ignore
 import ShineImg from '../../../assets/images/shine.png';
-import { useGetTableData } from '../../services/use-get-table-data';
+import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>

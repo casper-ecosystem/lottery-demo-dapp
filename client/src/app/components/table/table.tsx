@@ -7,8 +7,7 @@ import {
 	TableBody,
 	TableHead,
 } from '@make-software/cspr-ui';
-
-export const VISIBLE_TABLE_DATA_LENGTH = 10;
+import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/helpers';
 
 export const TableContainer = styled.div(({ theme }) => ({
 	overflowX: 'auto',
