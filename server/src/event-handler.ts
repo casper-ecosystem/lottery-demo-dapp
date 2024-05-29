@@ -28,6 +28,8 @@ async function main() {
     }
 
     try {
+      console.log('New event: ', rawData);
+      
       const event = JSON.parse(rawData) as Event<PlayEventPayload>;
 
       const play: Partial<Play> = {
@@ -49,6 +51,8 @@ async function main() {
     console.log('Disconnected from Streaming API');
     process.exit(1);
   });
+
+  console.log('Handler started running...')
 }
 
 main();
