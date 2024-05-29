@@ -21,6 +21,10 @@ async function main() {
     },
   );
 
+  ws.on('open', () => {
+    console.log(`Connected to streaming API: ${config.csprCloudStreamingUrl}`);
+  })
+
   ws.on('message', async (data: Buffer) => {
     const rawData = data.toString();
     if (rawData === 'Ping') {
