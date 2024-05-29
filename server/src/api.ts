@@ -46,6 +46,11 @@ async function main() {
     headers: {
       authorization: config.csprCloudAccessKey,
     },
+    on: {
+      proxyReqWs: (proxyReq) => {
+        proxyReq.removeHeader('Origin');
+      },
+    }
   });
   app.get('/deploys', csprCloudStreamingProxy);
 
