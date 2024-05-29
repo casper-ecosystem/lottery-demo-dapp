@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/helpers';
+import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
 
 interface InitialState {
 	data: any[] | null;

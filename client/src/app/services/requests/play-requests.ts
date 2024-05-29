@@ -13,6 +13,12 @@ import {
 } from 'casper-js-sdk';
 import { Deploy } from 'casper-js-sdk/dist/lib/DeployUtil';
 import axios from 'axios';
+import {
+	CSPR_CHAIN_NAME,
+	DEPLOY_ENTRY_POINT,
+	GAS_PRICE_IN_CSPR,
+	LOTTERY_TICKET_PRICE_IN_CSPR,
+} from '../../utils/constants';
 
 export enum DeployFailed {
 	Failed,
@@ -45,9 +51,13 @@ export const preparePlayDeploy = async (
 	const contractClient = new Contracts.Contract(casperClient);
 
 	const args = RuntimeArgs.fromMap({
-		attached_value: CLValueBuilder.u512(csprToMotes(50)), // Should be configural
-		amount: CLValueBuilder.u512(csprToMotes(50)),
-		entry_point: CLValueBuilder.string('play_lottery'),
+		attached_value: CLValueBuilder.u512(
+			csprToMotes(LOTTERY_TICKET_PRICE_IN_CSPR)
+		),
+		amount: CLValueBuilder.u512(
+			csprToMotes(LOTTERY_TICKET_PRICE_IN_CSPR)
+		),
+		entry_point: CLValueBuilder.string(DEPLOY_ENTRY_POINT),
 		contract_package_hash: contractPackageHashBytes,
 		args: serialized_args,
 	});
@@ -57,9 +67,9 @@ export const preparePlayDeploy = async (
 	return contractClient.install(
 		wasm,
 		args,
-		csprToMotes(10).toString(), // Make this contextual
+		csprToMotes(GAS_PRICE_IN_CSPR).toString(),
 		publicKey,
-		'casper-test' // Make this configural
+		CSPR_CHAIN_NAME
 	);
 };
 

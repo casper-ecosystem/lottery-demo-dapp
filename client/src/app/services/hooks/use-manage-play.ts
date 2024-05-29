@@ -56,16 +56,16 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	}, [activeAccountContext]);
 
-	const onCloseWsConnection = () => {
-		if (!executedDeploy) {
-			setPlayResultState({ ...playResultState, error: true });
-		}
-	};
-
 	const onReceiveWsMessage = (message: { data: string }) => {
 		if (isDeploy(message.data)) {
 			const deploy = JSON.parse(message.data) as DeployMessage;
 			setExecutedDeploy(deploy.data);
+		}
+	};
+
+	const onCloseWsConnection = () => {
+		if (!executedDeploy) {
+			setPlayResultState({ ...playResultState, error: true });
 		}
 	};
 

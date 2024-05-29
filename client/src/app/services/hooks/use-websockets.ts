@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import {
+	WS_CLOSE_CODE,
+	WS_CONNECTION_TIMEOUT,
+} from '../../utils/constants';
 
 interface UseWebSocketsProps {
 	onOpen?: () => void;
@@ -17,7 +21,7 @@ export const useWebSockets = ({
 		null as unknown as WebSocket
 	);
 
-	const updateHandler = (
+	const addEventHandler = (
 		type: string,
 		callback: (value: any) => void
 	) => {
@@ -28,13 +32,13 @@ export const useWebSockets = ({
 		};
 	};
 
-	useEffect(() => updateHandler('open', onOpen), [session, onOpen]);
+	useEffect(() => addEventHandler('open', onOpen), [session, onOpen]);
 	useEffect(
-		() => updateHandler('message', onMessage),
+		() => addEventHandler('message', onMessage),
 		[session, onMessage]
 	);
 	useEffect(
-		() => updateHandler('close', onClose),
+		() => addEventHandler('close', onClose),
 		[session, onClose]
 	);
 
@@ -43,6 +47,21 @@ export const useWebSockets = ({
 		const ws = new WebSocket(url);
 		setSession(ws);
 	}, []);
+
+	const close = useCallback(() => {
+		if (session?.readyState === session?.OPEN)
+			session.close(WS_CLOSE_CODE);
+	}, [session]);
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			close();
+		}, WS_CONNECTION_TIMEOUT);
+
+		return () => {
+			clearTimeout(timeout);
+		};
+	}, [session]);
 
 	return { connect };
 };
