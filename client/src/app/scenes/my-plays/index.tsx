@@ -12,6 +12,7 @@ import {
 import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import MyPlaysDataHeaders from './MyPlaysDataHeaders';
 import MyPlaysTableRow from './MyPlaysTableRow';
+import { Play } from '../../types';
 
 const MyPlaysTable = () => {
 	const clickRef = useClickRef();
@@ -24,7 +25,7 @@ const MyPlaysTable = () => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useGetTableData({
+	} = useGetTableData<Play[]>({
 		url: `/players/${activePublicKey}/plays`,
 	});
 
@@ -49,7 +50,7 @@ const MyPlaysTable = () => {
 			itemCount={total}
 			renderHeaders={() => <MyPlaysDataHeaders />}
 			renderData={() =>
-				myPlays.map(play => (
+				myPlays.map((play: Play) => (
 					<MyPlaysTableRow play={play} key={play.roundId} />
 				))
 			}

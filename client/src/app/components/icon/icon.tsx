@@ -1,5 +1,3 @@
-// @ts-ignore
-import CupIcon from '../../../assets/icons/cup.svg';
 import styled from 'styled-components';
 import { FlexRow, SvgIcon } from '@make-software/cspr-ui';
 import React from 'react';
@@ -28,7 +26,6 @@ const SvgIconContainer = styled(FlexRow)<{ status: IconStatus }>(
 			width: '80px',
 			height: '80px',
 			borderRadius: '50%',
-			// @ts-ignore
 			backgroundColor: statusIconBackgroundColor[status],
 			alignItems: 'center',
 			justifyContent: 'center',
@@ -38,7 +35,6 @@ const SvgIconContainer = styled(FlexRow)<{ status: IconStatus }>(
 const StyledSvgIcon = styled(SvgIcon)<{ status: IconStatus }>(
 	({ theme, status }) => ({
 		path: {
-			// @ts-ignore
 			fill: theme.styleguideColors[statusIconColor[status]],
 		},
 	})

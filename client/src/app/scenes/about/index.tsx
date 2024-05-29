@@ -7,7 +7,6 @@ import {
 	PageTile,
 } from '@make-software/cspr-ui';
 import { PageLayout } from '../../components';
-// @ts-ignore
 import CsprClickSchemeImg from '../../../assets/images/cspr-click-scheme.png';
 
 const StyledPageTile = styled(PageTile)(({ theme }) =>

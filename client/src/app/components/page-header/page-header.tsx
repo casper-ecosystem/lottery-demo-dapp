@@ -7,9 +7,7 @@ import {
 } from '@make-software/cspr-ui';
 import styled from 'styled-components';
 import NavigationMenu from '../navigation-menu/navigation-menu';
-// @ts-ignore
 import Logo from '../../../assets/logos/lottery-logo.svg';
-// @ts-ignore
 import HamburgerIcon from '../../../assets/icons/hamburger-menu.svg';
 import { useState } from 'react';
 

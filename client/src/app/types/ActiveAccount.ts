@@ -9,3 +9,8 @@ export type ActiveAccountType = {
 	public_key: string;
 	token: string | null;
 };
+
+export type CsprClickEvent = {
+	origin: string;
+	account: ActiveAccountType;
+};

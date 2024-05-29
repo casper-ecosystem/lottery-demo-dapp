@@ -11,6 +11,7 @@ import {
 import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import JackpotsDataHeaders from './JackpotsDataHeaders';
 import JackpotTableRow from './JackpotTableRow';
+import { Round } from '../../types';
 
 const JackpotsTable = () => {
 	const {
@@ -20,7 +21,7 @@ const JackpotsTable = () => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useGetTableData({
+	} = useGetTableData<Round[]>({
 		url: '/rounds',
 	});
 
@@ -45,7 +46,7 @@ const JackpotsTable = () => {
 			itemCount={total}
 			renderHeaders={() => <JackpotsDataHeaders />}
 			renderData={() =>
-				jackpots.map(round => (
+				jackpots.map((round: Round) => (
 					<JackpotTableRow round={round} key={round.roundId} />
 				))
 			}

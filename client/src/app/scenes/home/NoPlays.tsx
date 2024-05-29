@@ -7,7 +7,6 @@ import {
 	HeaderText,
 	PageTile,
 } from '@make-software/cspr-ui';
-// @ts-ignore
 import CupIcon from '../../../assets/icons/cup.svg';
 import { Icon } from '../../components';
 

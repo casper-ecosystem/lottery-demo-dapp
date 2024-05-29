@@ -3,7 +3,7 @@ import axios from 'axios';
 import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
 
 interface InitialState {
-	data: any[] | null;
+	data: null;
 	loading: boolean;
 	error: string | null;
 	total: number;
@@ -13,7 +13,18 @@ interface GetTableDataProps {
 	url: string;
 }
 
-export const useGetTableData = ({ url }: GetTableDataProps) => {
+interface GetTableDataType<T> {
+	data: T | null;
+	loading: boolean;
+	error: string | null;
+	total: number;
+	loadAllData: () => void;
+	resetLimit: () => void;
+}
+
+export const useGetTableData = <T>({
+	url,
+}: GetTableDataProps): GetTableDataType<T> => {
 	const [limit, setLimit] = useState(10);
 	const [state, setState] = useState<InitialState>({
 		data: null,
@@ -29,7 +40,6 @@ export const useGetTableData = ({ url }: GetTableDataProps) => {
 			})
 			.then(response => {
 				setState({
-					// @ts-ignore
 					data: response.data.data,
 					error: null,
 					loading: false,

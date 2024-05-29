@@ -10,6 +10,7 @@ import {
 import PlaysDataHeaders from './PlaysDataHeaders';
 import PlaysTableRow from './PlaysTableRow';
 import NoPlays from './NoPlays';
+import { Play } from '../../types';
 
 interface PlaysTableProps {
 	setModalOpen: (isOpen: boolean) => void;
@@ -23,7 +24,7 @@ const PlaysTable = ({ setModalOpen }: PlaysTableProps) => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useGetTableData({
+	} = useGetTableData<Play[]>({
 		url: '/rounds/latest/plays',
 	});
 
@@ -48,7 +49,7 @@ const PlaysTable = ({ setModalOpen }: PlaysTableProps) => {
 			itemCount={total}
 			renderHeaders={() => <PlaysDataHeaders />}
 			renderData={() =>
-				plays.map(play => (
+				plays.map((play: Play) => (
 					<PlaysTableRow play={play} key={play.playId} />
 				))
 			}

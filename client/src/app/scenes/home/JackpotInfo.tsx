@@ -10,12 +10,11 @@ import {
 	Text,
 } from '@make-software/cspr-ui';
 import Badge, { BadgePadding } from '../../components/badge/badge';
-// @ts-ignore
 import JackpotSvg from '../../../assets/images/jackpot.svg';
-// @ts-ignore
 import ShineImg from '../../../assets/images/shine.png';
 import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
+import { Round } from '../../types';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
@@ -99,7 +98,7 @@ interface JackpotInfoProps {
 }
 
 const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
-	const { data: latestRounds } = useGetTableData({
+	const { data: latestRounds } = useGetTableData<Round>({
 		url: '/rounds/latest',
 	});
 
@@ -107,10 +106,7 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 		setModalOpen(true);
 	};
 
-	const jackpotSum = motesToCSPR(
-		// @ts-ignore
-		latestRounds?.jackpotAmount || '0'
-	);
+	const jackpotSum = motesToCSPR(latestRounds?.jackpotAmount || '0');
 
 	return (
 		<HomeHeaderContainer>
@@ -141,10 +137,7 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						<JackpotText>CSPR</JackpotText>
 					</FlexRow>
 					<Badge
-						label={`Current Plays: ${
-							// @ts-ignore
-							latestRounds?.playsNum || 0
-						}`}
+						label={`Current Plays: ${latestRounds?.playsNum || 0}`}
 						padding={BadgePadding.big}
 					/>
 				</RightContainer>

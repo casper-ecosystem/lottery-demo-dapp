@@ -9,7 +9,7 @@ import {
 } from '@make-software/cspr-ui';
 import { HistoryLink } from '../history-link/history-link';
 
-export const StyledTableData = styled(TableData)(({ theme }) => ({
+export const StyledTableData = styled(TableData)(() => ({
 	padding: '12px 8px',
 }));
 

@@ -9,3 +9,7 @@ type GlobalConfig = {
 };
 
 declare const config: GlobalConfig;
+
+declare module '*.svg';
+
+declare module '*.png';

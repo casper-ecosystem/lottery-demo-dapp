@@ -8,7 +8,6 @@ import {
 	TableData,
 } from '@make-software/cspr-ui';
 import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
-// @ts-ignore
 import CupIcon from '../../../assets/icons/cup.svg';
 
 const StyledSvgIcon = styled(SvgIcon)(({ theme }) => ({

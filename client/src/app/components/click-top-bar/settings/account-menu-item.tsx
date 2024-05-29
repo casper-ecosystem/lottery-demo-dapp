@@ -1,5 +1,4 @@
 import { AccountMenuItem as CsprClickAccountMenuItem } from '@make-software/csprclick-ui';
-// @ts-ignore
 import CupIcon from '../../../../assets/icons/cup.svg';
 import { useNavigate } from 'react-router-dom';
 import { MY_PLAYS_PATH } from '../../../router/paths';

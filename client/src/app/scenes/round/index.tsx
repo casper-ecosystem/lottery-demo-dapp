@@ -12,6 +12,7 @@ import {
 } from '../../components';
 import PlaysDataHeaders from '../home/PlaysDataHeaders';
 import PlaysTableRow from '../home/PlaysTableRow';
+import { Play } from '../../types';
 
 const JackpotRoundTable = ({ id }: { id: string }) => {
 	const {
@@ -21,7 +22,7 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 		total,
 		loadAllData,
 		resetLimit,
-	} = useGetTableData({
+	} = useGetTableData<Play[]>({
 		url: `/rounds/${id}/plays`,
 	});
 
@@ -46,7 +47,7 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 			itemCount={total}
 			renderHeaders={() => <PlaysDataHeaders />}
 			renderData={() =>
-				plays.map(play => (
+				plays.map((play: Play) => (
 					<PlaysTableRow key={play.playId} play={play} />
 				))
 			}

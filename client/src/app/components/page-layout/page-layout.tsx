@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { FlexColumn, HeaderText } from '@make-software/cspr-ui';
 
-export const Header = styled(HeaderText)(({ theme }) => ({
+export const Header = styled(HeaderText)(() => ({
 	paddingTop: 32,
 	paddingBottom: 24,
 }));

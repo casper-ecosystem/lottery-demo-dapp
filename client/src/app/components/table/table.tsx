@@ -9,15 +9,19 @@ import {
 } from '@make-software/cspr-ui';
 import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
 
-export const TableContainer = styled.div(({ theme }) => ({
-	overflowX: 'auto',
-}));
+export const TableContainer = styled.div(({ theme }) =>
+	theme.withMedia({
+		overflowX: 'auto',
+	})
+);
 
-const StyledTable = styled.table(({ theme }) => ({
-	width: '100%',
-	position: 'relative',
-	borderCollapse: 'collapse',
-}));
+const StyledTable = styled.table(({ theme }) =>
+	theme.withMedia({
+		width: '100%',
+		position: 'relative',
+		borderCollapse: 'collapse',
+	})
+);
 
 const PaginationContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({

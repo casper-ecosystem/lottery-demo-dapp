@@ -4,9 +4,13 @@ import {
 	WS_CONNECTION_TIMEOUT,
 } from '../../utils/constants';
 
+interface WebSocketMessage {
+	data: string;
+}
+
 interface UseWebSocketsProps {
 	onOpen?: () => void;
-	onMessage: (message: { data: string }) => void;
+	onMessage: (message: WebSocketMessage) => void;
 	onClose: () => void;
 }
 

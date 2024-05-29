@@ -12,21 +12,13 @@ import styled from 'styled-components';
 import Icon, { IconStatus } from '../icon/icon';
 import Badge, { BadgeVariation } from '../badge/badge';
 
-// @ts-ignore
 import HandIcon from '../../../assets/icons/hand.svg';
-// @ts-ignore
 import TicketIcon from '../../../assets/icons/ticket.svg';
-// @ts-ignore
 import CoinsIcon from '../../../assets/icons/two-coins.svg';
-// @ts-ignore
 import ConnectionIcon from '../../../assets/icons/connection.svg';
-// @ts-ignore
 import CupIcon from '../../../assets/icons/cup.svg';
-// @ts-ignore
 import HappyIcon from '../../../assets/icons/happy.svg';
-// @ts-ignore
 import SadIcon from '../../../assets/icons/sad.svg';
-// @ts-ignore
 import LoadingIcon from '../../../assets/icons/loading.svg';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
@@ -36,7 +28,7 @@ const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	})
 );
 
-const LogoContainer = styled(FlexRow)(({ theme }) => ({
+const LogoContainer = styled(FlexRow)(() => ({
 	marginBottom: 12,
 }));
 
@@ -53,7 +45,7 @@ const LoadingContainer = styled(StyledFlexColumn)(({ theme }) =>
 	})
 );
 
-const LoadingSvgIcon = styled(SvgIcon)(({ theme }) => ({
+const LoadingSvgIcon = styled(SvgIcon)(() => ({
 	animationName: 'spin',
 	animationDuration: '5000ms',
 	animationIterationCount: 'infinite',
