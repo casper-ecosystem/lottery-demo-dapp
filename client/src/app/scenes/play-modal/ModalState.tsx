@@ -1,6 +1,5 @@
 import React from 'react';
 import { csprToMotes } from 'casper-js-sdk';
-import { AccountType } from '@make-software/csprclick-core-types';
 import {
 	BuyTicketContent,
 	DeployFailedContent,
@@ -12,34 +11,91 @@ import {
 	WelcomeModalContent,
 	YouWonContent,
 } from '../../components';
-import { Play } from '../../types';
 import { DeployFailed } from '../../services/requests/play-requests';
+import useManagePlay from '../../services/hooks/use-manage-play';
+import { Play } from '../../types';
+
+interface PlayResultStateProps {
+	playResult: Play | DeployFailed;
+	initiatePlay: () => void;
+	closeModal: () => void;
+}
+
+const PlayResultState = ({
+	playResult,
+	initiatePlay,
+	closeModal,
+}: PlayResultStateProps) => {
+	if (playResult == DeployFailed.Failed) {
+		return (
+			<DeployFailedContent
+				handleButtonAction={initiatePlay}
+				closeModal={closeModal}
+			/>
+		);
+	}
+
+	if (playResult.isJackpot) {
+		return (
+			<JackpotContent
+				handleButtonAction={initiatePlay}
+				closeModal={closeModal}
+			/>
+		);
+	}
+
+	if (parseInt(playResult.prizeAmount)) {
+		return (
+			<YouWonContent
+				handleButtonAction={initiatePlay}
+				closeModal={closeModal}
+			/>
+		);
+	}
+
+	return (
+		<UnluckyContent
+			handleButtonAction={initiatePlay}
+			closeModal={closeModal}
+		/>
+	);
+};
 
 interface ModalStateProps {
-	connectWallet: () => void;
-	initiatePlay: () => void;
-	clientErrorOccurred: boolean;
-	awaitingPlayResult: boolean;
-	activeAccountWithBalance: AccountType | null;
-	playResult: Play | DeployFailed | null;
 	closeModal: () => void;
 }
 
 const ModalState = (props: ModalStateProps) => {
+	const { closeModal } = props;
+
 	const {
+		data: playResult,
+		loading: awaitingPlayResult,
+		error: clientErrorOccurred,
+		activeAccountWithBalance,
 		connectWallet,
 		initiatePlay,
-		clientErrorOccurred,
-		awaitingPlayResult,
-		activeAccountWithBalance,
-		playResult,
-		closeModal,
-	} = props;
+	} = useManagePlay();
 
 	const refreshPage = () => window.location.reload();
 	const goToFaucet = () => {
 		window.open('https://testnet.cspr.live/tools/faucet', '_blank');
 	};
+
+	const isNotEnoughBalance =
+		activeAccountWithBalance != null &&
+		(activeAccountWithBalance.balance == null ||
+			parseInt(activeAccountWithBalance.balance) <
+				csprToMotes(5).toNumber());
+
+	if (isNotEnoughBalance) {
+		return (
+			<NotEnoughCsprContent
+				handleButtonAction={goToFaucet}
+				closeModal={closeModal}
+			/>
+		);
+	}
 
 	if (clientErrorOccurred) {
 		return (
@@ -48,51 +104,23 @@ const ModalState = (props: ModalStateProps) => {
 				closeModal={closeModal}
 			/>
 		);
-	} else if (playResult == DeployFailed.Failed) {
-		return (
-			<DeployFailedContent
-				handleButtonAction={initiatePlay}
-				closeModal={closeModal}
-			/>
-		);
-	} else if (playResult !== null) {
-		const prize = playResult.prizeAmount;
+	}
 
-		if (!prize) {
-			return (
-				<UnluckyContent
-					handleButtonAction={initiatePlay}
-					closeModal={closeModal}
-				/>
-			);
-		} else if (playResult.isJackpot) {
-			return (
-				<JackpotContent
-					handleButtonAction={initiatePlay}
-					closeModal={closeModal}
-				/>
-			);
-		} else if (!playResult.isJackpot) {
-			return (
-				<YouWonContent
-					handleButtonAction={initiatePlay}
-					closeModal={closeModal}
-				/>
-			);
-		}
-	} else if (
-		activeAccountWithBalance != null &&
-		(activeAccountWithBalance.balance == null ||
-			parseInt(activeAccountWithBalance.balance) <
-				csprToMotes(5).toNumber())
-	) {
+	if (awaitingPlayResult) {
+		return <LoadingContent closeModal={closeModal} />;
+	}
+
+	if (playResult !== null) {
 		return (
-			<NotEnoughCsprContent
-				handleButtonAction={goToFaucet}
+			<PlayResultState
+				playResult={playResult}
 				closeModal={closeModal}
+				initiatePlay={initiatePlay}
 			/>
 		);
-	} else if (activeAccountWithBalance != null) {
+	}
+
+	if (activeAccountWithBalance != null) {
 		return (
 			<BuyTicketContent
 				handleButtonAction={initiatePlay}
@@ -101,9 +129,6 @@ const ModalState = (props: ModalStateProps) => {
 		);
 	}
 
-	if (awaitingPlayResult && !clientErrorOccurred) {
-		return <LoadingContent closeModal={closeModal} />;
-	}
 	return (
 		<WelcomeModalContent
 			handleButtonAction={connectWallet}

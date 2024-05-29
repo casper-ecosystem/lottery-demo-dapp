@@ -36,11 +36,14 @@ export const preparePlayDeploy = async (
 	const args_bytes: Uint8Array = RuntimeArgs.fromMap({})
 		.toBytes()
 		.unwrap();
+
 	const serialized_args = new CLList(
 		Array.from(args_bytes).map(value => new CLU8(value))
 	);
+
 	const casperClient = new CasperClient('');
 	const contractClient = new Contracts.Contract(casperClient);
+
 	const args = RuntimeArgs.fromMap({
 		attached_value: CLValueBuilder.u512(csprToMotes(50)), // Should be configural
 		amount: CLValueBuilder.u512(csprToMotes(50)),
@@ -71,22 +74,15 @@ export const signAndSendDeploy = async (
 	);
 };
 
-export const initiateDeployListener = async (
-	publicKey: CLPublicKey
+export const getLastPlayByAccountHash = async (
+	accountHash: string
 ) => {
-	const result = await fetch(
-		`${
-			config.lottery_api_url
-		}/deploy?caller_public_key=${publicKey.toHex()}`
+	const response = await axios.get(
+		`${config.lottery_api_url}/players/${accountHash}/plays`,
+		{
+			params: { limit: 1 },
+		}
 	);
-	if (!result.ok) {
-		console.log('result', result);
-		throw new Error(await result.text());
-	}
-};
 
-export const getPlayByDeployHash = async (deployHash: string) => {
-	return axios.get(`${config.lottery_api_url}/playByDeployHash`, {
-		params: { deployHash: deployHash },
-	});
+	return response.data;
 };

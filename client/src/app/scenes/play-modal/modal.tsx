@@ -3,7 +3,6 @@ import styled, { useTheme } from 'styled-components';
 import ReactModal from 'react-modal';
 import { FlexColumn } from '@make-software/cspr-ui';
 
-import useManagePlay from '../../services/hooks/use-manage-play';
 import ModalState from './ModalState';
 
 const modalStyles = {
@@ -33,14 +32,6 @@ export interface ModalProps {
 
 export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 	const theme = useTheme();
-	const {
-		activeAccountWithBalance,
-		playResult,
-		awaitingPlayResult,
-		clientErrorOccurred,
-		connectWallet,
-		initiatePlay,
-	} = useManagePlay();
 
 	const modalStyle = {
 		overlay: {
@@ -67,17 +58,10 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 					isOpen={isOpen}
 					style={modalStyle}
 					portalClassName={'portal'}
+					ariaHideApp={false}
 				>
 					<ModalContainer>
-						<ModalState
-							connectWallet={connectWallet}
-							initiatePlay={initiatePlay}
-							clientErrorOccurred={clientErrorOccurred}
-							awaitingPlayResult={awaitingPlayResult}
-							activeAccountWithBalance={activeAccountWithBalance}
-							playResult={playResult}
-							closeModal={closeModal}
-						/>
+						<ModalState closeModal={closeModal} />
 					</ModalContainer>
 				</ReactModal>
 			)}
