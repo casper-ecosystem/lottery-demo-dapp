@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseWebSocketsProps {
-	onOpen: () => void;
-	onMessage: (message: any) => void;
+	onOpen?: () => void;
+	onMessage: (message: { data: string }) => void;
 	onClose: () => void;
 }
+
+const logOpenWsConnection = () => console.log('open ws connection');
+
 export const useWebSockets = ({
-	onOpen,
+	onOpen = logOpenWsConnection,
 	onMessage,
 	onClose,
 }: UseWebSocketsProps) => {
@@ -14,37 +17,30 @@ export const useWebSockets = ({
 		null as unknown as WebSocket
 	);
 
-	const updateOpenHandler = () => {
+	const updateHandler = (
+		type: string,
+		callback: (value: any) => void
+	) => {
 		if (!session) return;
-		session.addEventListener('open', onOpen);
+		session.addEventListener(type, callback);
 		return () => {
-			session.removeEventListener('open', onOpen);
+			session.removeEventListener(type, callback);
 		};
 	};
 
-	const updateMessageHandler = () => {
-		if (!session) return;
-		session.addEventListener('message', onMessage);
-		return () => {
-			session.removeEventListener('message', onMessage);
-		};
-	};
+	useEffect(() => updateHandler('open', onOpen), [session, onOpen]);
+	useEffect(
+		() => updateHandler('message', onMessage),
+		[session, onMessage]
+	);
+	useEffect(
+		() => updateHandler('close', onClose),
+		[session, onClose]
+	);
 
-	const updateCloseHandler = () => {
-		if (!session) return;
-		session.addEventListener('close', onClose);
-		return () => {
-			session.removeEventListener('close', onClose);
-		};
-	};
-
-	useEffect(updateOpenHandler, [session, onOpen]);
-	useEffect(updateMessageHandler, [session, onMessage]);
-	useEffect(updateCloseHandler, [session, onClose]);
-
-	const connect = useCallback(() => {
-		const uri = config.lottery_api_ws_url;
-		const ws = new WebSocket(uri);
+	const connect = useCallback((publicKey: string) => {
+		const url = `${config.lottery_api_ws_url}?caller_public_key=${publicKey}`;
+		const ws = new WebSocket(url);
 		setSession(ws);
 	}, []);
 

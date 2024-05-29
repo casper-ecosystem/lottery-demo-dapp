@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
 import { useClickRef } from '@make-software/csprclick-ui';
 import { AccountType } from '@make-software/csprclick-core-types';
-import { DeployMessage, Play } from '../../types';
+import { Deploy, DeployMessage, Play } from '../../types';
 import { ActiveAccountContext } from '../../../App';
 import {
 	DeployFailed,
@@ -11,6 +11,7 @@ import {
 	signAndSendDeploy,
 } from '../requests/play-requests';
 import { useWebSockets } from './use-websockets';
+import { isDeploy } from '../../utils/helpers';
 
 interface ManagePlayData {
 	data: Play | DeployFailed | null;
@@ -39,8 +40,9 @@ const useManagePlay = (): ManagePlayData => {
 			loading: false,
 			error: false,
 		});
-	const [executedDeploy, setExecutedDeploy] =
-		useState<DeployMessage | null>(null);
+	const [executedDeploy, setExecutedDeploy] = useState<Deploy | null>(
+		null
+	);
 
 	useEffect(() => {
 		if (activeAccountContext && clickRef) {
@@ -54,20 +56,20 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	}, [activeAccountContext]);
 
-	const onOpenWsConnection = () => console.log('open ws connection');
-
 	const onCloseWsConnection = () => {
 		if (!executedDeploy) {
 			setPlayResultState({ ...playResultState, error: true });
 		}
 	};
 
-	const onReceiveWsMessage = (message: { data: DeployMessage }) => {
-		setExecutedDeploy(message.data);
+	const onReceiveWsMessage = (message: { data: string }) => {
+		if (isDeploy(message.data)) {
+			const deploy = JSON.parse(message.data) as DeployMessage;
+			setExecutedDeploy(deploy.data);
+		}
 	};
 
 	const { connect: joinToDeploysWsConnection } = useWebSockets({
-		onOpen: onOpenWsConnection,
 		onMessage: onReceiveWsMessage,
 		onClose: onCloseWsConnection,
 	});
@@ -88,11 +90,11 @@ const useManagePlay = (): ManagePlayData => {
 
 		await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
 		setPlayResultState({ ...playResultState, loading: true });
-		joinToDeploysWsConnection();
+		joinToDeploysWsConnection(activeAccountWithBalance.public_key);
 	};
 
-	const handleDeployProcessed = async (deploy: DeployMessage) => {
-		if (!deploy.detected_deploy?.error && activeAccountContext) {
+	const handleDeployProcessed = async (deploy: Deploy) => {
+		if (!deploy.error_message && activeAccountContext) {
 			try {
 				const accountHash = encodeBase16(
 					CLPublicKey.fromHex(
@@ -101,9 +103,9 @@ const useManagePlay = (): ManagePlayData => {
 				);
 				const response = await getLastPlayByAccountHash(accountHash);
 
-				const play = response.data[0] as Play;
+				const play = response.data[0] as any;
 
-				if (play.deployHash === deploy.detected_deploy.deployHash) {
+				if (play.deployHash === deploy.deploy_hash) {
 					setPlayResultState({
 						...playResultState,
 						data: play,
@@ -118,7 +120,7 @@ const useManagePlay = (): ManagePlayData => {
 				});
 			}
 		} else {
-			console.error(`Deploy failed: ${deploy.detected_deploy.error}`);
+			console.error(`Deploy failed: ${deploy.error_message}`);
 			setPlayResultState({
 				...playResultState,
 				data: DeployFailed.Failed,
