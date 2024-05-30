@@ -6,6 +6,9 @@ type GlobalConfig = {
 	cspr_click_app_name: string;
 	cspr_click_app_id: string;
 	cspr_live_url: string;
+	cspr_chain_name: string;
+	lottery_ticket_price_in_cspr: number;
+	gas_price_in_cspr: number;
 };
 
 declare const config: GlobalConfig;

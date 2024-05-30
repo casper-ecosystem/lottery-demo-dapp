@@ -7,11 +7,12 @@ import React, {
 } from 'react';
 import { Play } from '../../types';
 import { useGetTableData } from '../hooks/use-get-table-data';
+import { AxiosError } from 'axios';
 
 type PlayContextType = {
 	plays: Play[];
 	loading: boolean;
-	error: string | null;
+	error: AxiosError<string> | null;
 	total: number;
 	loadAllData: () => void;
 	resetLimit: () => void;
@@ -39,7 +40,7 @@ type PlaysProviderProps = {
 type PlaysState = {
 	plays: Play[];
 	loading: boolean;
-	error: string | null;
+	error: AxiosError<string> | null;
 	total: number;
 };
 

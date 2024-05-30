@@ -5,6 +5,7 @@ import {
 	FlexRow,
 	HeaderText,
 } from '@make-software/cspr-ui';
+import { AxiosError } from 'axios';
 
 const StyledFlexColumn = styled(FlexColumn)(() => ({
 	width: '400px',
@@ -12,7 +13,7 @@ const StyledFlexColumn = styled(FlexColumn)(() => ({
 }));
 
 interface ErrorTileProps {
-	message: string;
+	message: AxiosError<string>;
 }
 
 export const ErrorTile = ({ message }: ErrorTileProps) => {
@@ -32,7 +33,7 @@ export const ErrorTile = ({ message }: ErrorTileProps) => {
 						Error
 					</HeaderText>
 					<BodyText size={3} scale={'sm'} variation={'red'}>
-						{message}
+						{message.message}
 					</BodyText>
 				</FlexColumn>
 			</StyledFlexColumn>

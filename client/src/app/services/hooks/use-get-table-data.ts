@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
 
 interface InitialState {
 	data: null;
 	loading: boolean;
-	error: string | null;
+	error: AxiosError<string> | null;
 	total: number;
 }
 
@@ -16,7 +16,7 @@ interface GetTableDataProps {
 interface GetTableDataType<T> {
 	data: T | null;
 	loading: boolean;
-	error: string | null;
+	error: AxiosError<string> | null;
 	total: number;
 	loadAllData: () => void;
 	resetLimit: () => void;
@@ -50,7 +50,7 @@ export const useGetTableData = <T>({
 				setState({
 					...state,
 					data: null,
-					error: error as string,
+					error: error,
 					loading: false,
 				})
 			);
