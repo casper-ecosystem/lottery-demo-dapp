@@ -1,5 +1,4 @@
 import { PageTile } from '@make-software/cspr-ui';
-import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import {
 	ErrorTile,
 	LoadMoreButton,
@@ -11,22 +10,15 @@ import PlaysDataHeaders from './PlaysDataHeaders';
 import PlaysTableRow from './PlaysTableRow';
 import NoPlays from './NoPlays';
 import { Play } from '../../types';
+import { usePlaysData } from '../../services/providers/PlaysContext';
 
 interface PlaysTableProps {
 	setModalOpen: (isOpen: boolean) => void;
 }
 
 const PlaysTable = ({ setModalOpen }: PlaysTableProps) => {
-	const {
-		data: plays,
-		loading,
-		error,
-		total,
-		loadAllData,
-		resetLimit,
-	} = useGetTableData<Play[]>({
-		url: '/rounds/latest/plays',
-	});
+	const { plays, loading, error, total, loadAllData, resetLimit } =
+		usePlaysData();
 
 	if (loading) {
 		return (

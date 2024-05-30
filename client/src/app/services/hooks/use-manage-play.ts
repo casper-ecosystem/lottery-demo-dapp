@@ -12,6 +12,7 @@ import {
 } from '../requests/play-requests';
 import { useWebSockets } from './use-websockets';
 import { isDeploy } from '../../utils/helpers';
+import { usePlaysData } from '../providers/PlaysContext';
 
 interface ManagePlayData {
 	data: Play | DeployFailed | null;
@@ -43,6 +44,8 @@ const useManagePlay = (): ManagePlayData => {
 	const [executedDeploy, setExecutedDeploy] = useState<Deploy | null>(
 		null
 	);
+
+	const { addPlay } = usePlaysData();
 
 	useEffect(() => {
 		if (activeAccountContext && clickRef) {
@@ -111,6 +114,7 @@ const useManagePlay = (): ManagePlayData => {
 						data: play,
 						loading: false,
 					});
+					addPlay(play);
 				}
 			} catch (error) {
 				setPlayResultState({
