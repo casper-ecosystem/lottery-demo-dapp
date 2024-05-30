@@ -40,6 +40,7 @@ const PlayResultState = ({
 			<JackpotContent
 				handleButtonAction={initiatePlay}
 				closeModal={closeModal}
+				prizeAmount={playResult.prizeAmount}
 			/>
 		);
 	}
@@ -49,6 +50,7 @@ const PlayResultState = ({
 			<YouWonContent
 				handleButtonAction={initiatePlay}
 				closeModal={closeModal}
+				prizeAmount={playResult.prizeAmount}
 			/>
 		);
 	}

@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { PageTile } from '@make-software/cspr-ui';
 import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import {
 	NoData,

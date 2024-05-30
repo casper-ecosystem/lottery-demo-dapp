@@ -8,7 +8,7 @@ import { formatIsoTimestamp } from '../../utils/helpers';
 import { Play } from '../../types';
 
 const MyPlaysTableRow = ({ play }: { play: Play }) => {
-	const { playId, prizeAmount, roundId, timestamp } = play;
+	const { playId, prizeAmount, roundId, timestamp, isJackpot } = play;
 
 	const roundPath = `/jackpot/${roundId}`;
 
@@ -19,7 +19,7 @@ const MyPlaysTableRow = ({ play }: { play: Play }) => {
 					<HistoryLink href={roundPath}>Round {roundId}</HistoryLink>
 				</BodyText>
 			</TableData>
-			<PrizeCell amount={prizeAmount} isJackpot />
+			<PrizeCell amount={prizeAmount} isJackpot={isJackpot} />
 			<TableData />
 			<TableData>
 				<BodyText size={3}>{formatIsoTimestamp(timestamp)}</BodyText>

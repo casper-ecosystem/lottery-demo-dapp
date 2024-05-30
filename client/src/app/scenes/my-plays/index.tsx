@@ -1,5 +1,4 @@
 import { useClickRef } from '@make-software/csprclick-ui';
-import { PageTile } from '@make-software/cspr-ui';
 import {
 	Table,
 	TableLoader,
@@ -13,10 +12,16 @@ import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import MyPlaysDataHeaders from './MyPlaysDataHeaders';
 import MyPlaysTableRow from './MyPlaysTableRow';
 import { Play } from '../../types';
+import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
 
 const MyPlaysTable = () => {
 	const clickRef = useClickRef();
-	const activePublicKey = clickRef?.currentAccount?.public_key || '';
+	const activePublicKey = clickRef?.currentAccount?.public_key;
+	const accountHash = activePublicKey
+		? encodeBase16(
+				CLPublicKey.fromHex(activePublicKey).toAccountHash()
+		  )
+		: null;
 
 	const {
 		data: myPlays,
@@ -26,7 +31,7 @@ const MyPlaysTable = () => {
 		loadAllData,
 		resetLimit,
 	} = useGetTableData<Play[]>({
-		url: `/players/${activePublicKey}/plays`,
+		url: accountHash ? `/players/${accountHash}/plays` : '',
 	});
 
 	if (loading) {
@@ -47,7 +52,7 @@ const MyPlaysTable = () => {
 			renderHeaders={() => <MyPlaysDataHeaders />}
 			renderData={() =>
 				myPlays.map((play: Play) => (
-					<MyPlaysTableRow play={play} key={play.roundId} />
+					<MyPlaysTableRow play={play} key={play.playId} />
 				))
 			}
 			renderFooterButton={() => (

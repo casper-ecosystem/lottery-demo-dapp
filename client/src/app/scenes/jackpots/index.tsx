@@ -1,4 +1,3 @@
-import { PageTile } from '@make-software/cspr-ui';
 import {
 	NoData,
 	ErrorTile,

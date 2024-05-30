@@ -71,7 +71,7 @@ export const PlaysProvider: React.FC<PlaysProviderProps> = ({
 	const addPlay = (play: Play) => {
 		setPlaysState({
 			...playsState,
-			plays: [...playsState.plays, play],
+			plays: [play, ...playsState.plays],
 			total: playsState.total + 1,
 		});
 	};

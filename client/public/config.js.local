@@ -4,7 +4,7 @@ const config = {
   lottery_api_url: 'https://cspr-lottery-demo-api.dev.make.services',
   lottery_api_ws_url: 'wss://cspr-lottery-demo-api.dev.make.services/deploys',
   cspr_click_app_name: 'Lottery Demo',
-  cspr_click_app_id: 'csprclick-template',
+  cspr_click_app_id: 'cspr-lottery-demo',
   cspr_live_url: 'https://cspr.live',
   cspr_chain_name: 'casper-test',
   lottery_ticket_price_in_cspr: 50,

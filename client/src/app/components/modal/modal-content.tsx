@@ -6,6 +6,7 @@ import {
 	FlexColumn,
 	FlexRow,
 	SvgIcon,
+	formatNumber,
 } from '@make-software/cspr-ui';
 import React from 'react';
 import styled from 'styled-components';
@@ -20,6 +21,7 @@ import CupIcon from '../../../assets/icons/cup.svg';
 import HappyIcon from '../../../assets/icons/happy.svg';
 import SadIcon from '../../../assets/icons/sad.svg';
 import LoadingIcon from '../../../assets/icons/loading.svg';
+import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
@@ -200,26 +202,34 @@ export const DeployFailedContent = (
 	);
 };
 
-export const JackpotContent = (props: CustomModalContentProps) => {
+export const JackpotContent = (
+	props: CustomModalContentProps & { prizeAmount: string }
+) => {
+	const prize = motesToCSPR(props.prizeAmount);
 	return (
 		<ModalContent
 			logo={<Icon src={CupIcon} status={IconStatus.success} />}
 			title={'Jackpot!'}
-			description={
-				'Congratulations, you have won the jackpot of 20,000 CSPR!'
-			}
+			description={`Congratulations, you have won the jackpot of ${formatNumber(
+				prize
+			)} CSPR!`}
 			buttonText={'Play More'}
 			{...props}
 		/>
 	);
 };
 
-export const YouWonContent = (props: CustomModalContentProps) => {
+export const YouWonContent = (
+	props: CustomModalContentProps & { prizeAmount: string }
+) => {
+	const prize = motesToCSPR(props.prizeAmount);
 	return (
 		<ModalContent
 			logo={<Icon src={HappyIcon} status={IconStatus.success} />}
 			title={'You Won!'}
-			description={'Congratulations, you have won 1,000 CSPR!'}
+			description={`Congratulations, you have won ${formatNumber(
+				prize
+			)} CSPR!`}
 			buttonText={'Play More'}
 			{...props}
 		/>
