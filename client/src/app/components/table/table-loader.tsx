@@ -2,6 +2,7 @@ import React from 'react';
 import Table from './table';
 import { TableRow, TableData } from '@make-software/cspr-ui';
 import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 type Props = {
 	columnsLength: number;

@@ -27,11 +27,7 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 	});
 
 	if (loading) {
-		return (
-			<PageTile>
-				<TableLoader columnsLength={1} />
-			</PageTile>
-		);
+		return <TableLoader columnsLength={1} />;
 	}
 
 	if (error) {
