@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { FlexColumn, HeaderText } from '@make-software/cspr-ui';
@@ -22,17 +22,15 @@ const Content = styled(FlexColumn)(({ theme }) =>
 );
 
 export interface PageLayoutProps {
-	children?: React.ReactNode;
-	title?: string;
+	children: React.ReactNode;
+	title: string;
 	renderHeader?: () => React.ReactNode;
 }
 
 export const PageLayout = (props: PageLayoutProps) => {
 	const { children, renderHeader, title } = props;
 
-	useEffect(() => {
-		document.title = `${title}`;
-	}, [title]);
+	document.title = title;
 
 	return (
 		<Content>

@@ -3,7 +3,7 @@ import { PageLayout } from '../../components';
 import JackpotInfo from './JackpotInfo';
 import Plays from './Plays';
 import Modal from '../play-modal/modal';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { PlaysProvider } from '../../services/providers/PlaysContext';
 
 const StyledPageLayout = styled(PageLayout)(() => ({
@@ -12,12 +12,18 @@ const StyledPageLayout = styled(PageLayout)(() => ({
 
 const HomeScene = () => {
 	const [showModal, setShowModal] = useState<boolean>(false);
+
+	const handleOpenModal = useCallback(
+		(value: boolean) => setShowModal(value),
+		[]
+	);
+
 	return (
 		<PlaysProvider>
-			<JackpotInfo setModalOpen={setShowModal} />
+			<JackpotInfo setModalOpen={handleOpenModal} />
 			<StyledPageLayout title={'Casper Lottery'}>
-				<Plays setModalOpen={setShowModal} />
-				<Modal isOpen={showModal} setModalOpen={setShowModal} />
+				<Plays setModalOpen={handleOpenModal} />
+				<Modal isOpen={showModal} setModalOpen={handleOpenModal} />
 			</StyledPageLayout>
 		</PlaysProvider>
 	);

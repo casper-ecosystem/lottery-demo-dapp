@@ -54,7 +54,7 @@ export const useWebSockets = ({
 
 	const close = useCallback(() => {
 		if (session?.readyState === session?.OPEN)
-			session.close(WS_CLOSE_CODE);
+			session?.close(WS_CLOSE_CODE);
 	}, [session]);
 
 	useEffect(() => {
