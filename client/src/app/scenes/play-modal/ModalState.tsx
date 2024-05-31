@@ -84,11 +84,14 @@ const ModalState = (props: ModalStateProps) => {
 		window.open('https://testnet.cspr.live/tools/faucet', '_blank');
 	};
 
+	const ticketPrice =
+		config.gas_price_in_cspr + config.lottery_ticket_price_in_cspr;
+
 	const isNotEnoughBalance =
-		activeAccountWithBalance != null &&
+		!!activeAccountWithBalance &&
 		(activeAccountWithBalance.balance == null ||
 			parseInt(activeAccountWithBalance.balance) <
-				csprToMotes(5).toNumber());
+				csprToMotes(ticketPrice).toNumber());
 
 	if (isNotEnoughBalance) {
 		return (

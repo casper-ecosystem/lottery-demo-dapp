@@ -127,6 +127,8 @@ const useManagePlay = (): ManagePlayData => {
 						error: false,
 					});
 					addPlay(play);
+				} else {
+					throw new Error('A new play was not created');
 				}
 			} catch (error) {
 				setPlayResultState(errorState);
