@@ -72,8 +72,8 @@ const ModalState = (props: ModalStateProps) => {
 
 	const {
 		data: playResult,
-		loading: awaitingPlayResult,
-		error: clientErrorOccurred,
+		loading: loadingPlayResult,
+		error: playError,
 		activeAccountWithBalance,
 		connectWallet,
 		initiatePlay,
@@ -99,7 +99,7 @@ const ModalState = (props: ModalStateProps) => {
 		);
 	}
 
-	if (clientErrorOccurred) {
+	if (playError) {
 		return (
 			<SomethingWentWrongContent
 				handleButtonAction={refreshPage}
@@ -108,7 +108,7 @@ const ModalState = (props: ModalStateProps) => {
 		);
 	}
 
-	if (awaitingPlayResult) {
+	if (loadingPlayResult) {
 		return <LoadingContent closeModal={closeModal} />;
 	}
 

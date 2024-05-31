@@ -47,6 +47,12 @@ const useManagePlay = (): ManagePlayData => {
 
 	const { addPlay } = usePlaysData();
 
+	const errorState = {
+		data: null,
+		loading: false,
+		error: true,
+	};
+
 	useEffect(() => {
 		if (activeAccountContext && clickRef) {
 			clickRef
@@ -59,6 +65,12 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	}, [activeAccountContext]);
 
+	useEffect(() => {
+		if (executedDeploy !== null) {
+			handleDeployProcessed(executedDeploy);
+		}
+	}, [executedDeploy]);
+
 	const onReceiveWsMessage = (message: { data: string }) => {
 		if (isDeploy(message.data)) {
 			const deploy = JSON.parse(message.data) as DeployMessage;
@@ -68,7 +80,7 @@ const useManagePlay = (): ManagePlayData => {
 
 	const onCloseWsConnection = () => {
 		if (!executedDeploy) {
-			setPlayResultState({ ...playResultState, error: true });
+			setPlayResultState(errorState);
 		}
 	};
 
@@ -79,7 +91,7 @@ const useManagePlay = (): ManagePlayData => {
 
 	const initiatePlay = async () => {
 		if (!activeAccountWithBalance?.public_key) {
-			setPlayResultState({ ...playResultState, error: true });
+			setPlayResultState(errorState);
 			return;
 		}
 
@@ -110,18 +122,14 @@ const useManagePlay = (): ManagePlayData => {
 
 				if (play.deployHash === deploy.deploy_hash) {
 					setPlayResultState({
-						...playResultState,
 						data: play,
 						loading: false,
+						error: false,
 					});
 					addPlay(play);
 				}
 			} catch (error) {
-				setPlayResultState({
-					...playResultState,
-					error: true,
-					loading: false,
-				});
+				setPlayResultState(errorState);
 			}
 		} else {
 			console.error(`Deploy failed: ${deploy.error_message}`);
@@ -132,12 +140,6 @@ const useManagePlay = (): ManagePlayData => {
 			});
 		}
 	};
-
-	useEffect(() => {
-		if (executedDeploy !== null) {
-			handleDeployProcessed(executedDeploy);
-		}
-	}, [executedDeploy]);
 
 	const connectWallet = async () => {
 		await clickRef?.signIn();
