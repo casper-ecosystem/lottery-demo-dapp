@@ -1,5 +1,5 @@
-import { DataSource, Repository } from 'typeorm';
-import "reflect-metadata";
+import { DataSource, FindManyOptions, Repository } from 'typeorm';
+import 'reflect-metadata';
 import { Round } from '../entity/round.entity';
 
 export class RoundRepository {
@@ -8,41 +8,21 @@ export class RoundRepository {
     this.repo = dataSource.getRepository(Round);
   }
 
-  async getRounds(limit: number, offset: number): Promise<[Round[], number]> {
-    const queryBuilder = this.repo
-      .createQueryBuilder('p')
-      .select('p.round_id', 'round_id')
-      .addSelect('w.plays_num', 'plays_num')
-      .addSelect('p.prize_amount', 'jackpot_amount')
-      .addSelect('p.player_account_hash', 'winner_account_hash')
-      .addSelect('p.timestamp', 'ended_at')
-      .innerJoin(
-        (subQuery) => {
-          return subQuery
-            .select('MAX(play_id)', 'play_id')
-            .addSelect('COUNT(*)', 'plays_num')
-            .from('plays', 'plays')
-            .groupBy('round_id');
-        },
-        'w',
-        'w.play_id = p.play_id',
-      )
-      .orderBy('p.round_id', 'DESC')
-      .limit(limit)
-      .offset(offset);
+  async getPaginatedRounds(pagination: { limit: number; offset: number }): Promise<[Round[], number]> {
+    const options: FindManyOptions<Round> = {
+      take: pagination.limit,
+      skip: pagination.offset,
+      order: {
+        roundId: 'DESC',
+      },
+    };
 
-    const [res, total] = await Promise.all([queryBuilder.getRawMany(), queryBuilder.getCount()]);
+    return this.repo.findAndCount(options);
+  }
 
-    const rounds = res.map((r) => {
-      const round = new Round();
-      round.roundId = r.round_id;
-      round.playsNum = r.plays_num;
-      round.jackpotAmount = r.jackpot_amount;
-      round.winnerAccountHash = r.winner_account_hash;
-      round.endedAt = r.ended_at;
-      return round;
-    });
+  async getLatest(): Promise<Round> {
+    const queryBuilder = this.repo.createQueryBuilder().orderBy('round_id', 'DESC').limit(1);
 
-    return [rounds, total];
+    return queryBuilder.getOne();
   }
 }
