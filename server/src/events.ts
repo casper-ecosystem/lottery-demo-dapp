@@ -2,7 +2,8 @@ export interface PlayEventPayload {
   is_jackpot: boolean;
   play_id: string;
   player: string;
-  prize: string;
+  prize_amount: string;
+  jackpot_amount: string;
   round_id: number;
   timestamp: number;
 }

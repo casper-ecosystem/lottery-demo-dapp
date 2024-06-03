@@ -9,6 +9,7 @@ export class Init1711623923370 implements MigrationInterface {
 					play_id             bigint(20) UNSIGNED  NOT NULL,
 					player_account_hash varchar(64)          NOT NULL,
 					prize_amount        varchar(128)         NOT NULL,
+					jackpot_amount      varchar(128)         NOT NULL,
 					is_jackpot          bool                 NOT NULL,
 					timestamp           datetime             NOT NULL,
 
