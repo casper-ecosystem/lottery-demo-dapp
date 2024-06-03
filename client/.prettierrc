@@ -1,7 +1,7 @@
 {
   "singleQuote": true,
   "bracketSpacing": true,
-  "printWidth": 120,
+  "printWidth": 70,
   "tabWidth": 2,
   "jsxSingleQuote": true,
   "arrowParens": "avoid",
