@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import {
 	BodyText,
 	FlexRow,
-	formatNumber,
-	SMALL_PRECISION,
 	SvgIcon,
 	TableData,
-} from '@make-software/cspr-ui';
-import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
+} from '../../components';
 import CupIcon from '../../../assets/icons/cup.svg';
+import { formatNumber } from '../../utils/formatters';
+import { motesToCSPR } from '../../utils/currency';
+import { SMALL_PRECISION } from '../../utils/constants';
 
 const StyledSvgIcon = styled(SvgIcon)(({ theme }) => ({
 	marginLeft: 10,

@@ -1,4 +1,4 @@
-import { BodyText, NavLink } from '@make-software/cspr-ui';
+import { BodyText, NavLink } from '../../components';
 import styled from 'styled-components';
 
 const StyledWrapper = styled.span(({ theme }) => ({

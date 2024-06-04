@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { BodyText, FlexRow } from '@make-software/cspr-ui';
+import { BodyText, FlexRow } from '../../components';
 
 export enum BadgeVariation {
 	light = 'light',
@@ -31,7 +31,7 @@ const StyledBodyText = styled(BodyText)(({ theme }) => ({
 	color: theme.styleguideColors.contentLightBlue,
 }));
 
-const Badge = ({
+export const Badge = ({
 	label,
 	variation = BadgeVariation.blue,
 	padding = BadgePadding.small,

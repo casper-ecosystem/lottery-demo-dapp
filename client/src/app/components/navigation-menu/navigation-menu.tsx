@@ -1,11 +1,10 @@
-import { MainMenu, MainMenuItem } from '@make-software/cspr-ui';
+import styled from 'styled-components';
+import { MainMenu, MainMenuItem, Link } from '../../components';
 import {
 	ABOUT_PATH,
 	HOME_PATH,
 	JACKPOTS_PATH,
 } from '../../router/paths';
-import styled from 'styled-components';
-import { Link } from '../link/link';
 
 const MainMenuContainer = styled.div(({ theme }) =>
 	theme.withMedia({
@@ -21,7 +20,7 @@ const MainMenuContainer = styled.div(({ theme }) =>
 	})
 );
 
-const NavigationMenu = () => {
+export const NavigationMenu = () => {
 	return (
 		<MainMenuContainer>
 			<MainMenu>

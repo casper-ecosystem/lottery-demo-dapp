@@ -8,12 +8,12 @@ import {
 	HeaderText,
 	SvgIcon,
 	Text,
-} from '@make-software/cspr-ui';
+} from '../../components';
 import Badge, { BadgePadding } from '../../components/badge/badge';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 import ShineImg from '../../../assets/images/shine.png';
 import { useGetTableData } from '../../services/hooks/use-get-table-data';
-import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
+import { motesToCSPR } from '../../utils/currency';
 import { Round } from '../../types';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>

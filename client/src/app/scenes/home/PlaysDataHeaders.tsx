@@ -1,5 +1,8 @@
-import { BodyText, TableRow } from '@make-software/cspr-ui';
-import { StyledTableDataHeader } from '../../components';
+import {
+	BodyText,
+	TableRow,
+	StyledTableDataHeader,
+} from '../../components';
 
 const PlaysDataHeaders = () => (
 	<TableRow>

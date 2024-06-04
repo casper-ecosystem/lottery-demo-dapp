@@ -1,6 +1,6 @@
 import React from 'react';
 import Table from './table';
-import { TableRow, TableData } from '@make-software/cspr-ui';
+import { TableRow, TableData } from '../../components';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 

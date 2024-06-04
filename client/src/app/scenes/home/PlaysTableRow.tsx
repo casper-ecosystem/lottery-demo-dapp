@@ -1,10 +1,6 @@
-import {
-	BodyText,
-	TableData,
-	TableRow,
-} from '@make-software/cspr-ui';
+import { BodyText, TableData, TableRow } from '../../components';
 import { AccountInfoCell, PrizeCell } from '../../components';
-import { formatIsoTimestamp } from '../../utils/helpers';
+import { formatIsoTimestamp } from '../../utils/formatters';
 import { Play } from '../../types';
 
 const PlaysTableRow = ({ play }: { play: Play }) => {

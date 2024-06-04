@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, FlexRow } from '@make-software/cspr-ui';
+import { Button, FlexRow } from '../../components';
 
 const ButtonContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({

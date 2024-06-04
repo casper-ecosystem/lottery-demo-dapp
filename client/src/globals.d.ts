@@ -16,3 +16,5 @@ declare const config: GlobalConfig;
 declare module '*.svg';
 
 declare module '*.png';
+declare module 'facepaint';
+declare module 'big.js';

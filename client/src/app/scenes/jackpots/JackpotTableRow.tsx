@@ -1,15 +1,11 @@
-import {
-	BodyText,
-	TableData,
-	TableRow,
-} from '@make-software/cspr-ui';
+import { BodyText, TableData, TableRow } from '../../components';
 import {
 	AccountInfoCell,
 	Link,
 	LinkVariation,
 	PrizeCell,
 } from '../../components';
-import { formatIsoTimestamp } from '../../utils/helpers';
+import { formatIsoTimestamp } from '../../utils/formatters';
 import { Round } from '../../types';
 
 const JackpotTableRow = ({ round }: { round: Round }) => {

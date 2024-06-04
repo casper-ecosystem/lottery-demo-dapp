@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
-import { BaseProps } from '@make-software/cspr-ui';
+import { BaseProps } from '../../types';
 
-/* eslint-disable-next-line */
 export interface RouterLinkProps extends BaseProps {
 	to: string;
 	render?: (props: {

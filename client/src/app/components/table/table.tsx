@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import {
 	BodyText,
 	FlexRow,
-	formatNumber,
 	TableBody,
 	TableHead,
-} from '@make-software/cspr-ui';
+} from '../../components';
 import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
+import { formatNumber } from '../../utils/formatters';
 
 export const TableContainer = styled.div(({ theme }) =>
 	theme.withMedia({
