@@ -11,7 +11,7 @@ import {
 	signAndSendDeploy,
 } from '../requests/play-requests';
 import { useWebSockets } from './use-websockets';
-import { isDeploy } from '../../utils/helpers';
+import { isDeploy } from '../../utils/formatters';
 import { usePlaysData } from '../providers/PlaysContext';
 
 interface ManagePlayData {

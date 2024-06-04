@@ -10,7 +10,7 @@ interface InitialState {
 }
 
 interface GetTableDataProps {
-	url: string;
+	url: string | null;
 }
 
 interface GetTableDataType<T> {
@@ -57,8 +57,10 @@ export const useGetTableData = <T>({
 	};
 
 	useEffect(() => {
-		fetchData();
-	}, [limit]);
+		if (url) {
+			fetchData();
+		}
+	}, [limit, url]);
 
 	const loadAllData = () => {
 		setLimit(1000);

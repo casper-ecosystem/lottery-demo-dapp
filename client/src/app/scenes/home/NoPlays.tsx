@@ -6,7 +6,7 @@ import {
 	FlexRow,
 	HeaderText,
 	PageTile,
-} from '@make-software/cspr-ui';
+} from '../../components';
 import CupIcon from '../../../assets/icons/cup.svg';
 import { Icon } from '../../components';
 

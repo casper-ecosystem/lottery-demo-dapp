@@ -1,15 +1,15 @@
+import { useState } from 'react';
+import styled from 'styled-components';
 import ClickTopBar from '../click-top-bar';
 import {
 	FlexColumn,
 	FlexRow,
 	SvgIcon,
-	useMatchMedia,
-} from '@make-software/cspr-ui';
-import styled from 'styled-components';
-import NavigationMenu from '../navigation-menu/navigation-menu';
+	NavigationMenu,
+} from '../../components';
 import Logo from '../../../assets/logos/lottery-logo.svg';
 import HamburgerIcon from '../../../assets/icons/hamburger-menu.svg';
-import { useState } from 'react';
+import { useMatchMedia } from '../../utils/match-media';
 
 const PageHeaderWrapper = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
@@ -38,7 +38,7 @@ const HamburgerButton = styled(SvgIcon)(({ theme }) => ({
 	},
 }));
 
-const PageHeader = () => {
+export const PageHeader = () => {
 	const [menuVisible, setMenuVisible] = useState(false);
 
 	const onMobile = (

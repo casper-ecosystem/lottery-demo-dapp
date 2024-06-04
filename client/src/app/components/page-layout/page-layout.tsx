@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { FlexColumn, HeaderText } from '@make-software/cspr-ui';
+import { FlexColumn, HeaderText } from '../../components';
 
 export const Header = styled(HeaderText)(() => ({
 	paddingTop: 32,

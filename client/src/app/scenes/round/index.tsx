@@ -22,7 +22,7 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 		loadAllData,
 		resetLimit,
 	} = useGetTableData<Play[]>({
-		url: `/rounds/${id}/plays`,
+		url: id ? `/rounds/${id}/plays` : null,
 	});
 
 	if (loading) {

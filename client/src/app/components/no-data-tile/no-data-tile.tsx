@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import {
-	FlexColumn,
-	FlexRow,
-	HeaderText,
-} from '@make-software/cspr-ui';
+import { FlexColumn, FlexRow, HeaderText } from '../../components';
 
 const StyledFlexColumn = styled(FlexColumn)(() => ({
 	width: '400px',

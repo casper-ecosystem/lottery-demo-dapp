@@ -1,3 +1,6 @@
+import React from 'react';
+import styled from 'styled-components';
+
 import {
 	BodyText,
 	Button,
@@ -6,12 +9,11 @@ import {
 	FlexColumn,
 	FlexRow,
 	SvgIcon,
-	formatNumber,
-} from '@make-software/cspr-ui';
-import React from 'react';
-import styled from 'styled-components';
-import Icon, { IconStatus } from '../icon/icon';
-import Badge, { BadgeVariation } from '../badge/badge';
+	Icon,
+	IconStatus,
+	Badge,
+	BadgeVariation,
+} from '../../components';
 
 import HandIcon from '../../../assets/icons/hand.svg';
 import TicketIcon from '../../../assets/icons/ticket.svg';
@@ -21,7 +23,8 @@ import CupIcon from '../../../assets/icons/cup.svg';
 import HappyIcon from '../../../assets/icons/happy.svg';
 import SadIcon from '../../../assets/icons/sad.svg';
 import LoadingIcon from '../../../assets/icons/loading.svg';
-import { motesToCSPR } from '@make-software/cspr-ui/dist/lib/utils/currency';
+import { formatNumber } from '../../utils/formatters';
+import { motesToCSPR } from '../../utils/currency';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({

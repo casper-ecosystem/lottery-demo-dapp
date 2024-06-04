@@ -1,7 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
-import HomeScene from '../scenes/home';
-import PageHeader from '../components/page-header/page-header';
 import {
 	HOME_PATH,
 	ABOUT_PATH,
@@ -9,7 +7,8 @@ import {
 	MY_PLAYS_PATH,
 	JACKPOT_PLAYS_PATH,
 } from './paths';
-import { FlexColumn } from '@make-software/cspr-ui';
+import { FlexColumn, PageHeader } from '../components';
+import HomeScene from '../scenes/home';
 import AboutScene from '../scenes/about';
 import JackpotsScene from '../scenes/jackpots';
 import JackpotRoundScene from '../scenes/round';

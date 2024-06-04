@@ -4,7 +4,7 @@ import {
 	FlexColumn,
 	FlexRow,
 	HeaderText,
-} from '@make-software/cspr-ui';
+} from '../../components';
 import { AxiosError } from 'axios';
 
 const StyledFlexColumn = styled(FlexColumn)(() => ({
