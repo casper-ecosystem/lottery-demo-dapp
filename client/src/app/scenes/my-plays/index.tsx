@@ -1,4 +1,3 @@
-import { useClickRef } from '@make-software/csprclick-ui';
 import {
 	Table,
 	TableLoader,
@@ -13,13 +12,16 @@ import MyPlaysDataHeaders from './MyPlaysDataHeaders';
 import MyPlaysTableRow from './MyPlaysTableRow';
 import { Play } from '../../types';
 import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
+import { useContext } from 'react';
+import { ActiveAccountContext } from '../../../App';
 
 const MyPlaysTable = () => {
-	const clickRef = useClickRef();
-	const activePublicKey = clickRef?.currentAccount?.public_key;
-	const accountHash = activePublicKey
+	const activeAccountContext = useContext(ActiveAccountContext);
+	const accountHash = activeAccountContext?.public_key
 		? encodeBase16(
-				CLPublicKey.fromHex(activePublicKey).toAccountHash()
+				CLPublicKey.fromHex(
+					activeAccountContext.public_key
+				).toAccountHash()
 		  )
 		: null;
 
@@ -31,7 +33,7 @@ const MyPlaysTable = () => {
 		loadAllData,
 		resetLimit,
 	} = useGetTableData<Play[]>({
-		url: accountHash ? `/players/${accountHash}/plays` : '',
+		url: accountHash ? `/players/${accountHash}/plays` : null,
 	});
 
 	if (loading) {
@@ -42,7 +44,7 @@ const MyPlaysTable = () => {
 		return <ErrorTile message={error} />;
 	}
 
-	if (!myPlays || myPlays.length < 1) {
+	if (!myPlays || myPlays.length < 1 || !activeAccountContext) {
 		return <NoData />;
 	}
 
