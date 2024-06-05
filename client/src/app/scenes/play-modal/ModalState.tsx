@@ -1,5 +1,5 @@
 import React from 'react';
-import { csprToMotes } from 'casper-js-sdk';
+import Big from 'big.js';
 import {
 	BuyTicketContent,
 	DeployFailedContent,
@@ -14,6 +14,7 @@ import {
 import { DeployFailed } from '../../services/requests/play-requests';
 import useManagePlay from '../../services/hooks/use-manage-play';
 import { Play } from '../../types';
+import { csprToMotes } from 'casper-js-sdk';
 
 interface PlayResultStateProps {
 	playResult: Play | DeployFailed;
@@ -84,9 +85,9 @@ const ModalState = (props: ModalStateProps) => {
 		window.open('https://testnet.cspr.live/tools/faucet', '_blank');
 	};
 
-	const ticketPrice =
-		config.gas_price_in_cspr + config.lottery_ticket_price_in_cspr;
-
+	const ticketPrice = Big(config.gas_price_in_cspr)
+		.add(config.lottery_ticket_price_in_cspr)
+		.toNumber();
 	const isNotEnoughBalance =
 		!!activeAccountWithBalance &&
 		(activeAccountWithBalance.balance == null ||
