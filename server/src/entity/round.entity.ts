@@ -14,6 +14,9 @@ export class Round {
   @ViewColumn({ name: 'winner_account_hash' })
   winnerAccountHash: string;
 
+  @ViewColumn({ name: 'is_finished' })
+  isFinished: boolean;
+
   winnerPublicKey?: string;
 
   @ViewColumn({ name: 'ended_at' })
