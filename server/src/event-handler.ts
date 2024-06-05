@@ -52,6 +52,13 @@ async function main() {
     }
   });
 
+  ws.on('error', (err) => {
+    console.log(`Received a WS error: ${err.message}`);
+    ws.close();
+    console.log('Disconnected from Streaming API');
+    process.exit(1);
+  })
+
   ws.on('close', () => {
     console.log('Disconnected from Streaming API');
     process.exit(1);
