@@ -61,7 +61,7 @@ async function main() {
       close: (res, socket, head) => {
         console.log('WebSocket connection closed', res);
       },
-      onError(err, req, res, target) {
+      error(err, req, res, target) {
         console.log('WebSocket connection error', err);
       }
     }
