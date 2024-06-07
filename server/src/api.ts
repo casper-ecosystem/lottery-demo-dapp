@@ -49,7 +49,7 @@ async function main() {
     },
     on: {
       proxyReqWs: (proxyReq) => {
-        console.log('WebSocket connection requestWS', res);
+        console.log('WebSocket connection requestWS');
         proxyReq.removeHeader('Origin');
       },
       proxyReq: (proxyReq, req) => {
