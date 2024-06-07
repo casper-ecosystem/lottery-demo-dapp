@@ -21,6 +21,7 @@ interface ManagePlayData {
 	activeAccountWithBalance: AccountType | null;
 	connectWallet: () => void;
 	initiatePlay: () => void;
+	closeDeploysWsConnection: () => void;
 }
 
 interface ManagePlayState {
@@ -87,10 +88,19 @@ const useManagePlay = (): ManagePlayData => {
 	const {
 		connect: joinToDeploysWsConnection,
 		close: closeDeploysWsConnection,
+		readyState,
 	} = useWebSockets({
 		onMessage: onReceiveWsMessage,
 		onClose: onCloseWsConnection,
 	});
+
+	const handleOpenConnection = () => {
+		if (readyState === 1) {
+			setExecutedDeploy(null);
+		} else {
+			joinToDeploysWsConnection(activeAccountWithBalance!.public_key);
+		}
+	};
 
 	const initiatePlay = async () => {
 		if (!activeAccountWithBalance?.public_key) {
@@ -109,7 +119,7 @@ const useManagePlay = (): ManagePlayData => {
 		try {
 			await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
 			setPlayResultState({ ...playResultState, loading: true });
-			joinToDeploysWsConnection(activeAccountWithBalance.public_key);
+			handleOpenConnection();
 		} catch (e) {
 			setPlayResultState(errorState);
 		}
@@ -148,7 +158,6 @@ const useManagePlay = (): ManagePlayData => {
 				loading: false,
 			});
 		}
-		closeDeploysWsConnection();
 	};
 
 	const connectWallet = async () => {
@@ -160,6 +169,7 @@ const useManagePlay = (): ManagePlayData => {
 		activeAccountWithBalance,
 		connectWallet,
 		initiatePlay,
+		closeDeploysWsConnection,
 	};
 };
 

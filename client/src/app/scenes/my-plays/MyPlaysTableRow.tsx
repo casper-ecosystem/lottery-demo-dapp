@@ -1,7 +1,7 @@
 import { BodyText, TableData, TableRow } from '../../components';
 import { HistoryLink, PrizeCell } from '../../components';
 import { Play } from '../../types';
-import Timestamp from '../../components/timestamp/timestamp';
+import DeployTimestamp from '../../components/timestamp/timestamp';
 
 const MyPlaysTableRow = ({ play }: { play: Play }) => {
 	const {
@@ -25,7 +25,10 @@ const MyPlaysTableRow = ({ play }: { play: Play }) => {
 			<PrizeCell amount={prizeAmount} isJackpot={isJackpot} />
 			<TableData />
 			<TableData>
-				<Timestamp deployHash={deployHash} timestamp={timestamp} />
+				<DeployTimestamp
+					deployHash={deployHash}
+					timestamp={timestamp}
+				/>
 			</TableData>
 		</TableRow>
 	);

@@ -1,8 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-	WS_CLOSE_CODE,
-	WS_CONNECTION_TIMEOUT,
-} from '../../utils/constants';
 
 interface WebSocketMessage {
 	data: string;
@@ -58,15 +54,5 @@ export const useWebSockets = ({
 		}
 	}, [session]);
 
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			close();
-		}, WS_CONNECTION_TIMEOUT);
-
-		return () => {
-			clearTimeout(timeout);
-		};
-	}, [session]);
-
-	return { connect, close };
+	return { connect, close, readyState: session?.readyState };
 };

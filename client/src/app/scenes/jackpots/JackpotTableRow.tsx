@@ -6,7 +6,7 @@ import {
 	PrizeCell,
 } from '../../components';
 import { Round } from '../../types';
-import Timestamp from '../../components/timestamp/timestamp';
+import DeployTimestamp from '../../components/timestamp/timestamp';
 
 const JackpotTableRow = ({ round }: { round: Round }) => {
 	const {
@@ -32,7 +32,10 @@ const JackpotTableRow = ({ round }: { round: Round }) => {
 			<PrizeCell amount={jackpotAmount} isJackpot />
 			<TableData />
 			<TableData>
-				<Timestamp deployHash={deployHash} timestamp={endedAt} />
+				<DeployTimestamp
+					deployHash={deployHash}
+					timestamp={endedAt}
+				/>
 			</TableData>
 		</TableRow>
 	);
