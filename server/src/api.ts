@@ -49,20 +49,20 @@ async function main() {
     },
     on: {
       proxyReqWs: (proxyReq, req) => {
-        console.log('WebSocket connection request', req.url);
+        console.log('WebSocketProxy: WebSocket connection request', req.url);
         proxyReq.removeHeader('Origin');
       },
       proxyReq: (proxyReq, req) => {
-        console.log('WebSocket connection request', req.url)
+        console.log('WebSocketProxy: Connection request', req.url)
       },
       open: (proxySocket) => {
-        console.log('WebSocket connection opened');
+        console.log('WebSocketProxy: Connection opened');
       },
       close: (res, socket, head) => {
-        console.log('WebSocket connection closed');
+        console.log('WebSocketProxy: Connection closed');
       },
       error(err, req, res) {
-        console.log('WebSocket connection error', req.url, err);
+        console.log('WebSocketProxy: Connection error', req.url, err);
       }
     }
   });
