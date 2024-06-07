@@ -48,7 +48,7 @@ async function main() {
       authorization: config.csprCloudAccessKey,
     },
     on: {
-      proxyReqWs: (proxyReq) => {
+      proxyReqWs: (proxyReq, req) => {
         console.log('WebSocket connection request', req.url);
         proxyReq.removeHeader('Origin');
       },
@@ -62,7 +62,7 @@ async function main() {
         console.log('WebSocket connection closed');
       },
       error(err, req, res) {
-        console.log('WebSocket connection error', err);
+        console.log('WebSocket connection error', req.url, err);
       }
     }
   });
