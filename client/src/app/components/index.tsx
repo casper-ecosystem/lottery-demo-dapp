@@ -23,6 +23,7 @@ export * from './page-header/page-header';
 export * from './account-info-cell/account-info-cell';
 export * from './prize-cell/prize-cell';
 export * from './history-link/history-link';
+export * from './timestamp/timestamp';
 export * from './icon/icon';
 export * from './no-data-tile/no-data-tile';
 export * from './error-tile/error-tile';

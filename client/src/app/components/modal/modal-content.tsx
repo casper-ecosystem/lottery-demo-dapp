@@ -150,7 +150,7 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 						Buy a ticket to get a chance to win the jackpot!
 					</BodyText>
 					<Badge
-						label={'1 shot = 5 CSPR'}
+						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 						variation={BadgeVariation.light}
 					/>
 				</FlexColumn>

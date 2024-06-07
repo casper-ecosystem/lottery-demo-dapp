@@ -45,7 +45,7 @@ const useManagePlay = (): ManagePlayData => {
 		null
 	);
 
-	const { addPlay } = usePlaysData();
+	const { reloadPlaysData } = usePlaysData();
 
 	const errorState = {
 		data: null,
@@ -84,7 +84,10 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	};
 
-	const { connect: joinToDeploysWsConnection } = useWebSockets({
+	const {
+		connect: joinToDeploysWsConnection,
+		close: closeDeploysWsConnection,
+	} = useWebSockets({
 		onMessage: onReceiveWsMessage,
 		onClose: onCloseWsConnection,
 	});
@@ -103,9 +106,13 @@ const useManagePlay = (): ManagePlayData => {
 			parsedActivePublicKey
 		);
 
-		await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
-		setPlayResultState({ ...playResultState, loading: true });
-		joinToDeploysWsConnection(activeAccountWithBalance.public_key);
+		try {
+			await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
+			setPlayResultState({ ...playResultState, loading: true });
+			joinToDeploysWsConnection(activeAccountWithBalance.public_key);
+		} catch (e) {
+			setPlayResultState(errorState);
+		}
 	};
 
 	const handleDeployProcessed = async (deploy: Deploy) => {
@@ -126,7 +133,7 @@ const useManagePlay = (): ManagePlayData => {
 						loading: false,
 						error: false,
 					});
-					addPlay(play);
+					reloadPlaysData();
 				} else {
 					throw new Error('A new play was not created');
 				}
@@ -141,6 +148,7 @@ const useManagePlay = (): ManagePlayData => {
 				loading: false,
 			});
 		}
+		closeDeploysWsConnection();
 	};
 
 	const connectWallet = async () => {

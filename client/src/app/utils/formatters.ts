@@ -1,4 +1,6 @@
 import { createIntl, createIntlCache } from '@formatjs/intl';
+import i18next from 'i18next';
+
 const cache = createIntlCache();
 const intl = createIntl(
 	{
@@ -68,10 +70,20 @@ export const formatHash = (
 		: `${truncatedHash}`;
 };
 
-export const formatIsoTimestamp = (value: string): string => {
-	const [date, time] = value.split('T');
+export const formatTimestamp = (value: string): string => {
+	const date = new Date(value);
+	const locale = i18next.language || 'en';
+	const nativeIntl = new Intl.DateTimeFormat(locale, {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+		second: 'numeric',
+		timeZoneName: 'short',
+	});
 
-	return `${date} ${time.split('.')[0]}`;
+	return `${nativeIntl.format(date)}`;
 };
 
 const isJSON = (str: string) => {

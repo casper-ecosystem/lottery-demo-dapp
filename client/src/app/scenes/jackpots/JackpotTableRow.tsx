@@ -5,11 +5,17 @@ import {
 	LinkVariation,
 	PrizeCell,
 } from '../../components';
-import { formatIsoTimestamp } from '../../utils/formatters';
 import { Round } from '../../types';
+import Timestamp from '../../components/timestamp/timestamp';
 
 const JackpotTableRow = ({ round }: { round: Round }) => {
-	const { roundId, winnerPublicKey, jackpotAmount, endedAt } = round;
+	const {
+		roundId,
+		winnerPublicKey,
+		jackpotAmount,
+		endedAt,
+		deployHash,
+	} = round;
 
 	const roundPath = `/jackpot/${roundId}`;
 
@@ -26,7 +32,7 @@ const JackpotTableRow = ({ round }: { round: Round }) => {
 			<PrizeCell amount={jackpotAmount} isJackpot />
 			<TableData />
 			<TableData>
-				<BodyText size={3}>{formatIsoTimestamp(endedAt)}</BodyText>
+				<Timestamp deployHash={deployHash} timestamp={endedAt} />
 			</TableData>
 		</TableRow>
 	);

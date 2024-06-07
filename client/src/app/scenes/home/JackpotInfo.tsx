@@ -12,9 +12,8 @@ import {
 import Badge, { BadgePadding } from '../../components/badge/badge';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 import ShineImg from '../../../assets/images/shine.png';
-import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import { motesToCSPR } from '../../utils/currency';
-import { Round } from '../../types';
+import { usePlaysData } from '../../services/providers/PlaysContext';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
@@ -98,15 +97,16 @@ interface JackpotInfoProps {
 }
 
 const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
-	const { data: latestRounds } = useGetTableData<Round>({
-		url: '/rounds/latest',
-	});
+	const { plays, total } = usePlaysData();
+
+	const jackpotAmount =
+		plays && plays.length > 0 ? plays[0].jackpotAmount : '0';
 
 	const handlePlay = () => {
 		setModalOpen(true);
 	};
 
-	const jackpotSum = motesToCSPR(latestRounds?.jackpotAmount || '0');
+	const jackpotSum = motesToCSPR(jackpotAmount);
 
 	return (
 		<HomeHeaderContainer>
@@ -120,7 +120,9 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						prizes – take part in the lottery now and let luck be on
 						your side!
 					</IntroText>
-					<Badge label={'1 shot = 5 CSPR'} />
+					<Badge
+						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
+					/>
 					<StyledButton
 						height={'36'}
 						color={'primaryRed'}
@@ -137,7 +139,7 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						<JackpotText>CSPR</JackpotText>
 					</FlexRow>
 					<Badge
-						label={`Current Plays: ${latestRounds?.playsNum || 0}`}
+						label={`Current Plays: ${total || 0}`}
 						padding={BadgePadding.big}
 					/>
 				</RightContainer>

@@ -18,9 +18,9 @@ const PlaysDataHeaders = () => (
 			</BodyText>
 		</StyledTableDataHeader>
 
-		<StyledTableDataHeader fixedWidthRem={14} />
+		<StyledTableDataHeader fixedWidthRem={12} />
 
-		<StyledTableDataHeader fixedWidthRem={15}>
+		<StyledTableDataHeader fixedWidthRem={20}>
 			<BodyText size={1} scale={'xs'}>
 				Time
 			</BodyText>

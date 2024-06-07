@@ -5,4 +5,5 @@ export interface Round {
 	roundId: string;
 	winnerAccountHash: string;
 	winnerPublicKey: string;
+	deployHash?: string;
 }

@@ -61,17 +61,24 @@ export interface TableProps {
 	renderData?: () => ReactNode;
 	renderFooterButton?: () => ReactNode;
 	itemCount?: number;
+	itemsLabel?: string;
 }
 
 export const Table = (props: TableProps) => {
-	const { renderData, renderHeaders, renderFooterButton, itemCount } =
-		props;
+	const {
+		renderData,
+		renderHeaders,
+		renderFooterButton,
+		itemCount,
+		itemsLabel = 'play',
+	} = props;
 
 	return (
 		<>
 			<PaginationContainer>
 				<BodyText size={3} variation='darkGray'>
-					{formatNumber(itemCount || 0)} plays
+					{formatNumber(itemCount || 0)} {itemsLabel}
+					{(itemCount || 0) > 1 ? 's' : ''}
 				</BodyText>
 			</PaginationContainer>
 			<TableContainer>

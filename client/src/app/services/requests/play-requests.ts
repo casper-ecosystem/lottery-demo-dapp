@@ -72,10 +72,16 @@ export const signAndSendDeploy = async (
 	publicKey: CLPublicKey
 ) => {
 	const deployJson = DeployUtil.deployToJson(deploy);
-	await window.csprclick.send(
+	const response = await window.csprclick.send(
 		JSON.stringify(deployJson.deploy),
 		publicKey.toHex().toLowerCase()
 	);
+
+	if (response?.cancelled) {
+		throw new Error('A deploy was not signed');
+	}
+
+	return response;
 };
 
 export const getLastPlayByAccountHash = async (
@@ -84,7 +90,7 @@ export const getLastPlayByAccountHash = async (
 	const response = await axios.get(
 		`${config.lottery_api_url}/players/${accountHash}/plays`,
 		{
-			params: { limit: 1 },
+			params: { pageSize: 1 },
 		}
 	);
 
