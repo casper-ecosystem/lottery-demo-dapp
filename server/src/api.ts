@@ -43,7 +43,7 @@ async function main() {
     target: config.csprCloudStreamingUrl,
     ws: true,
     changeOrigin: true,
-    logLevel: 'debug',
+    logger: console,
     headers: {
       authorization: config.csprCloudAccessKey,
     },
@@ -52,7 +52,7 @@ async function main() {
         console.log('WebSocket connection requestWS', res);
         proxyReq.removeHeader('Origin');
       },
-      proxyReq: (proxyReq, req, res) => {
+      proxyReq: (proxyReq, req) => {
         console.log('WebSocket connection request', req.url)
       },
       open: (proxySocket) => {
