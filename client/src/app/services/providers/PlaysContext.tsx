@@ -16,7 +16,7 @@ type PlayContextType = {
 	total: number;
 	loadAllData: () => void;
 	resetLimit: () => void;
-	addPlay: (play: Play) => void;
+	reloadPlaysData: () => void;
 };
 
 const PlaysContext = createContext<PlayContextType | undefined>(
@@ -68,17 +68,13 @@ export const PlaysProvider: React.FC<PlaysProviderProps> = ({
 		}
 	}, [tableData.data]);
 
-	const addPlay = (play: Play) => {
-		setPlaysState({
-			...playsState,
-			plays: [play, ...playsState.plays],
-			total: playsState.total + 1,
-		});
+	const reloadPlaysData = () => {
+		tableData.reloadData();
 	};
 
 	return (
 		<PlaysContext.Provider
-			value={{ ...tableData, ...playsState, addPlay }}
+			value={{ ...tableData, ...playsState, reloadPlaysData }}
 		>
 			{children}
 		</PlaysContext.Provider>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
 import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
 
@@ -11,6 +11,7 @@ interface InitialState {
 
 interface GetTableDataProps {
 	url: string | null;
+	params?: Record<string, string>;
 }
 
 interface GetTableDataType<T> {
@@ -20,12 +21,15 @@ interface GetTableDataType<T> {
 	total: number;
 	loadAllData: () => void;
 	resetLimit: () => void;
+	reloadData: () => void;
 }
 
 export const useGetTableData = <T>({
 	url,
+	params,
 }: GetTableDataProps): GetTableDataType<T> => {
-	const [limit, setLimit] = useState(10);
+	const [pageSize, setPageSize] = useState(10);
+	const [requestCounter, setRequestCounter] = useState(0);
 	const [state, setState] = useState<InitialState>({
 		data: null,
 		loading: true,
@@ -33,10 +37,14 @@ export const useGetTableData = <T>({
 		total: 0,
 	});
 
+	const reloadData = useCallback(() => {
+		setRequestCounter(state => state + 1);
+	}, []);
+
 	const fetchData = async () => {
 		axios
 			.get(`${config.lottery_api_url}${url}`, {
-				params: { pageSize: limit },
+				params: { pageSize, ...params },
 			})
 			.then(response => {
 				setState({
@@ -60,19 +68,20 @@ export const useGetTableData = <T>({
 		if (url) {
 			fetchData();
 		}
-	}, [limit, url]);
+	}, [pageSize, url, requestCounter]);
 
 	const loadAllData = () => {
-		setLimit(1000);
+		setPageSize(1000);
 	};
 
 	const resetLimit = () => {
-		setLimit(VISIBLE_TABLE_DATA_LENGTH);
+		setPageSize(VISIBLE_TABLE_DATA_LENGTH);
 	};
 
 	return {
 		...state,
 		loadAllData,
 		resetLimit,
+		reloadData,
 	};
 };

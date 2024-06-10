@@ -3,7 +3,7 @@ import { StyledTableDataHeader } from '../../components';
 
 const JackpotsDataHeaders = () => (
 	<TableRow>
-		<StyledTableDataHeader fixedWidthRem={19.3}>
+		<StyledTableDataHeader fixedWidthRem={17}>
 			<BodyText size={1} scale={'xs'}>
 				Round
 			</BodyText>
@@ -17,14 +17,14 @@ const JackpotsDataHeaders = () => (
 
 		<StyledTableDataHeader align={'right'} fixedWidthRem={16.4}>
 			<BodyText size={1} scale={'xs'}>
-				Prize
+				Lottery pool
 			</BodyText>
 		</StyledTableDataHeader>
 		<StyledTableDataHeader />
 
-		<StyledTableDataHeader fixedWidthRem={16}>
+		<StyledTableDataHeader fixedWidthRem={18}>
 			<BodyText size={1} scale={'xs'}>
-				Time
+				Ended
 			</BodyText>
 		</StyledTableDataHeader>
 	</TableRow>

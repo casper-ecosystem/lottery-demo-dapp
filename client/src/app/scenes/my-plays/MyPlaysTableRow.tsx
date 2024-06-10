@@ -1,10 +1,17 @@
 import { BodyText, TableData, TableRow } from '../../components';
 import { HistoryLink, PrizeCell } from '../../components';
-import { formatIsoTimestamp } from '../../utils/formatters';
 import { Play } from '../../types';
+import DeployTimestamp from '../../components/timestamp/timestamp';
 
 const MyPlaysTableRow = ({ play }: { play: Play }) => {
-	const { playId, prizeAmount, roundId, timestamp, isJackpot } = play;
+	const {
+		playId,
+		prizeAmount,
+		roundId,
+		timestamp,
+		isJackpot,
+		deployHash,
+	} = play;
 
 	const roundPath = `/jackpot/${roundId}`;
 
@@ -18,7 +25,10 @@ const MyPlaysTableRow = ({ play }: { play: Play }) => {
 			<PrizeCell amount={prizeAmount} isJackpot={isJackpot} />
 			<TableData />
 			<TableData>
-				<BodyText size={3}>{formatIsoTimestamp(timestamp)}</BodyText>
+				<DeployTimestamp
+					deployHash={deployHash}
+					timestamp={timestamp}
+				/>
 			</TableData>
 		</TableRow>
 	);

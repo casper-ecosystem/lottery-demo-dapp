@@ -78,7 +78,13 @@ const ModalState = (props: ModalStateProps) => {
 		activeAccountWithBalance,
 		connectWallet,
 		initiatePlay,
+		closeDeploysWsConnection,
 	} = useManagePlay();
+
+	const handleCloseModal = () => {
+		closeDeploysWsConnection();
+		closeModal();
+	};
 
 	const refreshPage = () => window.location.reload();
 	const goToFaucet = () => {
@@ -98,7 +104,7 @@ const ModalState = (props: ModalStateProps) => {
 		return (
 			<NotEnoughCsprContent
 				handleButtonAction={goToFaucet}
-				closeModal={closeModal}
+				closeModal={handleCloseModal}
 			/>
 		);
 	}
@@ -107,20 +113,20 @@ const ModalState = (props: ModalStateProps) => {
 		return (
 			<SomethingWentWrongContent
 				handleButtonAction={refreshPage}
-				closeModal={closeModal}
+				closeModal={handleCloseModal}
 			/>
 		);
 	}
 
 	if (loadingPlayResult) {
-		return <LoadingContent closeModal={closeModal} />;
+		return <LoadingContent closeModal={handleCloseModal} />;
 	}
 
 	if (playResult !== null) {
 		return (
 			<PlayResultState
 				playResult={playResult}
-				closeModal={closeModal}
+				closeModal={handleCloseModal}
 				initiatePlay={initiatePlay}
 			/>
 		);
@@ -130,7 +136,7 @@ const ModalState = (props: ModalStateProps) => {
 		return (
 			<BuyTicketContent
 				handleButtonAction={initiatePlay}
-				closeModal={closeModal}
+				closeModal={handleCloseModal}
 			/>
 		);
 	}
@@ -138,7 +144,7 @@ const ModalState = (props: ModalStateProps) => {
 	return (
 		<WelcomeModalContent
 			handleButtonAction={connectWallet}
-			closeModal={closeModal}
+			closeModal={handleCloseModal}
 		/>
 	);
 };

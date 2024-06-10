@@ -1,7 +1,7 @@
-import { BodyText, TableData, TableRow } from '../../components';
+import { TableData, TableRow } from '../../components';
 import { AccountInfoCell, PrizeCell } from '../../components';
-import { formatIsoTimestamp } from '../../utils/formatters';
 import { Play } from '../../types';
+import DeployTimestamp from '../../components/timestamp/timestamp';
 
 const PlaysTableRow = ({ play }: { play: Play }) => {
 	return (
@@ -16,9 +16,10 @@ const PlaysTableRow = ({ play }: { play: Play }) => {
 			/>
 			<TableData />
 			<TableData>
-				<BodyText size={3}>
-					{formatIsoTimestamp(play.timestamp)}
-				</BodyText>
+				<DeployTimestamp
+					deployHash={play.deployHash}
+					timestamp={play.timestamp}
+				/>
 			</TableData>
 		</TableRow>
 	);

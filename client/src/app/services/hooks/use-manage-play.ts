@@ -21,6 +21,7 @@ interface ManagePlayData {
 	activeAccountWithBalance: AccountType | null;
 	connectWallet: () => void;
 	initiatePlay: () => void;
+	closeDeploysWsConnection: () => void;
 }
 
 interface ManagePlayState {
@@ -45,7 +46,7 @@ const useManagePlay = (): ManagePlayData => {
 		null
 	);
 
-	const { addPlay } = usePlaysData();
+	const { reloadPlaysData } = usePlaysData();
 
 	const errorState = {
 		data: null,
@@ -84,10 +85,22 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	};
 
-	const { connect: joinToDeploysWsConnection } = useWebSockets({
+	const {
+		connect: joinToDeploysWsConnection,
+		close: closeDeploysWsConnection,
+		readyState,
+	} = useWebSockets({
 		onMessage: onReceiveWsMessage,
 		onClose: onCloseWsConnection,
 	});
+
+	const handleOpenConnection = () => {
+		if (readyState === 1) {
+			setExecutedDeploy(null);
+		} else {
+			joinToDeploysWsConnection(activeAccountWithBalance!.public_key);
+		}
+	};
 
 	const initiatePlay = async () => {
 		if (!activeAccountWithBalance?.public_key) {
@@ -103,9 +116,13 @@ const useManagePlay = (): ManagePlayData => {
 			parsedActivePublicKey
 		);
 
-		await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
-		setPlayResultState({ ...playResultState, loading: true });
-		joinToDeploysWsConnection(activeAccountWithBalance.public_key);
+		try {
+			await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
+			setPlayResultState({ ...playResultState, loading: true });
+			handleOpenConnection();
+		} catch (e) {
+			setPlayResultState(errorState);
+		}
 	};
 
 	const handleDeployProcessed = async (deploy: Deploy) => {
@@ -126,7 +143,7 @@ const useManagePlay = (): ManagePlayData => {
 						loading: false,
 						error: false,
 					});
-					addPlay(play);
+					reloadPlaysData();
 				} else {
 					throw new Error('A new play was not created');
 				}
@@ -152,6 +169,7 @@ const useManagePlay = (): ManagePlayData => {
 		activeAccountWithBalance,
 		connectWallet,
 		initiatePlay,
+		closeDeploysWsConnection,
 	};
 };
 

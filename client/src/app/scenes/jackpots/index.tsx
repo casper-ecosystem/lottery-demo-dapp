@@ -22,6 +22,9 @@ const JackpotsTable = () => {
 		resetLimit,
 	} = useGetTableData<Round[]>({
 		url: '/rounds',
+		params: {
+			is_finished: 'true',
+		},
 	});
 
 	if (loading) {
@@ -52,6 +55,7 @@ const JackpotsTable = () => {
 					handleReset={resetLimit}
 				/>
 			)}
+			itemsLabel={'round'}
 		/>
 	);
 };

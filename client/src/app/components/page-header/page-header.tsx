@@ -7,9 +7,9 @@ import {
 	SvgIcon,
 	NavigationMenu,
 } from '../../components';
-import Logo from '../../../assets/logos/lottery-logo.svg';
 import HamburgerIcon from '../../../assets/icons/hamburger-menu.svg';
 import { useMatchMedia } from '../../utils/match-media';
+import LotteryLogo from './lottery-logo';
 
 const PageHeaderWrapper = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
@@ -44,7 +44,7 @@ export const PageHeader = () => {
 	const onMobile = (
 		<FlexColumn justify={'center'}>
 			<NavBarContainer>
-				<SvgIcon src={Logo} width={162} height={72} />
+				<LotteryLogo />
 				<HamburgerButton
 					src={HamburgerIcon}
 					size={16}
@@ -60,7 +60,7 @@ export const PageHeader = () => {
 	const onAbove = (
 		<FlexRow justify={'center'}>
 			<NavBarContainer>
-				<SvgIcon src={Logo} width={162} height={72} />
+				<LotteryLogo />
 				<FlexRow align={'end'}>
 					<NavigationMenu />
 				</FlexRow>

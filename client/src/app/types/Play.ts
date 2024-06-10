@@ -5,6 +5,7 @@ export interface Play {
 	playerAccountHash: string;
 	playerPublicKey: string;
 	prizeAmount: string;
+	jackpotAmount: string;
 	roundId: string;
 	timestamp: string;
 }
