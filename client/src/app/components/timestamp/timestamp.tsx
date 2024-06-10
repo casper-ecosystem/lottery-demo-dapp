@@ -11,7 +11,7 @@ const DeployTimestamp = ({
 	deployHash,
 	timestamp,
 }: DeployTimestampProps) => {
-	const deployPath = `${config.cspr_live_url}deploy/${
+	const deployPath = `${config.cspr_live_url}/deploy/${
 		deployHash || ''
 	}`;
 	return (
