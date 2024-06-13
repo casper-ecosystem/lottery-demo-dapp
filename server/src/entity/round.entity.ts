@@ -17,6 +17,9 @@ export class Round {
   @ViewColumn({ name: 'is_finished' })
   isFinished: boolean;
 
+  @ViewColumn({ name: 'last_play_deploy_hash' })
+  last_play_deploy_hash: string;
+
   winnerPublicKey?: string;
 
   @ViewColumn({ name: 'ended_at' })
