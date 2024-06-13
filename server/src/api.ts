@@ -114,19 +114,23 @@ async function main() {
     res.json({ data: plays, total });
   });
 
-  app.get('/rounds/latest', async (req: Request, res: Response) => {
-    const round = await roundsRepository.getLatest();
+  app.get('/rounds/latest', async (req: Request<never, never, never, { is_finished: string }>, res: Response) => {
+    const isFinished = req.query.is_finished === 'true';
+
+    const round = await roundsRepository.getLatest({ isFinished });
 
     await csprCloudClient.withPublicKeys([round]);
 
     res.json({ data: round });
   });
 
-  app.get('/rounds', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
+  app.get('/rounds', pagination(), async (req: Request<never, never, never, PaginationParams & { is_finished: string }>, res: Response) => {
+    const isFinished = req.query.is_finished === 'true';
+  
     const [rounds, total] = await roundsRepository.getPaginatedRounds({
       limit: req.query.limit,
       offset: req.query.offset,
-    });
+    }, { isFinished });
 
     await csprCloudClient.withPublicKeys(rounds);
 

@@ -10,11 +10,13 @@ export class CreateRoundsView1713372155154 implements MigrationInterface {
                 p.round_id, 
                 w.plays_num, 
                 p.jackpot_amount, 
-                p.player_account_hash as winner_account_hash, 
+                p.player_account_hash as winner_account_hash,
                 p.timestamp as ended_at 
             from plays p
             join (
-                select max(play_id) as play_id, count(*) as plays_num
+                select max(play_id) as play_id,
+                max(is_jackpot) as is_finished,
+                count(*) as plays_num
                 from plays 
                 group by round_id
             ) w on w.play_id = p.play_id;
