@@ -12,7 +12,7 @@ export class CreateRoundsView1713372155154 implements MigrationInterface {
                 p.jackpot_amount,
                 w.is_finished,
                 p.player_account_hash as winner_account_hash,
-                last_play.deploy_hash as last_play_deploy_hash,
+                p.deploy_hash as last_play_deploy_hash,
                 p.timestamp as ended_at 
             from plays p
             join (
@@ -21,8 +21,7 @@ export class CreateRoundsView1713372155154 implements MigrationInterface {
                 count(*) as plays_num
                 from plays 
                 group by round_id
-            ) w on w.play_id = p.play_id
-            join plays last_play on last_play.play_id = p.play_id;
+            ) w on w.play_id = p.play_id;
         `);
   }
 
