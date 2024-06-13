@@ -9,7 +9,8 @@ export class CreateRoundsView1713372155154 implements MigrationInterface {
             select 
                 p.round_id, 
                 w.plays_num, 
-                p.jackpot_amount, 
+                p.jackpot_amount,
+                w.is_finished,
                 p.player_account_hash as winner_account_hash,
                 last_play.deploy_hash as last_play_deploy_hash,
                 p.timestamp as ended_at 
