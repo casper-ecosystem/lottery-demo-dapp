@@ -73,7 +73,7 @@ const useManagePlay = (): ManagePlayData => {
 	}, [executedDeploy]);
 
 	const onReceiveWsMessage = (message: { data: string }) => {
-		if (isDeploy(message.data)) {
+		if (message.data) {
 			const deploy = JSON.parse(message.data) as DeployMessage;
 			setExecutedDeploy(deploy.data);
 		}
@@ -82,6 +82,8 @@ const useManagePlay = (): ManagePlayData => {
 	const onCloseWsConnection = () => {
 		if (!executedDeploy) {
 			setPlayResultState(errorState);
+		} else {
+			setExecutedDeploy(null);
 		}
 	};
 
@@ -112,13 +114,17 @@ const useManagePlay = (): ManagePlayData => {
 			activeAccountWithBalance.public_key
 		);
 
-		const preparedDeploy = await preparePlayDeploy(
-			parsedActivePublicKey
-		);
-
 		try {
+			const preparedDeploy = await preparePlayDeploy(
+				parsedActivePublicKey
+			);
+
 			await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
-			setPlayResultState({ ...playResultState, loading: true });
+			setPlayResultState({
+				...playResultState,
+				loading: true,
+				error: false,
+			});
 			handleOpenConnection();
 		} catch (e) {
 			setPlayResultState(errorState);
