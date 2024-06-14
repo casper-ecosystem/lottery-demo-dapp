@@ -53,7 +53,6 @@ const JackpotRoundTable = ({ id }: { id: string }) => {
 					handleReset={resetLimit}
 				/>
 			)}
-			itemsLabel={'round'}
 		/>
 	);
 };
