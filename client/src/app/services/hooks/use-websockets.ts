@@ -10,7 +10,7 @@ interface UseWebSocketsProps {
 	onMessage: (message: WebSocketMessage) => void;
 	onClose: () => void;
 }
-const disconnectTimeout = 60000;
+const DISCONNECT_TIMEOUT = 60000;
 const logOpenWsConnection = () => console.log('open ws connection');
 
 export const useWebSockets = ({
@@ -30,7 +30,7 @@ export const useWebSockets = ({
 				'No deploy received for 1 min, closing connection...'
 			);
 			close();
-		}, disconnectTimeout);
+		}, DISCONNECT_TIMEOUT);
 	}
 
 	const addEventHandler = (
