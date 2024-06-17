@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { isDeploy } from '../../utils/formatters';
 
 interface WebSocketMessage {
 	data: string;
@@ -9,7 +10,7 @@ interface UseWebSocketsProps {
 	onMessage: (message: WebSocketMessage) => void;
 	onClose: () => void;
 }
-
+const DISCONNECT_TIMEOUT = 60000;
 const logOpenWsConnection = () => console.log('open ws connection');
 
 export const useWebSockets = ({
@@ -20,6 +21,17 @@ export const useWebSockets = ({
 	const [session, setSession] = useState(
 		null as unknown as WebSocket
 	);
+
+	let timeoutId;
+	function resetMessageTimeout() {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(function () {
+			console.log(
+				'No deploy received for 1 min, closing connection...'
+			);
+			close();
+		}, DISCONNECT_TIMEOUT);
+	}
 
 	const addEventHandler = (
 		type: string,
@@ -32,14 +44,35 @@ export const useWebSockets = ({
 		};
 	};
 
-	useEffect(() => addEventHandler('open', onOpen), [session, onOpen]);
 	useEffect(
-		() => addEventHandler('message', onMessage),
+		() =>
+			addEventHandler('open', () => {
+				onOpen && onOpen();
+				resetMessageTimeout();
+			}),
+		[session, onOpen]
+	);
+	useEffect(
+		() =>
+			addEventHandler('message', event => {
+				if (isDeploy(event.data)) {
+					onMessage(event);
+					resetMessageTimeout();
+				}
+			}),
 		[session, onMessage]
 	);
 	useEffect(
 		() => addEventHandler('close', onClose),
 		[session, onClose]
+	);
+
+	useEffect(
+		() =>
+			addEventHandler('error', () => {
+				close();
+			}),
+		[session]
 	);
 
 	const connect = useCallback((publicKey: string) => {
@@ -48,11 +81,12 @@ export const useWebSockets = ({
 		setSession(ws);
 	}, []);
 
-	const close = useCallback(() => {
+	const close = () => {
 		if (session?.readyState === session?.OPEN) {
 			session?.close();
+			setSession(null as unknown as WebSocket);
 		}
-	}, [session]);
+	};
 
 	return { connect, close, readyState: session?.readyState };
 };

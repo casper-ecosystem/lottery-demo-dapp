@@ -14,7 +14,7 @@ const JackpotTableRow = ({ round }: { round: Round }) => {
 		winnerPublicKey,
 		jackpotAmount,
 		endedAt,
-		deployHash,
+		lastPlayDeployHash,
 	} = round;
 
 	const roundPath = `/jackpot/${roundId}`;
@@ -33,7 +33,7 @@ const JackpotTableRow = ({ round }: { round: Round }) => {
 			<TableData />
 			<TableData>
 				<DeployTimestamp
-					deployHash={deployHash}
+					deployHash={lastPlayDeployHash}
 					timestamp={endedAt}
 				/>
 			</TableData>
