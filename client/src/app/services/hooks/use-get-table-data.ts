@@ -71,7 +71,7 @@ export const useGetTableData = <T>({
 	}, [pageSize, url, requestCounter]);
 
 	const loadAllData = () => {
-		setPageSize(1000);
+		setPageSize(-1);
 	};
 
 	const resetLimit = () => {
