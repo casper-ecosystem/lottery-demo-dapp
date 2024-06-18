@@ -10,12 +10,15 @@ export class RoundRepository {
 
   async getPaginatedRounds(pagination: { limit: number; offset: number }, params: { isFinished: boolean } = { isFinished: false }): Promise<[Round[], number]> {
     const options: FindManyOptions<Round> = {
-      take: pagination.limit,
-      skip: pagination.offset,
       order: {
         roundId: 'DESC',
       },
     };
+
+    if (pagination.limit !== -1) {
+      options.take = pagination.limit;
+      options.skip = pagination.offset;
+    }
 
     if (params.isFinished) {
       options.where = { isFinished: true };

@@ -49,9 +49,11 @@ export class PlayRepository {
         const subQuery = qb.subQuery().select('max(round_id)').from(Play, 'maxp').getQuery();
         return 'round_id = ' + subQuery;
       })
-      .limit(pagination.limit)
-      .offset(pagination.offset)
       .orderBy('timestamp', 'DESC');
+
+    if (pagination.limit !== -1) {
+      queryBuilder.limit(pagination.limit).offset(pagination.offset);
+    }
 
     return queryBuilder.getManyAndCount();
   }
