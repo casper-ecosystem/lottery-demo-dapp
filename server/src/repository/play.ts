@@ -17,12 +17,15 @@ export class PlayRepository {
     pagination: { limit: number; offset: number },
   ): Promise<[Play[], number]> {
     const options: FindManyOptions<Play> = {
-      take: pagination.limit,
-      skip: pagination.offset,
       order: {
         timestamp: 'DESC',
       },
     };
+
+    if (pagination.limit !== -1) {
+      options.take = pagination.limit;
+      options.skip = pagination.offset;
+    }
 
     if (filters.playerAccountHash) {
       options.where = {

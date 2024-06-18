@@ -17,6 +17,10 @@ export function pagination(
     const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 10;
     req.query.limit = pageSize >= 0 ? pageSize : 10;
 
+    if (pageSize === -1) {
+      req.query.limit = -1;
+    }
+
     if (req.query.limit > maxLimit) {
       req.query.limit = maxLimit;
     }
