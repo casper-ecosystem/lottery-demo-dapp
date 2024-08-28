@@ -137,8 +137,18 @@ async function main() {
     res.json({ data: rounds, total });
   });
 
-  app.get('/proxy-wasm', async (req: Request, res: Response) => {
+  app.get('/proxy-wasm', async (_: Request, res: Response) => {
     fs.createReadStream(path.resolve(__dirname, `./resources/proxy_caller.wasm`)).pipe(res);
+  });
+
+  app.get('/health', async (_: Request, res: Response) => {
+    try {
+      await AppDataSource.query('SELECT 1');
+
+      return res.status(200).json({ status: 'UP' });
+    } catch (error) {
+      return res.status(500).json({ status: 'DOWN', error: error.message });
+    }
   });
 
   server.listen(config.httpPort, () => console.log(`Server running on http://localhost:${config.httpPort}`));
