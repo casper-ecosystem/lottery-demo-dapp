@@ -66,7 +66,7 @@ async function main() {
       }
     }
   });
-  app.use('/deploys', csprCloudStreamingProxy);
+  app.get('/deploys', csprCloudStreamingProxy);
 
   const csprCloudAPIProxy = createProxyMiddleware({
     target: config.csprCloudApiUrl,
