@@ -1,44 +1,52 @@
 # Lottery Demo dApp Smart Contract
 
-This smart contract allows users to participate in a demo lottery on the Casper blockchain. Users can purchase tickets and have a chance to win the prize pool, which is accumulated from ticket purchases or a consolation prize.
+This smart contract allows users to participate in a demo lottery on the Casper blockchain. Users can purchase tickets to get a chance to win , which come from the prize pool accumulated from the ticket proceeds. Users can win either a jackpot (the whole prize pool) or a small consolation prize. When somebody wins the jackpot, a new lottery round starts, making the game indefinite.
 
-## Functionalities
+This contract is written using the [Odra](https://odra.dev/docs) smart contract framework for the [Casper Network](https://casper.network). Odra is Rust-based and encourages rapid development and clean, pragmatic design.
 
-* Configure settings like ticket price, maximum consolation prize, prize probabilities, and fees.
-* Allow users to participate in the lottery.
-* Determine lottery winners based on a pseudo-random number generation mechanism (for demo purposes only).
-* Distribute jackpot and consolation prizes to winners.
-* Provide owner with administrative functionalities topping up the prize pool, and configuring settings.
+## Entry Points (Contract Functions)
 
-## Entry Points (Public Functions)
+### `configure`
 
-### Admin
-These functionalities can only be called by the contract owner (designated during deployment). They are used for configuration and maintenance purposes.
+Configures the essential lottery game settings. This entry point can only be called by the contract owner (designated during deployment).
 
-  * `configure(max_consolation_prize: Option<U512>, lottery_fee: Option<U512>, jackpot_probability: Option<u8>, consolation_prize_probability: Option<u8>, ticket_price: Option<U512>)`: Configures various lottery settings.
-  * `top_up_prize_pool()`: Allows the owner to add funds to the prize pool.
-  * `transfer_fees_to_account(amount: U512, reciver: Address)`: Transfers the requested amount to receiver`s address. Reverts if the requested amount bigger than collected fees.
+| Arguments                       | Description                               |
+|---------------------------------|-------------------------------------------|
+| `ticket_price`                  | Ticket price in CSPR                      |
+| `lottery_fee`                   | Lottery fee in percents                   |
+| `jackpot_probability`           | Jackpot probability in percents           |
+| `max_consolation_prize`         | Max consolation prize amount in CSPR      |
+| `consolation_prize_probability` | Consolation prize probability in percents |
 
-### User
+### `top_up_prize_pool`
 
-  * `play_lottery()`: Participates in the current lottery round by purchasing a ticket (requires sending the ticket price in attached value). This is a payable entry point that needs to be called using `proxy_caller`.
+Adds funds to the prize pool. This entry point can only be called by the contract owner (designated during deployment).
 
-## Queries (Public View Functions)
+| Arguments                 | Description                                     |
+|---------------------------|-------------------------------------------------|
+| `amount`                  | Amount in motes (1,000,000,000 motes is 1 CSPR) |
 
-* `ticket_price()`: Returns the current ticket price.
-* `prize_pool()`: Returns the current prize pool balance.
+### `transfer_fees_to_account`
 
-## Interaction Example
+Transfers the requested amount from the fee purse to receiver`s account. Reverts if the requested amount bigger than collected fees. This entry point can only be called by the contract owner (designated during deployment).
 
-1. The contract owner deploys the contract and creates the first lottery round.
-2. Users can then check the ticket price using `ticket_price()`.
-3. To participate, a user calls `play_lottery()` while attaching the required amount (ticket price) in Casper tokens (CSPR).
-4. **Note:** Whether the user is a winner is immediately determined based on a pseudo-random number generation mechanism (for demo purposes only). This mechanism is not suitable for production use.
-5. Winners receive their prizes automatically (jackpot or consolation prize) based on the outcome.
+| Arguments               | Description                                     |
+|-------------------------|-------------------------------------------------|
+| `amount`                | Amount in motes (1,000,000,000 motes is 1 CSPR) |
+| `receiver`              | Receiver account hash                           |
+
+### `play_lottery`
+
+Participates in the current lottery round by purchasing a ticket. This is a [`Payable`](https://odra.dev/docs/tutorials/odra-solidity#payable) entry point that needs to be called using [`proxy_caller`](https://odra.dev/docs/tutorials/using-proxy-caller)
+
+| Arguments             | Description                                          |
+|-----------------------|------------------------------------------------------|
+| `amount`              | Ticket price in motes (1,000,000,000 motes is 1 CSPR |
+
 
 ## Usage
 
-It's recommended to install `cargo-odra` first. You can find it here: [https://github.com/odradev/odra](https://github.com/odradev/odra)
+It's recommended to install `cargo-odra` first. You can find it [here](https://github.com/odradev/odra).
 
 ### Build
 
@@ -60,7 +68,7 @@ To test actual WASM files against a backend
 make test-wasm
 ```
 
-### Deployment using Livenet
+### Deploy to Casper Testnet
 
 Copy and adjust `.env` file
 
@@ -68,7 +76,7 @@ Copy and adjust `.env` file
 cp .env.sample .env
 ```
 
-Run deploy command
+Run the deploy command that uses Odra's [Livenet backend](https://odra.dev/docs/backends/livenet)
 
 ```shell
 cargo run --bin livenet --features=livenet

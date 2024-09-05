@@ -1,6 +1,6 @@
 # Lottery Demo dApp Client
 
-Casper Lottery Client is a React application bootstrapped from [CSPR.click React template](https://www.npmjs.com/package/@make-software/cra-template-csprclick-react). To read more about CSPR.click, please check [the documentation](https://docs.cspr.click).
+Casper Lottery Client is a Web application that allows users to play the lottery and see past plays. It is a React application bootstrapped from [CSPR.click React template](https://www.npmjs.com/package/@make-software/cra-template-csprclick-react). To read more about CSPR.click, please check [the documentation](https://docs.cspr.click).
 
 ## Setup
 

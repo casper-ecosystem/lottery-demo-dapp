@@ -2,7 +2,7 @@
 
 This is an example of a decentralized application (or dApp) built on the [Casper Network](https://casper.network), a layer 1 proof-of-stake (PoS) blockchain. Lottery game logic implemented on-chain aims to demonstrate the value of blockchain, which is the increased trust to the outcome since nobody can manipulate the results.
 
-To participate in the lottery, you need to buy a ticket using the Casper Network native token. After collecting a fee, the application puts the proceeds into the prize pool, which is used to reward the players. When somebody wins the jackpot, a new game round starts, making the game indefinite. 
+To participate in the lottery, you need to buy a ticket using the Casper Network native token. After collecting a fee, the application puts the proceeds into the prize pool, which is used to reward the players. When somebody wins the jackpot, a new lottery round starts, making the game indefinite. 
 
 You can try it by playing the lottery deployed to [Casper Testnet](https://testnet.cspr.live/) at https://lottery-demo.casper.network. Please use the [Faucet](https://testnet.cspr.live/tools/faucet) to obtain the test tokens.
 
