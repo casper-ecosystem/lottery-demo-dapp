@@ -4,7 +4,7 @@ Casper Lottery Client is a React application bootstrapped from [CSPR.click React
 
 ## Setup
 
-Before building фтв running the Web Client, please update the configuration. Start with copying the config template:
+Before building and running the Web Client, please update the configuration. Start with copying the config template:
 
 ```bash
 cp public/config.js.local public/config.js
@@ -16,9 +16,14 @@ Next, update the following configuration values:
 
 The rest of the values should remain the same for the local development, unless you made corresponding changes in other places.
 
+To install the dependencies, run:
+```
+npm install
+```
+
 ## Build
 
-To build the project for production, use:
+To build the project for production, run:
 ```
 npm run build
 ```
@@ -27,7 +32,7 @@ This command will create a build folder with optimized production-ready files.
 
 ## Run
 
-To run the application, use:
+To run the application, execute:
 
 ```bash
 npm start
