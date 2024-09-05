@@ -1,64 +1,59 @@
-# Casper Lottery
-This repository contains the front-end implementation of a decentralized application (DApp) demonstrating a simple lottery system using CSPR.suite series of products.
+# Lottery Demo dApp
 
-Built with CSPR.click, Odra, and the CSPR.cloud, this DApp showcases how Casper blockchain technology can be utilized for transparent and fair random selection processes.
+This is an example of a decentralized application (or dApp) built on the [Casper Network](https://casper.network), a layer 1 proof-of-stake (PoS) blockchain. Lottery game logic implemented on-chain aims to demonstrate the value of blockchain, which is the increased trust to the outcome since nobody can manipulate the results.
 
-Detailed spec:  [here](./docs/specs.md)
+To participate in the lottery, you need to buy a ticket using the Casper Network native token. After collecting a fee, the application puts the proceeds into the prize pool, which is used to reward the players. When somebody wins the jackpot, a new game round starts, making the game indefinite. 
 
-### Setup 
-#### CSPR.click
-Create a new project using CSPR.click react template:
-```
-npx create-react-app my-new-casper-app --template @make-software/csprclick-react
-```
+You can try it by playing the lottery deployed to [Casper Testnet](https://testnet.cspr.live/) at https://lottery-demo.casper.network. Please use the [Faucet](https://testnet.cspr.live/tools/faucet) to obtain the test tokens.
 
-Go to the newly created project directory, install dependencies and run the app. 
+![Lottery Application](docs/images/lottery-application.png)
 
-In this case it will be "my-new-casper-app"
-```
-cd my-new-casper-app
-npm install
-npm start
-```
-This command will start the development server. You can view the app by navigating to http://localhost:3000 in your web browser.
+## Toolset
 
-More details [here](https://docs.cspr.click/) 
+This application was created to onboard software engineers to the Casper blockchain and the Web3 architecture in general. Unlike traditional Web2 applications, in Web3, users may interact with blockchain directly. It changes the traditional paradigm of how information flows between users and the application and forces the application to observe the network activity and react correspondingly.
 
-[CRA link](https://www.npmjs.com/package/@make-software/cra-template-csprclick-react)
+To ease the integration, this example was developed with the help of higher-level abstractions that address those specific challenges of Web3 development and elevate the developer experience.
 
-### Build
-To build the project for production, use:
-```
-npm run build
-```
-This command will create a build folder with optimized production-ready files.
+![Casper Development Ecosystem](docs/images/development-ecosystem.png)
 
-### Usage
-To initialize and use the CSPR.click feature in the frontend application, follow these steps:
-1. ####Import the hook:
-In the React component file where you want to use the CSPR.click feature, import the hook from the library:
-```
-import { useClickRef } from '@make-software/csprclick-ui';
-```
-2. ####Initialize the hook:
-```
-const clickRef = useClickRef();
-```
-3. ####Use methods to handle sign in/sign out events
-```
-clickRef.on('csprclick:signed_in', async (event) => await doSomethingWithAccount(event.account));
-```
-4. ####Add the CSPR.click header
-To add the CSPR.click header to your application import the ClickUI component. 
+- [CSPR.click](https://docs.cspr.click) is a Web3 authentication layer that covers the end-user interaction with the blockchain. It provides integration with all the wallets in the Casper Ecosystem and greets users with a well-known Single-Sign-On like experience
+- [Odra](https://odra.dev/docs/) is a smart contract framework written in Rust that abstracts the chain-specific details behind a familiar OOP interface
+- [CSPR.cloud](https://docs.cspr.cloud) is a middleware layer for the Casper Network. It observes and indexes the network activity and provides access to it via a scalable REST API and real-time WebSocket subscriptions
 
-```
-import { ClickUI } from '@make-software/csprclick-ui';
-```
-Customize the behavior of the hook by passing options as parameters. For example, you can use advanced functions such as adding a list of languages, a dark theme, and a list of currencies by passing parameters to props.
-```
-<ClickUI
-	topBarSettings={{
-		languageSettings: languageSettings
-	}}
-/>
-```
+Register a free [CSPR.build](https://console.cspr.build/) account to generate CSPR.click and CSPR.cloud keys.
+
+## Architecture
+
+Lottery Demo is a Web that consists of four primary components interacting with each other:
+
+- [Smart Contract](smart-contract) runs on the Casper Network and implements the lottery logic
+- [Event Listener](server/src/event-handler.ts) listens to the contract on-chain activity and aggregates it to the database for faster access via the API  
+- [API](server/src/api.ts) reads aggregated on-chain data and serves it to the Web Client. It also acts as a proxy to the CSPR.cloud APIs to make it possible for the Web Client to access CSPR.cloud without exposing the access key
+- [Web Client](client) allows users to play the lottery by directly calling the smart contract and displaying information about past plays. It fetches the lottery data from the API and general blockchain data (e.g. account balance) from CSPR.cloud via the CSPR.cloud proxy endpoints exposed by the API
+
+![Architecture](docs/images/architecture.png)
+
+Each component's code resides in a corresponding separate directory of this mono-repository. [Event Listener](server/src/event-handler.ts) and [API](server/src/api.ts) are both parts of the [server](server) infrastructure.
+
+## Setup
+
+To configure you local environment perform the following steps:
+
+1. Register a free [CSPR.build](https://console.cspr.build) account. Create CSPR.click and CSPR.cloud keys.
+2. Build and deploy the smart contract to [Casper Testnet](https://testnet.cspr.live) as described [here](smart-contract/README.md). You can skip this step and use the existing [Testnet smart contract](https://testnet.cspr.live/contract-package/8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347) package hash `8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347`.
+2. Update Web Client configuration as described [here](client/README.md#setup)
+3. Update Server configuration as described [here](server/README.md#setup)
+
+## Build 
+
+TODO
+
+## Run
+
+TODO
+
+## About Casper
+
+[Casper](https://casper.network) is a layer 1 proof-of-stake (PoS) blockchain that prioritizes security and decentralization. Casper was built with developer needs in mind and supports features such as upgradable smart contracts or multi-signature transactions on the protocol level. Casper smart contracts are run in a WASM virtual machine, creating the possibility of using a wider variety of languages for smart contract development.
+
+Join [Casper Developers](https://t.me/CSPRDevelopers) Telegram channel to connect with other developers.

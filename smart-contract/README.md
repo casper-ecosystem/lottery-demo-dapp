@@ -1,5 +1,4 @@
-
-# Lottery Smart Contract - Demo
+# Lottery Demo dApp Smart Contract
 
 This smart contract allows users to participate in a demo lottery on the Casper blockchain. Users can purchase tickets and have a chance to win the prize pool, which is accumulated from ticket purchases or a consolation prize.
 
@@ -36,21 +35,6 @@ These functionalities can only be called by the contract owner (designated durin
 3. To participate, a user calls `play_lottery()` while attaching the required amount (ticket price) in Casper tokens (CSPR).
 4. **Note:** Whether the user is a winner is immediately determined based on a pseudo-random number generation mechanism (for demo purposes only). This mechanism is not suitable for production use.
 5. Winners receive their prizes automatically (jackpot or consolation prize) based on the outcome.
-
-## Deployment Addresses
-
-**- Testnet:**
-
-  - contract hash: `hash-40777e199af2ae4756c2a148c24e79885dc062fe4428adf23212dd04fd73187b`
-
-**- Mainnet (if applicable):**
-
-  - contract hash: coming soon.
-
-## Security Considerations
-
-- This smart contract is a demo application not ready for production use. It uses a naive pseudo-random number generation mechanism. A secure random number generation mechanism is crucial for real-world lottery applications.
-
 
 ## Usage
 
