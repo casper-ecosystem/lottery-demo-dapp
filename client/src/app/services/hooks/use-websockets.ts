@@ -76,7 +76,7 @@ export const useWebSockets = ({
 	);
 
 	const connect = useCallback((publicKey: string) => {
-		const url = `${config.lottery_api_ws_url}?caller_public_key=${publicKey}`;
+		const url = `${config.lottery_api_ws_url}/deploys?caller_public_key=${publicKey}`;
 		const ws = new WebSocket(url);
 		setSession(ws);
 	}, []);
