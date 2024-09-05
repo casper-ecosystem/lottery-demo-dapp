@@ -37,16 +37,15 @@ const AboutScene = () => {
 					</HeaderText>
 					<FlexColumn itemsSpacing={20}>
 						<BodyText size={3} scale={'md'} variation={'darkGray'}>
-							This is an example decentralized application, or dApp,
-							built on the Casper Network, which is a layer 1
-							proof-of-stake (PoS) blockchain that prioritizes
-							security and decentralization. Casper was built with
-							developer needs in mind and supports features such as
-							upgradable smart contracts or multi-signature
-							transactions on the protocol level. Casper smart
-							contracts are run in a WASM virtual machine creating a
-							possibility to use a wider variety of languages for
-							smart contract development.
+							This is an example of a decentralized application, or dApp,
+              built on the Casper Network, which is a layer 1
+              proof-of-stake (PoS) blockchain that prioritizes security
+              and decentralization. Casper was built with developer
+              needs in mind and supports features such as upgradable
+              smart contracts or multi-signature transactions on the
+              protocol level. Casper smart contracts are run in a
+              WASM virtual machine, creating the possibility of using
+              a wider variety of languages for smart contract development.
 						</BodyText>
 						<BodyText size={3} scale={'md'} variation={'darkGray'}>
 							This application was created to onboard software
@@ -77,7 +76,7 @@ const AboutScene = () => {
 							users with a well-known Single-Sign-On like experience.
 						</BodyText>
 						<BodyText size={3} scale={'md'} variation={'darkGray'}>
-							<StyledA href={'https://odra.dev/'} target='_blank'>
+							<StyledA href={'https://odra.dev/docs'} target='_blank'>
 								Odra
 							</StyledA>{' '}
 							is a smart contract framework written in Rust that
@@ -119,10 +118,10 @@ const AboutScene = () => {
 							</li>
 							<li>
 								<StyledA
-									href={'https://github.com/odradev/odra'}
+									href={'https://odra.dev/docs'}
 									target='_blank'
 								>
-									https://github.com/odradev/odra
+                  https://odra.dev/docs
 								</StyledA>
 							</li>
 							<li>
