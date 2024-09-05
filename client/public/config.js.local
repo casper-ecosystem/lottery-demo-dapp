@@ -1,6 +1,5 @@
 const config = {
   lottery_app_contract_package_hash: '8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347',
-  lottery_play_payment_amount: '1000000',
   lottery_api_url: 'https://cspr-lottery-demo-api.dev.make.services',
   lottery_api_ws_url: 'wss://cspr-lottery-demo-api.dev.make.services',
   cspr_click_app_name: 'Lottery Demo',
