@@ -20,8 +20,6 @@ To ease the integration, this example was developed with the help of higher-leve
 - [Odra](https://odra.dev/docs/) is a smart contract framework written in Rust that abstracts the chain-specific details behind a familiar OOP interface
 - [CSPR.cloud](https://docs.cspr.cloud) is a middleware layer for the Casper Network. It observes and indexes the network activity and provides access to it via a scalable REST API and real-time WebSocket subscriptions
 
-Register a free [CSPR.build](https://console.cspr.build/) account to generate CSPR.click and CSPR.cloud keys.
-
 ## Architecture
 
 Lottery Demo is a Web that consists of four primary components interacting with each other:
@@ -39,7 +37,7 @@ Each component's code resides in a corresponding separate directory of this mono
 
 To configure you local environment perform the following steps:
 
-1. Register a free [CSPR.build](https://console.cspr.build) account. Create CSPR.click and CSPR.cloud keys.
+1. Register a free [CSPR.build](https://console.cspr.build) account to create CSPR.click and CSPR.cloud access keys.
 2. Build and deploy the smart contract to [Casper Testnet](https://testnet.cspr.live) as described [here](smart-contract/README.md). You can skip this step and use the existing [Testnet smart contract](https://testnet.cspr.live/contract-package/8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347) package hash `8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347`.
 2. Update Web Client configuration as described [here](client/README.md#setup)
 3. Update Server configuration as described [here](server/README.md#setup)
