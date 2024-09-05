@@ -24,7 +24,7 @@ Adds funds to the prize pool. This entry point can only be called by the contrac
 
 | Arguments                 | Description                                     |
 |---------------------------|-------------------------------------------------|
-| `amount`                  | Amount in motes (1,000,000,000 motes is 1 CSPR) |
+| `amount`                  | Amount in motes (1 CSPR is 1,000,000,000 motes) |
 
 ### `transfer_fees_to_account`
 
@@ -32,16 +32,16 @@ Transfers the requested amount from the fee purse to receiver`s account. Reverts
 
 | Arguments               | Description                                     |
 |-------------------------|-------------------------------------------------|
-| `amount`                | Amount in motes (1,000,000,000 motes is 1 CSPR) |
+| `amount`                | Amount in motes (1 CSPR is 1,000,000,000 motes) |
 | `receiver`              | Receiver account hash                           |
 
 ### `play_lottery`
 
 Participates in the current lottery round by purchasing a ticket. This is a [`Payable`](https://odra.dev/docs/tutorials/odra-solidity#payable) entry point that needs to be called using [`proxy_caller`](https://odra.dev/docs/tutorials/using-proxy-caller)
 
-| Arguments             | Description                                          |
-|-----------------------|------------------------------------------------------|
-| `amount`              | Ticket price in motes (1,000,000,000 motes is 1 CSPR |
+| Arguments             | Description                                           |
+|-----------------------|-------------------------------------------------------|
+| `amount`              | Ticket price in motes (1 CSPR is 1,000,000,000 motes) |
 
 
 ## Usage
