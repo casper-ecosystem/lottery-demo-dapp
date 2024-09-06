@@ -10,6 +10,9 @@ build-event-handler-docker:
 setup:
 	cp ./server/.env.example ./server/.env
 
+build-demo:
+	docker compose -f infra/local/docker-compose.yaml --project-name lottery build
+
 run-demo:
 	docker compose -f infra/local/docker-compose.yaml --project-name lottery up -d
 

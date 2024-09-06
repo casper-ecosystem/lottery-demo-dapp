@@ -44,6 +44,12 @@ To configure you local environment perform the following steps:
 
 ## Run Demo
 
+Build:
+```bash
+make build-demo
+```
+
+Run:
 ```bash
 make run-demo
 ```
