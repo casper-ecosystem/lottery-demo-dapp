@@ -42,13 +42,68 @@ To configure you local environment perform the following steps:
 2. Update Web Client configuration as described [here](client/README.md#setup)
 3. Update Server configuration as described [here](server/README.md#setup)
 
-## Build 
+## Run Demo
 
-TODO
+```bash
+make run-demo
+```
 
-## Run
+## Run for local development
 
-TODO
+### Server side
+
+Go to the server folder and process (`cd client`)
+
+1) Run database
+```bash
+docker compose -f infra/local/docker-compose.db.yaml --project-name lottery up -d mysql
+```
+
+2) Use required node version
+
+```bash
+nvm use
+```
+
+3) Setup local deps
+```bash
+make setup-local
+```
+
+3) Run database migration
+
+```bash
+make sync-db
+```
+
+4) Run API
+```bash
+npm run api:dev
+```
+
+5) Run Event Handler
+```bash
+npm run event-handler:dev
+```
+
+### Client side
+
+Go to the client folder and proceed (`cd client`)
+
+1) Copy local config
+```bash
+cp public/config.js.local public/config.js
+```
+
+2) Install deps
+```bash
+npm install
+```
+
+3) Start dev server
+```bash
+npm start
+```
 
 ## About Casper
 

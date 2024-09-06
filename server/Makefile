@@ -9,7 +9,7 @@ setup-local:
 	@$(MAKE) copy-envs
 
 run-local-infra:
-	docker compose -f ../infra/local/docker-compose.yaml --project-name lottery up -d
+	docker compose -f ../infra/local/docker-compose.yaml --project-name lottery up -d mysql
 
 sync-db:
 	npm run build && npm run typeorm migration:run

@@ -13,10 +13,7 @@ services:
     volumes:
       - ./provision:/docker-entrypoint-initdb.d
       - mysql-data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - lottery-local
+    network_mode: "host"
 
   nctl:
     image: makesoftware/casper-nctl:latest
@@ -30,8 +27,7 @@ services:
       MINIMUM_ROUND_EXPONENT: '12'
       MAXIMUM_ROUND_EXPONENT: '14'
       DEPLOY_DELAY: '15sec'
-    networks:
-      - lottery-local
+    network_mode: "host"
 
   healthcheck-wait:
     image: busybox
@@ -41,10 +37,54 @@ services:
         condition: service_healthy
       nctl:
         condition: service_healthy
+  
+  db_migrator:
+    build:
+      context: ./server
+      dockerfile: ../docker/event-handler.dockerfile
+    env_file: ../../server/.env
+    command: npm run typeorm migration:run
+    network_mode: "host"
+    depends_on:
+      mysql:
+        condition: service_healthy
+  api:
+    build:
+      context: ./server
+      dockerfile: ../docker/api.dockerfile
+    network_mode: "host"
+    env_file: ../../server/.env
+    depends_on:
+      - db_migrator
+  
+  handler:
+    build:
+      context: ./server
+      dockerfile: ../docker/event-handler.dockerfile
+    network_mode: "host"
+    env_file: ../../server/.env
+    depends_on:
+      - db_migrator
+
+  client:
+    build:
+      context: ./client
+      dockerfile: ./infra/docker/client.dockerfile
+    network_mode: "host"
+    environment:
+      LOTTERY_APP_CONTRACT_PACKAGE_HASH: "8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347"
+      LOTTERY_API_URL: "http://localhost:3001"
+      LOTTERY_API_WS_URL: "ws://localhost:3001"
+      CSPR_CLICK_APP_NAME: "Lottery Demo"
+      CSPR_CLICK_APP_ID: "cspr-lottery-demo"
+      CSPR_LIVE_URL: "https://testnet.cspr.live"
+      CSPR_CHAIN_NAME: "casper-test"
+      LOTTERY_TICKET_PRICE_IN_CSPR: "50"
+      GAS_PRICE_IN_CSPR: "10"
+    depends_on:
+      - api
+      - handler
 
 volumes:
   mysql-data:
     driver: local
-
-networks:
-  lottery-local:
