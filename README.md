@@ -52,58 +52,15 @@ make run-demo
 
 ### Server side
 
-Go to the server folder and process (`cd client`)
+Go to the server folder and proceed according to the instructions (`cd client`)
 
-1) Run database
-```bash
-docker compose -f infra/local/docker-compose.db.yaml --project-name lottery up -d mysql
-```
-
-2) Use required node version
-
-```bash
-nvm use
-```
-
-3) Setup local deps
-```bash
-make setup-local
-```
-
-3) Run database migration
-
-```bash
-make sync-db
-```
-
-4) Run API
-```bash
-npm run api:dev
-```
-
-5) Run Event Handler
-```bash
-npm run event-handler:dev
-```
+[Server side setup instructions](./server/README.md)
 
 ### Client side
 
 Go to the client folder and proceed (`cd client`)
 
-1) Copy local config
-```bash
-cp public/config.js.local public/config.js
-```
-
-2) Install deps
-```bash
-npm install
-```
-
-3) Start dev server
-```bash
-npm start
-```
+[Client side setup instructions](./client/README.md)
 
 ## About Casper
 

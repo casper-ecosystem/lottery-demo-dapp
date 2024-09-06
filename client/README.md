@@ -17,14 +17,14 @@ Next, update the following configuration values:
 The rest of the values should remain the same for the local development, unless you made corresponding changes in other places.
 
 To install the dependencies, run:
-```
+```bash
 npm install
 ```
 
 ## Build
 
 To build the project for production, run:
-```
+```bash
 npm run build
 ```
 
