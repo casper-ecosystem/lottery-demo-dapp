@@ -18,28 +18,11 @@ services:
       - ./provision:/docker-entrypoint-initdb.d
       - mysql-data:/var/lib/mysql
 
-  nctl:
-    image: makesoftware/casper-nctl:latest
-    container_name: nctl
-    ports:
-      - 11101-11105:11101-11105
-      - 14101-14105:14101-14105
-      - 18101-18105:18101-18105
-    environment:
-      PREDEFINED_ACCOUNTS: 'true'
-      MINIMUM_ROUND_EXPONENT: '12'
-      MAXIMUM_ROUND_EXPONENT: '14'
-      DEPLOY_DELAY: '15sec'
-    networks:
-      - lottery-local
-
   healthcheck-wait:
     image: busybox
     container_name: healthcheck-wait
     depends_on:
       mysql:
-        condition: service_healthy
-      nctl:
         condition: service_healthy
   
   db_migrator:

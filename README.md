@@ -68,6 +68,12 @@ Go to the client folder and proceed (`cd client`)
 
 [Client side setup instructions](./client/README.md)
 
+### Smart contract
+
+Go to the contract folder and proceed (`cd smart-contract`)
+
+[Smart contract setup instructions](./smart-contract/README.md)
+
 ## About Casper
 
 [Casper](https://casper.network) is a layer 1 proof-of-stake (PoS) blockchain that prioritizes security and decentralization. Casper was built with developer needs in mind and supports features such as upgradable smart contracts or multi-signature transactions on the protocol level. Casper smart contracts are run in a WASM virtual machine, creating the possibility of using a wider variety of languages for smart contract development.
