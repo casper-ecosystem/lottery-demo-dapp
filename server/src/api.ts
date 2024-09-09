@@ -66,6 +66,8 @@ async function main() {
       }
     }
   });
+  server.on('upgrade', csprCloudStreamingProxy.upgrade);
+
   app.get('/deploys', csprCloudStreamingProxy);
 
   const csprCloudAPIProxy = createProxyMiddleware({
