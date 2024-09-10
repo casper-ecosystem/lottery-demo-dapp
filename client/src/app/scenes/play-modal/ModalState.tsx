@@ -72,17 +72,15 @@ const ModalState = (props: ModalStateProps) => {
 	const { closeModal } = props;
 
 	const {
-		data: playResult,
-		loading: loadingPlayResult,
-		error: playError,
-		activeAccountWithBalance,
-		connectWallet,
-		initiatePlay,
-		closeDeploysWsConnection,
-	} = useManagePlay();
+    playerAccount,
+    connectWallet,
+    startPlaying,
+    endPlaying,
+    playResult,
+  } = useManagePlay();
 
 	const handleCloseModal = () => {
-		closeDeploysWsConnection();
+    endPlaying();
 		closeModal();
 	};
 
@@ -95,9 +93,9 @@ const ModalState = (props: ModalStateProps) => {
 		.add(config.lottery_ticket_price_in_cspr)
 		.toNumber();
 	const isNotEnoughBalance =
-		!!activeAccountWithBalance &&
-		(activeAccountWithBalance.balance == null ||
-			parseInt(activeAccountWithBalance.balance) <
+		!!playerAccount &&
+		(playerAccount.balance == null ||
+			parseInt(playerAccount.balance) <
 				csprToMotes(ticketPrice).toNumber());
 
 	if (isNotEnoughBalance) {
@@ -109,7 +107,7 @@ const ModalState = (props: ModalStateProps) => {
 		);
 	}
 
-	if (playError) {
+	if (playResult.error) {
 		return (
 			<SomethingWentWrongContent
 				handleButtonAction={refreshPage}
@@ -118,24 +116,24 @@ const ModalState = (props: ModalStateProps) => {
 		);
 	}
 
-	if (loadingPlayResult) {
+	if (playResult.loading) {
 		return <LoadingContent closeModal={handleCloseModal} />;
 	}
 
-	if (playResult !== null) {
+	if (playResult.data !== null) {
 		return (
 			<PlayResultState
-				playResult={playResult}
+				playResult={playResult.data}
 				closeModal={handleCloseModal}
-				initiatePlay={initiatePlay}
+				initiatePlay={startPlaying}
 			/>
 		);
 	}
 
-	if (activeAccountWithBalance != null) {
+	if (playerAccount != null) {
 		return (
 			<BuyTicketContent
-				handleButtonAction={initiatePlay}
+				handleButtonAction={startPlaying}
 				closeModal={handleCloseModal}
 			/>
 		);

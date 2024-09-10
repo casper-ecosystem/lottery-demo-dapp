@@ -8,29 +8,29 @@ interface WebSocketMessage {
 interface UseWebSocketsProps {
 	onOpen?: () => void;
 	onMessage: (message: WebSocketMessage) => void;
-	onClose: () => void;
+  onError: () => void;
+  onClose: () => void;
 }
-const DISCONNECT_TIMEOUT = 60000;
-const logOpenWsConnection = () => console.log('open ws connection');
+const INACTIVITY_TIMEOUT = 120000;
+const logOpenConnection = () => console.log('Opened WebSocket connection');
 
 export const useWebSockets = ({
-	onOpen = logOpenWsConnection,
+	onOpen = logOpenConnection,
 	onMessage,
 	onClose,
+	onError,
 }: UseWebSocketsProps) => {
 	const [session, setSession] = useState(
 		null as unknown as WebSocket
 	);
 
 	let timeoutId;
-	function resetMessageTimeout() {
+	function resetInactivityTimeout() {
 		clearTimeout(timeoutId);
 		timeoutId = setTimeout(function () {
-			console.log(
-				'No deploy received for 1 min, closing connection...'
-			);
+			console.log('No activity for 1 min. Closing WebSocket connection.');
 			close();
-		}, DISCONNECT_TIMEOUT);
+		}, INACTIVITY_TIMEOUT);
 	}
 
 	const addEventHandler = (
@@ -48,45 +48,50 @@ export const useWebSockets = ({
 		() =>
 			addEventHandler('open', () => {
 				onOpen && onOpen();
-				resetMessageTimeout();
+				resetInactivityTimeout();
 			}),
 		[session, onOpen]
 	);
+
 	useEffect(
 		() =>
 			addEventHandler('message', event => {
 				if (isDeploy(event.data)) {
 					onMessage(event);
-					resetMessageTimeout();
+					resetInactivityTimeout();
 				}
 			}),
 		[session, onMessage]
 	);
+
 	useEffect(
-		() => addEventHandler('close', onClose),
+		() => addEventHandler('close', () => {
+      onClose();
+    }),
 		[session, onClose]
 	);
 
 	useEffect(
 		() =>
 			addEventHandler('error', () => {
+        onError();
 				close();
 			}),
 		[session]
 	);
 
-	const connect = useCallback((publicKey: string) => {
+	const open = useCallback((publicKey: string) => {
 		const url = `${config.lottery_api_ws_url}/deploys?caller_public_key=${publicKey}`;
 		const ws = new WebSocket(url);
 		setSession(ws);
-	}, []);
+	}, [setSession]);
 
 	const close = () => {
-		if (session?.readyState === session?.OPEN) {
+		if (session && session?.readyState === session?.OPEN) {
 			session?.close();
 			setSession(null as unknown as WebSocket);
 		}
 	};
 
-	return { connect, close, readyState: session?.readyState };
+	return { connect: open, close, session };
 };

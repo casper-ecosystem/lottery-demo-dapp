@@ -11,58 +11,57 @@ import {
 	signAndSendDeploy,
 } from '../requests/play-requests';
 import { useWebSockets } from './use-websockets';
-import { isDeploy } from '../../utils/formatters';
 import { usePlaysData } from '../providers/PlaysContext';
 
-interface ManagePlayData {
-	data: Play | DeployFailed | null;
-	loading: boolean;
-	error: boolean;
-	activeAccountWithBalance: AccountType | null;
-	connectWallet: () => void;
-	initiatePlay: () => void;
-	closeDeploysWsConnection: () => void;
+interface PlayResult {
+  data: Play | DeployFailed | null;
+  loading: boolean;
+  error: boolean;
 }
 
-interface ManagePlayState {
-	data: Play | DeployFailed | null;
-	loading: boolean;
-	error: boolean;
+interface ManagePlayData {
+  playerAccount: AccountType | null;
+  connectWallet: () => void;
+  startPlaying: () => void;
+  endPlaying: () => void;
+  playResult: PlayResult;
 }
 
 const useManagePlay = (): ManagePlayData => {
 	const clickRef = useClickRef();
 	const activeAccountContext = useContext(ActiveAccountContext);
 
-	const [activeAccountWithBalance, setActiveAccountWithBalance] =
+	const [playerAccount, setPlayerAccount] =
 		useState<AccountType | null>(null);
-	const [playResultState, setPlayResultState] =
-		useState<ManagePlayState>({
+
+	const [playResult, setPlayResult] =
+		useState<PlayResult>({
 			data: null,
 			loading: false,
 			error: false,
 		});
+
+  const errorPlayResult = {
+    data: null,
+    loading: false,
+    error: true,
+  };
+
 	const [executedDeploy, setExecutedDeploy] = useState<Deploy | null>(
 		null
 	);
 
 	const { reloadPlaysData } = usePlaysData();
 
-	const errorState = {
-		data: null,
-		loading: false,
-		error: true,
-	};
-
 	useEffect(() => {
 		if (activeAccountContext && clickRef) {
 			clickRef
 				.getActiveAccountWithBalance()
-				.then(accountWithBalance => {
-					setActiveAccountWithBalance(accountWithBalance);
+				.then(playerAccount => {
+					setPlayerAccount(playerAccount);
 				});
 		} else {
-			setActiveAccountWithBalance(null);
+			setPlayerAccount(null);
 		}
 	}, [activeAccountContext]);
 
@@ -72,46 +71,41 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	}, [executedDeploy]);
 
-	const onReceiveWsMessage = (message: { data: string }) => {
+	const onWebSocketMessage = (message: { data: string }) => {
 		if (message.data) {
 			const deploy = JSON.parse(message.data) as DeployMessage;
 			setExecutedDeploy(deploy.data);
 		}
 	};
 
-	const onCloseWsConnection = () => {
-		if (!executedDeploy) {
-			setPlayResultState(errorState);
-		} else {
-			setExecutedDeploy(null);
-		}
-	};
+  const onWebSocketError = () => setPlayResult(errorPlayResult);
 
 	const {
-		connect: joinToDeploysWsConnection,
-		close: closeDeploysWsConnection,
-		readyState,
+		connect: openPlayerDeploysWebSocketStream,
+		close: closePlayerDeploysWebSocketStream,
+		session,
 	} = useWebSockets({
-		onMessage: onReceiveWsMessage,
-		onClose: onCloseWsConnection,
+		onMessage: onWebSocketMessage,
+		onClose: onWebSocketError,
+		onError: onWebSocketError,
 	});
 
-	const handleOpenConnection = () => {
-		if (readyState === 1) {
+	const waitForTheNextPlayerDeploy = () => {
+		if (session && session?.readyState === WebSocket.OPEN) {
 			setExecutedDeploy(null);
 		} else {
-			joinToDeploysWsConnection(activeAccountWithBalance!.public_key);
+			openPlayerDeploysWebSocketStream(playerAccount!.public_key);
 		}
 	};
 
-	const initiatePlay = async () => {
-		if (!activeAccountWithBalance?.public_key) {
-			setPlayResultState(errorState);
+	const startPlaying = async () => {
+		if (!playerAccount?.public_key) {
+			setPlayResult(errorPlayResult);
 			return;
 		}
 
 		const parsedActivePublicKey = CLPublicKey.fromHex(
-			activeAccountWithBalance.public_key
+			playerAccount.public_key
 		);
 
 		try {
@@ -120,14 +114,14 @@ const useManagePlay = (): ManagePlayData => {
 			);
 
 			await signAndSendDeploy(preparedDeploy, parsedActivePublicKey);
-			setPlayResultState({
-				...playResultState,
+			setPlayResult({
+				...playResult,
 				loading: true,
 				error: false,
 			});
-			handleOpenConnection();
+      waitForTheNextPlayerDeploy();
 		} catch (e) {
-			setPlayResultState(errorState);
+			setPlayResult(errorPlayResult);
 		}
 	};
 
@@ -144,7 +138,7 @@ const useManagePlay = (): ManagePlayData => {
 				const play = response.data[0] as any;
 
 				if (play.deployHash === deploy.deploy_hash) {
-					setPlayResultState({
+					setPlayResult({
 						data: play,
 						loading: false,
 						error: false,
@@ -154,29 +148,39 @@ const useManagePlay = (): ManagePlayData => {
 					throw new Error('A new play was not created');
 				}
 			} catch (error) {
-				setPlayResultState(errorState);
+				setPlayResult(errorPlayResult);
 			}
 		} else {
 			console.error(`Deploy failed: ${deploy.error_message}`);
-			setPlayResultState({
-				...playResultState,
+			setPlayResult({
+				...playResult,
 				data: DeployFailed.Failed,
 				loading: false,
 			});
 		}
 	};
 
+  const endPlaying = () => {
+    if (!executedDeploy) {
+      setPlayResult(errorPlayResult);
+    } else {
+      setExecutedDeploy(null);
+    }
+
+    closePlayerDeploysWebSocketStream();
+  }
+
 	const connectWallet = async () => {
 		await clickRef?.signIn();
 	};
 
-	return {
-		...playResultState,
-		activeAccountWithBalance,
-		connectWallet,
-		initiatePlay,
-		closeDeploysWsConnection,
-	};
+  return {
+    playerAccount,
+    connectWallet,
+    startPlaying,
+    endPlaying,
+    playResult
+  };
 };
 
 export default useManagePlay;
