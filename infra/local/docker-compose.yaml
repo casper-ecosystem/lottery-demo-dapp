@@ -10,28 +10,13 @@ services:
       interval: 2s
       timeout: 20s
       retries: 10
-    volumes:
-      - ./provision:/docker-entrypoint-initdb.d
-      - mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
       - lottery-local
-
-  nctl:
-    image: makesoftware/casper-nctl:latest
-    container_name: nctl
-    ports:
-      - 11101-11105:11101-11105
-      - 14101-14105:14101-14105
-      - 18101-18105:18101-18105
-    environment:
-      PREDEFINED_ACCOUNTS: 'true'
-      MINIMUM_ROUND_EXPONENT: '12'
-      MAXIMUM_ROUND_EXPONENT: '14'
-      DEPLOY_DELAY: '15sec'
-    networks:
-      - lottery-local
+    volumes:
+      - ./provision:/docker-entrypoint-initdb.d
+      - mysql-data:/var/lib/mysql
 
   healthcheck-wait:
     image: busybox
@@ -39,8 +24,68 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      nctl:
+  
+  db_migrator:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/event-handler.dockerfile
+    env_file: ../../server/.env
+    environment:
+      DB_URI: "mysql://root:password@mysql:3306/lottery"
+    command: npm run typeorm migration:run
+    networks:
+      - lottery-local
+    depends_on:
+      mysql:
         condition: service_healthy
+  api:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/api.dockerfile
+    ports:
+      - "3001:3001"
+    networks:
+      - lottery-local
+    env_file: ../../server/.env
+    environment:
+      DB_URI: "mysql://root:password@mysql:3306/lottery"
+    depends_on:
+      - db_migrator
+  
+  handler:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/event-handler.dockerfile
+    env_file: ../../server/.env
+    environment:
+      DB_URI: "mysql://root:password@mysql:3306/lottery"
+    networks:
+      - lottery-local
+    depends_on:
+      - db_migrator
+
+  client:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/client.dockerfile
+    environment:
+      LOTTERY_APP_CONTRACT_PACKAGE_HASH: "8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347"
+      LOTTERY_PLAY_PAYMENT_AMOUNT: "1000000"
+      LOTTERY_API_URL: "http://localhost:3001"
+      LOTTERY_API_WS_URL: "ws://localhost:3001"
+      CSPR_CLICK_APP_NAME: "Lottery Demo"
+      CSPR_CLICK_APP_ID: "cspr-lottery-demo"
+      CSPR_LIVE_URL: "https://testnet.cspr.live"
+      CSPR_CHAIN_NAME: "casper-test"
+      LOTTERY_TICKET_PRICE_IN_CSPR: "50"
+      GAS_PRICE_IN_CSPR: "10"
+    networks:
+      - lottery-local
+    ports:
+      - 3000:80
+    depends_on:
+      - api
+      - handler
 
 volumes:
   mysql-data:

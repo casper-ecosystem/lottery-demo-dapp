@@ -4,6 +4,30 @@ This smart contract allows users to participate in a demo lottery on the Casper 
 
 This contract is written using the [Odra](https://odra.dev/docs) smart contract framework for the [Casper Network](https://casper.network). Odra is Rust-based and encourages rapid development and clean, pragmatic design.
 
+## Setup
+
+If you would like to deploy contract to a local chain run nctl in docker:
+
+```bash
+docker run --rm -it --name nctl -d -p 11101:11101 -p 14101:14101 -p 18101:18101 makesoftware/casper-nctl
+```
+
+please check https://github.com/make-software/casper-nctl-docker for more details
+
+Install casper cli (https://docs.casper.network/developers/prerequisites/)
+
+Build contract:
+```bash
+make build
+```
+
+Deploy smart contract onchain:
+```bash
+casper-client put-deploy --node-address http://<node-address>:7777 --chain-name "<chain-name>" --payment-amount <payment-amount> --secret-key /path/to/secret_key.pem --session-path wasm/Lottery.wasm
+```
+
+Deploy contract 
+
 ## Entry Points (Contract Functions)
 
 ### `configure`
@@ -11,7 +35,7 @@ This contract is written using the [Odra](https://odra.dev/docs) smart contract 
 Configures the essential lottery game settings. This entry point can only be called by the contract owner (designated during deployment).
 
 | Arguments                       | Description                               |
-|---------------------------------|-------------------------------------------|
+| ------------------------------- | ----------------------------------------- |
 | `ticket_price`                  | Ticket price in CSPR                      |
 | `lottery_fee`                   | Lottery fee in percents                   |
 | `jackpot_probability`           | Jackpot probability in percents           |
@@ -22,26 +46,26 @@ Configures the essential lottery game settings. This entry point can only be cal
 
 Adds funds to the prize pool. This entry point can only be called by the contract owner (designated during deployment).
 
-| Arguments                 | Description                                     |
-|---------------------------|-------------------------------------------------|
-| `amount`                  | Amount in motes (1 CSPR is 1,000,000,000 motes) |
+| Arguments | Description                                     |
+| --------- | ----------------------------------------------- |
+| `amount`  | Amount in motes (1 CSPR is 1,000,000,000 motes) |
 
 ### `transfer_fees_to_account`
 
 Transfers the requested amount from the fee purse to receiver`s account. Reverts if the requested amount bigger than collected fees. This entry point can only be called by the contract owner (designated during deployment).
 
-| Arguments               | Description                                     |
-|-------------------------|-------------------------------------------------|
-| `amount`                | Amount in motes (1 CSPR is 1,000,000,000 motes) |
-| `receiver`              | Receiver account hash                           |
+| Arguments  | Description                                     |
+| ---------- | ----------------------------------------------- |
+| `amount`   | Amount in motes (1 CSPR is 1,000,000,000 motes) |
+| `receiver` | Receiver account hash                           |
 
 ### `play_lottery`
 
 Participates in the current lottery round by purchasing a ticket. This is a [`Payable`](https://odra.dev/docs/tutorials/odra-solidity#payable) entry point that needs to be called using [`proxy_caller`](https://odra.dev/docs/tutorials/using-proxy-caller)
 
-| Arguments             | Description                                           |
-|-----------------------|-------------------------------------------------------|
-| `amount`              | Ticket price in motes (1 CSPR is 1,000,000,000 motes) |
+| Arguments | Description                                           |
+| --------- | ----------------------------------------------------- |
+| `amount`  | Ticket price in motes (1 CSPR is 1,000,000,000 motes) |
 
 
 ## Usage

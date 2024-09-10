@@ -42,13 +42,37 @@ To configure you local environment perform the following steps:
 2. Update Web Client configuration as described [here](client/README.md#setup)
 3. Update Server configuration as described [here](server/README.md#setup)
 
-## Build 
+## Run Demo
 
-TODO
+Build:
+```bash
+make build-demo
+```
 
-## Run
+Run:
+```bash
+make run-demo
+```
 
-TODO
+## Run for local development
+
+### Server side
+
+Go to the server folder and proceed according to the instructions (`cd client`)
+
+[Server side setup instructions](./server/README.md)
+
+### Client side
+
+Go to the client folder and proceed (`cd client`)
+
+[Client side setup instructions](./client/README.md)
+
+### Smart contract
+
+Go to the contract folder and proceed (`cd smart-contract`)
+
+[Smart contract setup instructions](./smart-contract/README.md)
 
 ## About Casper
 
