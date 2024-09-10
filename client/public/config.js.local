@@ -1,11 +1,11 @@
 const config = {
   lottery_app_contract_package_hash: '8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347',
-  lottery_api_url: 'https://cspr-lottery-demo-api.dev.make.services',
-  lottery_api_ws_url: 'wss://cspr-lottery-demo-api.dev.make.services',
+  lottery_api_url: 'http://localhost:3001',
+  lottery_api_ws_url: 'ws://localhost:3001',
   cspr_click_app_name: 'Lottery Demo',
-  cspr_click_app_id: 'cspr-lottery-demo',
+  cspr_click_app_id: 'cspr-lottery-demo', // put your key here, this one will work only on localhost and the demo URL
   cspr_live_url: 'https://testnet.cspr.live',
-  cspr_chain_name: 'casper-test',
+  cspr_chain_name: 'casper-test', // that's Casper Testnet name, put casper-net-1 if you are testing on local NCTL
   lottery_ticket_price_in_cspr: '50',
   gas_price_in_cspr: '10',
 };

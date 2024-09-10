@@ -33,49 +33,52 @@ Lottery Demo is a Web that consists of four primary components interacting with 
 
 Each component's code resides in a corresponding separate directory of this mono-repository. [Event Listener](server/src/event-handler.ts) and [API](server/src/api.ts) are both parts of the [server](server) infrastructure.
 
-## Setup
+## Run
 
-To configure you local environment perform the following steps:
+You can run the demo application using [Docker compose](https://docs.docker.com/compose/install).
 
-1. Register a free [CSPR.build](https://console.cspr.build) account to create CSPR.click and CSPR.cloud access keys.
-2. Build and deploy the smart contract to [Casper Testnet](https://testnet.cspr.live) as described [here](smart-contract/README.md). You can skip this step and use the existing [Testnet smart contract](https://testnet.cspr.live/contract-package/8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347) package hash `8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347`.
-2. Update Web Client configuration as described [here](client/README.md#setup)
-3. Update Server configuration as described [here](server/README.md#setup)
-
-## Run Demo
-
-Build:
+First, build the applications:
 ```bash
-make build-demo
+docker compose -f infra/local/docker-compose.yaml --project-name lottery build
 ```
 
-Run:
+Then, run using the following command:
 ```bash
+docker compose -f infra/local/docker-compose.yaml --project-name lottery up -d
+```
+
+There are shortcuts available in the [Makefile](Makefile):
+```
+make build-demo
 make run-demo
 ```
 
-## Run for local development
+## Develop
 
-### Server side
+Please, do the following steps if you want to play with the code, or if you want to use it as a starting point for your own dApp.
 
-Go to the server folder and proceed according to the instructions (`cd client`)
+### CSPR.build
 
-[Server side setup instructions](./server/README.md)
-
-### Client side
-
-Go to the client folder and proceed (`cd client`)
-
-[Client side setup instructions](./client/README.md)
+Register a free [CSPR.build](https://console.cspr.build) account to create CSPR.click and CSPR.cloud access keys.
 
 ### Smart contract
 
-Go to the contract folder and proceed (`cd smart-contract`)
+Build and deploy the smart contract to [Casper Testnet](https://testnet.cspr.live) as described [here](smart-contract/README.md#deploy-to-casper-testnet). You can skip this step and use the existing [Testnet smart contract](https://testnet.cspr.live/contract-package/8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347) package hash `8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347`, which is already provided in the default configuration.
 
-[Smart contract setup instructions](./smart-contract/README.md)
+If you want to write and test your own smart contracts, check the [smart contract documentation](smart-contract/README.md).
+
+### Server
+
+Follow the [Server instructions](server/README.md) to configure, build, and run the Event Listener and API.
+
+### Web Client
+
+Follow the [Web Client instructions](client/README.md) to configure, build, and run the application.
 
 ## About Casper
 
 [Casper](https://casper.network) is a layer 1 proof-of-stake (PoS) blockchain that prioritizes security and decentralization. Casper was built with developer needs in mind and supports features such as upgradable smart contracts or multi-signature transactions on the protocol level. Casper smart contracts are run in a WASM virtual machine, creating the possibility of using a wider variety of languages for smart contract development.
+
+## Community
 
 Join [Casper Developers](https://t.me/CSPRDevelopers) Telegram channel to connect with other developers.

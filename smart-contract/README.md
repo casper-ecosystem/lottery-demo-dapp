@@ -4,30 +4,6 @@ This smart contract allows users to participate in a demo lottery on the Casper 
 
 This contract is written using the [Odra](https://odra.dev/docs) smart contract framework for the [Casper Network](https://casper.network). Odra is Rust-based and encourages rapid development and clean, pragmatic design.
 
-## Setup
-
-If you would like to deploy contract to a local chain run nctl in docker:
-
-```bash
-docker run --rm -it --name nctl -d -p 11101:11101 -p 14101:14101 -p 18101:18101 makesoftware/casper-nctl
-```
-
-please check https://github.com/make-software/casper-nctl-docker for more details
-
-Install casper cli (https://docs.casper.network/developers/prerequisites/)
-
-Build contract:
-```bash
-make build
-```
-
-Deploy smart contract onchain:
-```bash
-casper-client put-deploy --node-address http://<node-address>:7777 --chain-name "<chain-name>" --payment-amount <payment-amount> --secret-key /path/to/secret_key.pem --session-path wasm/Lottery.wasm
-```
-
-Deploy contract 
-
 ## Entry Points (Contract Functions)
 
 ### `configure`
@@ -48,7 +24,7 @@ Adds funds to the prize pool. This entry point can only be called by the contrac
 
 | Arguments | Description                                     |
 | --------- | ----------------------------------------------- |
-| `amount`  | Amount in motes (1 CSPR is 1,000,000,000 motes) |
+| `amount`  | Amount in motes (`1` CSPR is `1,000,000,000` motes) |
 
 ### `transfer_fees_to_account`
 
@@ -56,7 +32,7 @@ Transfers the requested amount from the fee purse to receiver`s account. Reverts
 
 | Arguments  | Description                                     |
 | ---------- | ----------------------------------------------- |
-| `amount`   | Amount in motes (1 CSPR is 1,000,000,000 motes) |
+| `amount`   | Amount in motes (`1` CSPR is `1,000,000,000` motes) |
 | `receiver` | Receiver account hash                           |
 
 ### `play_lottery`
@@ -65,8 +41,24 @@ Participates in the current lottery round by purchasing a ticket. This is a [`Pa
 
 | Arguments | Description                                           |
 | --------- | ----------------------------------------------------- |
-| `amount`  | Ticket price in motes (1 CSPR is 1,000,000,000 motes) |
+| `amount`  | Ticket price in motes (`1` CSPR is `1,000,000,000` motes) |
 
+
+## Events
+
+### `Play`
+
+The [`play_lottery`](#playlottery) entry point emits the following `Play` event, which is used to notify the [Event Listener](../server) about new lottery plays:
+
+| Property          | Description                                                                         |
+|-------------------|-------------------------------------------------------------------------------------|
+| `play_id`         | Unique play ID that can be used to index plays                                      |
+| `round_id`        | Current lottery round ID                                                            |
+| `player`          | Player account hash                                                                 |
+| `timestamp`       | Timestamp of the play                                                               |
+| `prize_amount`    | Prize amount won by the player in motes (`1` CSPR is `1,000,000,000` motes)             |
+| `is_jackpot`      | Flag that indicates whether the player won the jackpot                              |
+| `jackpot_amount`  | The remaining prize pool balance after the play (`0` if the player won the jackpot) |
 
 ## Usage
 
@@ -92,6 +84,34 @@ To test actual WASM files against a backend
 make test-wasm
 ```
 
+### Run locally
+
+The most convenient way to run your smart contract locally would be by using [NCTL in Docker](https://hub.docker.com/r/makesoftware/casper-nctl):
+
+```bash
+docker run --rm -it --name casper-nctl -d \
+    -p 11101:11101 \
+    -p 14101:14101 \
+    -p 18101:18101 \
+    -v ${PWD}/wasm:/home/casper/contract \
+    makesoftware/casper-nctl
+```
+
+Open the NCTL container terminal:
+```bash
+docker exec -it casper-nctl /bin/bash
+```
+
+Deploy the contract to the local NCTL:
+```bash
+casper-client put-deploy \
+    --node-address http://127.0.0.1:11101 \
+    --chain-name casper-net-1 \
+    --payment-amount 200000000000 \
+    --secret-key "/home/casper/casper-node/utils/nctl/assets/net-1/users/user-1/secret_key.pem" \
+    --session-path /home/casper/contract/Lottery.wasm
+```
+
 ### Deploy to Casper Testnet
 
 Copy and adjust `.env` file
@@ -100,7 +120,7 @@ Copy and adjust `.env` file
 cp .env.sample .env
 ```
 
-Run the deploy command that uses Odra's [Livenet backend](https://odra.dev/docs/backends/livenet)
+Run the deploy command that uses Odra's [Livenet backend](https://odra.dev/docs/backends/livenet):
 
 ```shell
 cargo run --bin livenet --features=livenet
