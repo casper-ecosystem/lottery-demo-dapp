@@ -25,9 +25,22 @@ async function main() {
     console.log(`Connected to streaming API: ${config.csprCloudStreamingUrl}`);
   })
 
+  let lastPingTimestamp = new Date();
+
+  setInterval(() => {
+    const now = new Date();
+    if (now.getTime() - lastPingTimestamp.getTime() > config.pingCheckIntervalInMilliseconds) {
+      console.log(`No ping events from Streaming API for ${config.pingCheckIntervalInMilliseconds/1000} seconds, closing ws connection...`);
+      ws.close();
+      process.exit(1);
+    }
+  }, config.pingCheckIntervalInMilliseconds);
+
   ws.on('message', async (data: Buffer) => {
     const rawData = data.toString();
+
     if (rawData === 'Ping') {
+      lastPingTimestamp = new Date();
       return;
     }
 

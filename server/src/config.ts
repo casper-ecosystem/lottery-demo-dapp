@@ -11,6 +11,7 @@ interface Config {
   lotteryContractPackageHash: string;
   dbURI: string;
   clientURL: string[];
+  pingCheckIntervalInMilliseconds: number;
 }
 
 export const config: Config = {
@@ -21,4 +22,5 @@ export const config: Config = {
   lotteryContractPackageHash: process.env.LOTTERY_CONTRACT_PACKAGE_HASH as string,
   dbURI: process.env.DB_URI as string,
   clientURL: process.env.CLIENT_URL ? (process.env.CLIENT_URL as string).split(',') : [],
+  pingCheckIntervalInMilliseconds: 60000,
 };
