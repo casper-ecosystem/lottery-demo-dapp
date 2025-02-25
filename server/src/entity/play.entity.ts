@@ -16,6 +16,9 @@ export class Play {
   @Column({ name: 'prize_amount' })
   prizeAmount: string;
 
+  @Column({ name: 'jackpot_amount' })
+  jackpotAmount: string;
+
   @Column({ name: 'is_jackpot' })
   isJackpot: boolean;
 

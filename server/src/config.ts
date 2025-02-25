@@ -10,7 +10,8 @@ interface Config {
   csprCloudAccessKey: string;
   lotteryContractPackageHash: string;
   dbURI: string;
-  clientURL: string;
+  clientURL: string[];
+  pingCheckIntervalInMilliseconds: number;
 }
 
 export const config: Config = {
@@ -20,5 +21,6 @@ export const config: Config = {
   csprCloudAccessKey: process.env.CSPR_CLOUD_ACCESS_KEY as string,
   lotteryContractPackageHash: process.env.LOTTERY_CONTRACT_PACKAGE_HASH as string,
   dbURI: process.env.DB_URI as string,
-  clientURL: process.env.CLIENT_URL as string,
+  clientURL: process.env.CLIENT_URL ? (process.env.CLIENT_URL as string).split(',') : [],
+  pingCheckIntervalInMilliseconds: 60000,
 };
