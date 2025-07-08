@@ -230,9 +230,8 @@ export const YouWonContent = (
 		<ModalContent
 			logo={<Icon src={HappyIcon} status={IconStatus.success} />}
 			title={'You Won!'}
-			description={`Congratulations, you have won ${formatNumber(
-				prize
-			)} CSPR!`}
+      description={
+        `Congratulations, you have won ${formatNumber(prize, {precision: 2, minPrecision: 0})} CSPR!`}
 			buttonText={'Play More'}
 			{...props}
 		/>
