@@ -213,9 +213,7 @@ export const JackpotContent = (
 		<ModalContent
 			logo={<Icon src={CupIcon} status={IconStatus.success} />}
 			title={'Jackpot!'}
-			description={`Congratulations, you have won the jackpot of ${formatNumber(
-				prize
-			)} CSPR!`}
+			description={`Congratulations, you have won ${formatNumber(prize, {precision: 2, minPrecision: 0})} CSPR!`}
 			buttonText={'Play More'}
 			{...props}
 		/>

@@ -16,16 +16,18 @@ export const formatNumber = (
 	value: number | string,
 	{
 		precision,
+    minPrecision,
 		notation,
 		compactDisplay,
 	}: {
 		precision?: number;
+		minPrecision?: number;
 		notation?: 'compact' | 'standard';
 		compactDisplay?: 'short' | 'long';
 	} = {}
 ): string => {
 	return intl.formatNumber(value as number, {
-		minimumFractionDigits: precision || 0,
+		minimumFractionDigits: (minPrecision !== null ? minPrecision : precision) || 0,
 		maximumFractionDigits: precision || 0,
 		notation,
 		compactDisplay,
