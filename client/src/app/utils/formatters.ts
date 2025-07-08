@@ -21,13 +21,13 @@ export const formatNumber = (
 		compactDisplay,
 	}: {
 		precision?: number;
-    minPrecision?: number;
+		minPrecision?: number;
 		notation?: 'compact' | 'standard';
 		compactDisplay?: 'short' | 'long';
 	} = {}
 ): string => {
 	return intl.formatNumber(value as number, {
-    minimumFractionDigits: (minPrecision !== null ? minPrecision : precision) || 0,
+		minimumFractionDigits: (minPrecision !== null ? minPrecision : precision) || 0,
 		maximumFractionDigits: precision || 0,
 		notation,
 		compactDisplay,
