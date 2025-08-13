@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { PageLayout } from '../../components';
 import JackpotInfo from './JackpotInfo';
 import Plays from './Plays';
-import Modal from '../play-modal/modal';
+import Modal from '../../components/play-modal/modal';
 import { useCallback, useState } from 'react';
 import { PlaysProvider } from '../../services/providers/PlaysContext';
 
