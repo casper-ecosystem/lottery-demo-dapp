@@ -69,12 +69,17 @@ export const preparePlayDeploy = async (
 
 export const signAndSendDeploy = async (
 	deploy: Deploy,
-	publicKey: CLPublicKey
+	publicKey: CLPublicKey,
+	statusUpdateCallBack: (status: string, data: any) => void
 ) => {
+
+
+
 	const deployJson = DeployUtil.deployToJson(deploy);
 	const response = await window.csprclick.send(
 		JSON.stringify(deployJson.deploy),
-		publicKey.toHex().toLowerCase()
+		publicKey.toHex().toLowerCase(),
+		statusUpdateCallBack
 	);
 
 	if (response?.cancelled) {

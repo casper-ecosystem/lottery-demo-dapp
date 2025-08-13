@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
 import { useClickRef } from '@make-software/csprclick-ui';
 import { AccountType } from '@make-software/csprclick-core-types';
-import { Deploy, DeployMessage, Play } from '../../types';
+import { Deploy, Play } from '../../types';
 import { ActiveAccountContext } from '../../../App';
 import {
   DeployFailed,
@@ -10,7 +10,6 @@ import {
   preparePlayDeploy,
   signAndSendDeploy,
 } from '../requests/play-requests';
-import { useWebSockets } from './use-websockets';
 import { usePlaysData } from '../providers/PlaysContext';
 
 interface PlayResult {
@@ -27,6 +26,12 @@ interface ManagePlayData {
   playResult: PlayResult;
 }
 
+export const enum SocketStatus  {
+  SENT = 'sent',
+  PING = 'ping',
+  PROCESSED = 'processed'
+
+}
 const useManagePlay = (): ManagePlayData => {
   const clickRef = useClickRef();
   const activeAccountContext = useContext(ActiveAccountContext);
@@ -51,6 +56,7 @@ const useManagePlay = (): ManagePlayData => {
     null
   );
 
+
   const { reloadPlaysData } = usePlaysData();
 
   useEffect(() => {
@@ -71,31 +77,15 @@ const useManagePlay = (): ManagePlayData => {
     }
   }, [executedDeploy]);
 
-  const onWebSocketMessage = (message: { data: string }) => {
-    if (message.data) {
-      const deploy = JSON.parse(message.data) as DeployMessage;
-      setExecutedDeploy(deploy.data);
-    }
-  };
-
-  const onWebSocketError = () => setPlayResult(errorPlayResult);
-
-  const {
-    connect: openPlayerDeploysWebSocketStream,
-    close: closePlayerDeploysWebSocketStream,
-    session,
-  } = useWebSockets({
-    onMessage: onWebSocketMessage,
-    onClose: onWebSocketError,
-    onError: onWebSocketError,
-  });
-
-  const waitForTheNextPlayerDeploy = () => {
-    if (session && session?.readyState === WebSocket.OPEN) {
+  const waitForTheNextPlayerDeploy = (status: string, data: any) => {
+    console.log('status',status);
+    if (status === SocketStatus.SENT) {
       setExecutedDeploy(null);
-    } else {
-      openPlayerDeploysWebSocketStream(playerAccount!.public_key);
     }
+    if (status === SocketStatus.PROCESSED) {
+      setExecutedDeploy(data.csprCloudTransaction);
+    }
+
   };
 
   const startPlaying = async () => {
@@ -113,7 +103,7 @@ const useManagePlay = (): ManagePlayData => {
         playerPublicKey
       );
 
-      await signAndSendDeploy(preparedDeploy, playerPublicKey);
+      await signAndSendDeploy(preparedDeploy, playerPublicKey, waitForTheNextPlayerDeploy);
 
       setPlayResult({
         ...playResult,
@@ -121,13 +111,14 @@ const useManagePlay = (): ManagePlayData => {
         error: false,
       });
 
-      waitForTheNextPlayerDeploy();
     } catch (e) {
       setPlayResult(errorPlayResult);
     }
   };
 
   const handleDeployProcessed = async (deploy: Deploy) => {
+    // eslint-disable-next-line no-debugger
+    debugger;
     if (!deploy.error_message && activeAccountContext) {
       try {
         const accountHash = encodeBase16(
@@ -169,7 +160,7 @@ const useManagePlay = (): ManagePlayData => {
       setExecutedDeploy(null);
     }
 
-    closePlayerDeploysWebSocketStream();
+    // closePlayerDeploysWebSocketStream();
   }
 
   const connectWallet = async () => {
