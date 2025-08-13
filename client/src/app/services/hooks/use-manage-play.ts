@@ -78,14 +78,22 @@ const useManagePlay = (): ManagePlayData => {
   }, [executedDeploy]);
 
   const waitForTheNextPlayerDeploy = (status: string, data: any) => {
-    console.log('status',status);
+    setPlayResult({
+      ...playResult,
+      loading: true,
+      error: false,
+    });
     if (status === SocketStatus.SENT) {
       setExecutedDeploy(null);
     }
     if (status === SocketStatus.PROCESSED) {
       setExecutedDeploy(data.csprCloudTransaction);
+      setPlayResult({
+        ...playResult,
+        loading: false,
+        error: false,
+      });
     }
-
   };
 
   const startPlaying = async () => {
@@ -117,8 +125,6 @@ const useManagePlay = (): ManagePlayData => {
   };
 
   const handleDeployProcessed = async (deploy: Deploy) => {
-    // eslint-disable-next-line no-debugger
-    debugger;
     if (!deploy.error_message && activeAccountContext) {
       try {
         const accountHash = encodeBase16(
@@ -159,8 +165,6 @@ const useManagePlay = (): ManagePlayData => {
     } else {
       setExecutedDeploy(null);
     }
-
-    // closePlayerDeploysWebSocketStream();
   }
 
   const connectWallet = async () => {
