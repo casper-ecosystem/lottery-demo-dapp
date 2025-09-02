@@ -84,9 +84,16 @@ const useManagePlay = (): ManagePlayData => {
       loading: true,
       error: false,
     });
-    if (status === DeployStatus.SENT || status === DeployStatus.TIMEOUT) {
+    if (status === DeployStatus.SENT) {
       setExecutedDeploy(null);
     }
+
+    if(status === DeployStatus.TIMEOUT) {
+      setExecutedDeploy(null);
+      setPlayResult(errorPlayResult);
+    }
+
+
     if (status === DeployStatus.PROCESSED) {
       setExecutedDeploy(data.csprCloudTransaction);
       setPlayResult({
