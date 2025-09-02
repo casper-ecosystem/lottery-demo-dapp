@@ -26,10 +26,11 @@ interface ManagePlayData {
   playResult: PlayResult;
 }
 
-export const enum SocketStatus  {
+const enum DeployStatus  {
   SENT = 'sent',
   PING = 'ping',
-  PROCESSED = 'processed'
+  PROCESSED = 'processed',
+  TIMEOUT = 'timeout'
 
 }
 const useManagePlay = (): ManagePlayData => {
@@ -77,16 +78,16 @@ const useManagePlay = (): ManagePlayData => {
     }
   }, [executedDeploy]);
 
-  const waitForTheNextPlayerDeploy = (status: string, data: any) => {
+  const handleDeployStatusUpdate = (status: string, data: any) => {
     setPlayResult({
       ...playResult,
       loading: true,
       error: false,
     });
-    if (status === SocketStatus.SENT) {
+    if (status === DeployStatus.SENT || status === DeployStatus.TIMEOUT) {
       setExecutedDeploy(null);
     }
-    if (status === SocketStatus.PROCESSED) {
+    if (status === DeployStatus.PROCESSED) {
       setExecutedDeploy(data.csprCloudTransaction);
       setPlayResult({
         ...playResult,
@@ -111,7 +112,7 @@ const useManagePlay = (): ManagePlayData => {
         playerPublicKey
       );
 
-      await signAndSendDeploy(preparedDeploy, playerPublicKey, waitForTheNextPlayerDeploy);
+      await signAndSendDeploy(preparedDeploy, playerPublicKey, handleDeployStatusUpdate);
 
       setPlayResult({
         ...playResult,
