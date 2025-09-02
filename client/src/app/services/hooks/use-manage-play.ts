@@ -40,6 +40,8 @@ const useManagePlay = (): ManagePlayData => {
   const [playerAccount, setPlayerAccount] =
     useState<AccountType | null>(null);
 
+  const [status, setStatus] = useState<string | null>(null);
+
   const [playResult, setPlayResult] =
     useState<PlayResult>({
       data: null,
@@ -57,6 +59,11 @@ const useManagePlay = (): ManagePlayData => {
     null
   );
 
+  useEffect(() => {
+    if(status === DeployStatus.TIMEOUT) {
+      setPlayResult(errorPlayResult);
+    }
+  }, [status])
 
   const { reloadPlaysData } = usePlaysData();
 
@@ -79,6 +86,7 @@ const useManagePlay = (): ManagePlayData => {
   }, [executedDeploy]);
 
   const handleDeployStatusUpdate = (status: string, data: any) => {
+    setStatus(status);
     setPlayResult({
       ...playResult,
       loading: true,
@@ -86,21 +94,24 @@ const useManagePlay = (): ManagePlayData => {
     });
     if (status === DeployStatus.SENT) {
       setExecutedDeploy(null);
-    }
-
-    if(status === DeployStatus.TIMEOUT) {
+    } else if(status === DeployStatus.TIMEOUT) {
       setExecutedDeploy(null);
       setPlayResult(errorPlayResult);
-    }
-
-
-    if (status === DeployStatus.PROCESSED) {
+    } else if (status === DeployStatus.PROCESSED) {
       setExecutedDeploy(data.csprCloudTransaction);
       setPlayResult({
         ...playResult,
         loading: false,
         error: false,
       });
+    } else if(status === DeployStatus.PING) {
+      setPlayResult({
+        ...playResult,
+        loading: true,
+        error: false,
+      });
+    } else {
+      setPlayResult(errorPlayResult);
     }
   };
 
