@@ -10,6 +10,9 @@
     "event-handler:dev": "ts-node src/event-handler.ts",
     "typeorm": "./node_modules/ts-node/dist/bin.js ./node_modules/typeorm/cli.js -d dist/data-source.js"
   },
+  "overrides": {
+    "sha.js": "^2.4.12"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
