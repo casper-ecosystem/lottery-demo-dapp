@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
 import { useClickRef } from '@make-software/csprclick-ui';
-import { AccountType } from '@make-software/csprclick-core-types';
+import { AccountType, TransactionStatus } from '@make-software/csprclick-core-types';
 import { Deploy, Play } from '../../types';
 import { ActiveAccountContext } from '../../../App';
 import {
@@ -26,13 +26,6 @@ interface ManagePlayData {
   playResult: PlayResult;
 }
 
-const enum DeployStatus  {
-  SENT = 'sent',
-  PING = 'ping',
-  PROCESSED = 'processed',
-  TIMEOUT = 'timeout'
-
-}
 const useManagePlay = (): ManagePlayData => {
   const clickRef = useClickRef();
   const activeAccountContext = useContext(ActiveAccountContext);
@@ -60,7 +53,7 @@ const useManagePlay = (): ManagePlayData => {
   );
 
   useEffect(() => {
-    if(status === DeployStatus.TIMEOUT) {
+    if(status === TransactionStatus.TIMEOUT) {
       setPlayResult(errorPlayResult);
     }
   }, [status])
@@ -92,19 +85,19 @@ const useManagePlay = (): ManagePlayData => {
       loading: true,
       error: false,
     });
-    if (status === DeployStatus.SENT) {
+    if (status === TransactionStatus.SENT) {
       setExecutedDeploy(null);
-    } else if(status === DeployStatus.TIMEOUT) {
+    } else if(status === TransactionStatus.TIMEOUT) {
       setExecutedDeploy(null);
       setPlayResult(errorPlayResult);
-    } else if (status === DeployStatus.PROCESSED) {
+    } else if (status === TransactionStatus.PROCESSED) {
       setExecutedDeploy(data.csprCloudTransaction);
       setPlayResult({
         ...playResult,
         loading: false,
         error: false,
       });
-    } else if(status === DeployStatus.PING) {
+    } else if(status === TransactionStatus.PING) {
       setPlayResult({
         ...playResult,
         loading: true,
