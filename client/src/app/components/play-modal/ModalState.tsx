@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Big from 'big.js';
 import {
 	BuyTicketContent,
@@ -68,21 +68,25 @@ interface ModalStateProps {
 	closeModal: () => void;
 }
 
-const ModalState = (props: ModalStateProps) => {
-	const { closeModal } = props;
-
+const ModalState = ({ closeModal }: ModalStateProps) => {
 	const {
-    playerAccount,
-    connectWallet,
-    startPlaying,
-    endPlaying,
-    playResult,
-  } = useManagePlay();
+		playerAccount,
+		connectWallet,
+		startPlaying,
+		endPlaying,
+		playResult,
+	} = useManagePlay();
 
 	const handleCloseModal = () => {
-    endPlaying();
+		endPlaying();
 		closeModal();
 	};
+
+	useEffect(() => {
+		if (playResult.cancelled) {
+			handleCloseModal();
+		}
+	}, [playResult.cancelled]);
 
 	const refreshPage = () => window.location.reload();
 	const goToFaucet = () => {
@@ -118,6 +122,10 @@ const ModalState = (props: ModalStateProps) => {
 
 	if (playResult.loading) {
 		return <LoadingContent closeModal={handleCloseModal} />;
+	}
+
+	if (playResult.cancelled) {
+		return null;
 	}
 
 	if (playResult.data !== null) {
