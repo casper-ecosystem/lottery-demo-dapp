@@ -76,7 +76,7 @@ export const signAndSendDeploy = async (
 	const response = await window.csprclick.send(
 		JSON.stringify(deployJson.deploy),
 		publicKey.toHex().toLowerCase(),
-		onStatusUpdate, 3
+		onStatusUpdate
 	);
 
 	return response;

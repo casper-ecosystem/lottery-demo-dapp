@@ -102,9 +102,7 @@ const useManagePlay = (): ManagePlayData => {
 		) {
 			setPlayResult(errorPlayResult());
 		} else if (status === TransactionStatus.PROCESSED) {
-			setTimeout(() => {
-				setExecutedDeploy(data.csprCloudTransaction);
-			}, 5000);
+			setExecutedDeploy(data.csprCloudTransaction);
 			setPlayResult(prev => ({
 				...prev,
 				loading: false,
@@ -144,21 +142,39 @@ const useManagePlay = (): ManagePlayData => {
 						activeAccountContext.public_key
 					).toAccountHash()
 				);
-				const response = await getLastPlayByAccountHash(accountHash);
+				/** we need interval to align receiving the 'processed' event from BE **/
+				let attempts = 0;
+				const intervalId = setInterval(async () => {
+					attempts++;
 
-				const play = response.data[0] as any;
+					try {
+						const response = await getLastPlayByAccountHash(
+							accountHash
+						);
+						const play = response.data[0] as any;
 
-				if (play.deployHash === deploy.deploy_hash) {
-					setPlayResult({
-						data: play,
-						loading: false,
-						error: false,
-						cancelled: false,
-					});
-					reloadPlaysData();
-				} else {
-					throw new Error('A new play was not created');
-				}
+						if (play.deployHash === deploy.deploy_hash) {
+							clearInterval(intervalId);
+							setPlayResult({
+								data: play,
+								loading: false,
+								error: false,
+								cancelled: false,
+							});
+							reloadPlaysData();
+						} else if (attempts >= 7) {
+							clearInterval(intervalId);
+							setPlayResult({
+								...playResult,
+								error: true,
+								loading: false,
+							});
+						}
+					} catch (err) {
+						clearInterval(intervalId);
+						setPlayResult(errorPlayResult());
+					}
+				}, 1000);
 			} catch (error) {
 				setPlayResult(errorPlayResult());
 			}
