@@ -103,11 +103,6 @@ const useManagePlay = (): ManagePlayData => {
 			setPlayResult(errorPlayResult());
 		} else if (status === TransactionStatus.PROCESSED) {
 			setExecutedDeploy(data.csprCloudTransaction);
-			setPlayResult(prev => ({
-				...prev,
-				loading: false,
-				error: false,
-			}));
 		}
 	};
 
@@ -192,8 +187,8 @@ const useManagePlay = (): ManagePlayData => {
 		setExecutedDeploy(null);
 	};
 
-	const connectWallet = async () => {
-		await clickRef?.signIn();
+	const connectWallet = () => {
+		clickRef?.signIn();
 	};
 
 	return {
