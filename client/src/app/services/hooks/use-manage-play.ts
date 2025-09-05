@@ -58,7 +58,7 @@ const useManagePlay = (): ManagePlayData => {
 		error: false,
 	});
 
-	const [executedDeploy, setExecutedDeploy] = useState<Deploy | null>(
+	const [executedTransaction, setExecutedTransaction] = useState<Deploy | null>(
 		null
 	);
 
@@ -77,12 +77,12 @@ const useManagePlay = (): ManagePlayData => {
 	}, [activeAccountContext]);
 
 	useEffect(() => {
-		if (executedDeploy !== null) {
-			handleDeployProcessed(executedDeploy);
+		if (executedTransaction !== null) {
+			handleTransactionProcessed(executedTransaction);
 		}
-	}, [executedDeploy]);
+	}, [executedTransaction]);
 
-	const handleDeployStatusUpdate = async (
+	const handleTransactionStatusUpdate = async (
 		status: string,
 		data: any
 	) => {
@@ -93,7 +93,7 @@ const useManagePlay = (): ManagePlayData => {
 				cancelled: false,
 				error: false,
 			});
-			setExecutedDeploy(null);
+			setExecutedTransaction(null);
 		} else if (status === TransactionStatus.CANCELLED) {
 			setPlayResult(cancelledPlayResult());
 		} else if (
@@ -102,7 +102,7 @@ const useManagePlay = (): ManagePlayData => {
 		) {
 			setPlayResult(errorPlayResult());
 		} else if (status === TransactionStatus.PROCESSED) {
-			setExecutedDeploy(data.csprCloudTransaction);
+			setExecutedTransaction(data.csprCloudTransaction);
 		}
 	};
 
@@ -117,20 +117,20 @@ const useManagePlay = (): ManagePlayData => {
 		);
 
 		try {
-			const preparedDeploy = await preparePlayDeploy(playerPublicKey);
+			const transaction = await preparePlayDeploy(playerPublicKey);
 
 			await signAndSendDeploy(
-				preparedDeploy,
+				transaction,
 				playerPublicKey,
-				handleDeployStatusUpdate
+				handleTransactionStatusUpdate
 			);
 		} catch (e) {
 			setPlayResult(errorPlayResult());
 		}
 	};
 
-	const handleDeployProcessed = async (deploy: Deploy) => {
-		if (!deploy.error_message && activeAccountContext) {
+	const handleTransactionProcessed = async (transaction: Deploy) => {
+		if (!transaction.error_message && activeAccountContext) {
 			try {
 				const accountHash = encodeBase16(
 					CLPublicKey.fromHex(
@@ -148,7 +148,7 @@ const useManagePlay = (): ManagePlayData => {
 						);
 						const play = response.data[0] as any;
 
-						if (play.deployHash === deploy.deploy_hash) {
+						if (play.deployHash === transaction.deploy_hash) {
 							clearInterval(intervalId);
 							setPlayResult({
 								data: play,
@@ -174,7 +174,7 @@ const useManagePlay = (): ManagePlayData => {
 				setPlayResult(errorPlayResult());
 			}
 		} else {
-			console.error(`Deploy failed: ${deploy.error_message}`);
+			console.error(`Transaction failed: ${transaction.error_message}`);
 			setPlayResult({
 				...playResult,
 				data: DeployFailed.Failed,
@@ -184,7 +184,7 @@ const useManagePlay = (): ManagePlayData => {
 	};
 
 	const endPlaying = () => {
-		setExecutedDeploy(null);
+		setExecutedTransaction(null);
 	};
 
 	const connectWallet = () => {
