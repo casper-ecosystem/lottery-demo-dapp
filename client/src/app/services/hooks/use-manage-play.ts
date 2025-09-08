@@ -1,188 +1,203 @@
 import { useContext, useEffect, useState } from 'react';
 import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
 import { useClickRef } from '@make-software/csprclick-ui';
-import { AccountType } from '@make-software/csprclick-core-types';
-import { Deploy, DeployMessage, Play } from '../../types';
+import {
+	AccountType,
+	TransactionStatus,
+} from '@make-software/csprclick-core-types';
+import { Deploy, Play } from '../../types';
 import { ActiveAccountContext } from '../../../App';
 import {
-  DeployFailed,
-  getLastPlayByAccountHash,
-  preparePlayDeploy,
-  signAndSendDeploy,
+	DeployFailed,
+	getLastPlayByAccountHash,
+	preparePlayDeploy,
+	signAndSendDeploy,
 } from '../requests/play-requests';
-import { useWebSockets } from './use-websockets';
 import { usePlaysData } from '../providers/PlaysContext';
 
 interface PlayResult {
-  data: Play | DeployFailed | null;
-  loading: boolean;
-  error: boolean;
+	data: Play | DeployFailed | null;
+	loading: boolean;
+	cancelled: boolean;
+	error: boolean;
 }
 
 interface ManagePlayData {
-  playerAccount: AccountType | null;
-  connectWallet: () => void;
-  startPlaying: () => void;
-  endPlaying: () => void;
-  playResult: PlayResult;
+	playerAccount: AccountType | null;
+	connectWallet: () => void;
+	startPlaying: () => void;
+	endPlaying: () => void;
+	playResult: PlayResult;
 }
 
 const useManagePlay = (): ManagePlayData => {
-  const clickRef = useClickRef();
-  const activeAccountContext = useContext(ActiveAccountContext);
+	const clickRef = useClickRef();
+	const activeAccountContext = useContext(ActiveAccountContext);
 
-  const [playerAccount, setPlayerAccount] =
-    useState<AccountType | null>(null);
+	const [playerAccount, setPlayerAccount] =
+		useState<AccountType | null>(null);
 
-  const [playResult, setPlayResult] =
-    useState<PlayResult>({
-      data: null,
-      loading: false,
-      error: false,
-    });
+	const [playResult, setPlayResult] = useState<PlayResult>({
+		data: null,
+		loading: false,
+		cancelled: false,
+		error: false,
+	});
 
-  const errorPlayResult = {
-    data: null,
-    loading: false,
-    error: true,
-  };
+	const errorPlayResult = () => ({
+		data: null,
+		loading: false,
+		cancelled: false,
+		error: true,
+	});
 
-  const [executedDeploy, setExecutedDeploy] = useState<Deploy | null>(
-    null
-  );
+	const cancelledPlayResult = () => ({
+		data: null,
+		loading: false,
+		cancelled: true,
+		error: false,
+	});
 
-  const { reloadPlaysData } = usePlaysData();
+	const [executedTransaction, setExecutedTransaction] = useState<Deploy | null>(
+		null
+	);
 
-  useEffect(() => {
-    if (activeAccountContext && clickRef) {
-      clickRef
-        .getActiveAccountWithBalance()
-        .then(playerAccount => {
-          setPlayerAccount(playerAccount);
-        });
-    } else {
-      setPlayerAccount(null);
-    }
-  }, [activeAccountContext]);
+	const { reloadPlaysData } = usePlaysData();
 
-  useEffect(() => {
-    if (executedDeploy !== null) {
-      handleDeployProcessed(executedDeploy);
-    }
-  }, [executedDeploy]);
+	useEffect(() => {
+		if (activeAccountContext && clickRef) {
+			clickRef
+				.getActiveAccountAsync({ withBalance: true })
+				.then(playerAccount => {
+					setPlayerAccount(playerAccount);
+				});
+		} else {
+			setPlayerAccount(null);
+		}
+	}, [activeAccountContext]);
 
-  const onWebSocketMessage = (message: { data: string }) => {
-    if (message.data) {
-      const deploy = JSON.parse(message.data) as DeployMessage;
-      setExecutedDeploy(deploy.data);
-    }
-  };
+	useEffect(() => {
+		if (executedTransaction !== null) {
+			handleTransactionProcessed(executedTransaction);
+		}
+	}, [executedTransaction]);
 
-  const onWebSocketError = () => setPlayResult(errorPlayResult);
+	const handleTransactionStatusUpdate = async (
+		status: string,
+		data: any
+	) => {
+		if (status === TransactionStatus.SENT) {
+			setPlayResult({
+				data: null,
+				loading: true,
+				cancelled: false,
+				error: false,
+			});
+			setExecutedTransaction(null);
+		} else if (status === TransactionStatus.CANCELLED) {
+			setPlayResult(cancelledPlayResult());
+		} else if (
+			status === TransactionStatus.TIMEOUT ||
+			status === TransactionStatus.ERROR
+		) {
+			setPlayResult(errorPlayResult());
+		} else if (status === TransactionStatus.PROCESSED) {
+			setExecutedTransaction(data.csprCloudTransaction);
+		}
+	};
 
-  const {
-    connect: openPlayerDeploysWebSocketStream,
-    close: closePlayerDeploysWebSocketStream,
-    session,
-  } = useWebSockets({
-    onMessage: onWebSocketMessage,
-    onClose: onWebSocketError,
-    onError: onWebSocketError,
-  });
+	const startPlaying = async () => {
+		if (!playerAccount?.public_key) {
+			setPlayResult(errorPlayResult());
+			return;
+		}
 
-  const waitForTheNextPlayerDeploy = () => {
-    if (session && session?.readyState === WebSocket.OPEN) {
-      setExecutedDeploy(null);
-    } else {
-      openPlayerDeploysWebSocketStream(playerAccount!.public_key);
-    }
-  };
+		const playerPublicKey = CLPublicKey.fromHex(
+			playerAccount.public_key
+		);
 
-  const startPlaying = async () => {
-    if (!playerAccount?.public_key) {
-      setPlayResult(errorPlayResult);
-      return;
-    }
+		try {
+			const transaction = await preparePlayDeploy(playerPublicKey);
 
-    const playerPublicKey = CLPublicKey.fromHex(
-      playerAccount.public_key
-    );
+			await signAndSendDeploy(
+				transaction,
+				playerPublicKey,
+				handleTransactionStatusUpdate
+			);
+		} catch (e) {
+			setPlayResult(errorPlayResult());
+		}
+	};
 
-    try {
-      const preparedDeploy = await preparePlayDeploy(
-        playerPublicKey
-      );
+	const handleTransactionProcessed = async (transaction: Deploy) => {
+		if (!transaction.error_message && activeAccountContext) {
+			try {
+				const accountHash = encodeBase16(
+					CLPublicKey.fromHex(
+						activeAccountContext.public_key
+					).toAccountHash()
+				);
+				/** we need interval to align receiving the 'processed' event from BE **/
+				let attempts = 0;
+				const intervalId = setInterval(async () => {
+					attempts++;
 
-      await signAndSendDeploy(preparedDeploy, playerPublicKey);
+					try {
+						const response = await getLastPlayByAccountHash(
+							accountHash
+						);
+						const play = response.data[0] as any;
 
-      setPlayResult({
-        ...playResult,
-        loading: true,
-        error: false,
-      });
+						if (play.deployHash === transaction.deploy_hash) {
+							clearInterval(intervalId);
+							setPlayResult({
+								data: play,
+								loading: false,
+								error: false,
+								cancelled: false,
+							});
+							reloadPlaysData();
+						} else if (attempts >= 7) {
+							clearInterval(intervalId);
+							setPlayResult({
+								...playResult,
+								error: true,
+								loading: false,
+							});
+						}
+					} catch (err) {
+						clearInterval(intervalId);
+						setPlayResult(errorPlayResult());
+					}
+				}, 1000);
+			} catch (error) {
+				setPlayResult(errorPlayResult());
+			}
+		} else {
+			console.error(`Transaction failed: ${transaction.error_message}`);
+			setPlayResult({
+				...playResult,
+				data: DeployFailed.Failed,
+				loading: false,
+			});
+		}
+	};
 
-      waitForTheNextPlayerDeploy();
-    } catch (e) {
-      setPlayResult(errorPlayResult);
-    }
-  };
+	const endPlaying = () => {
+		setExecutedTransaction(null);
+	};
 
-  const handleDeployProcessed = async (deploy: Deploy) => {
-    if (!deploy.error_message && activeAccountContext) {
-      try {
-        const accountHash = encodeBase16(
-          CLPublicKey.fromHex(
-            activeAccountContext.public_key
-          ).toAccountHash()
-        );
-        const response = await getLastPlayByAccountHash(accountHash);
+	const connectWallet = () => {
+		clickRef?.signIn();
+	};
 
-        const play = response.data[0] as any;
-
-        if (play.deployHash === deploy.deploy_hash) {
-          setPlayResult({
-            data: play,
-            loading: false,
-            error: false,
-          });
-          reloadPlaysData();
-        } else {
-          throw new Error('A new play was not created');
-        }
-      } catch (error) {
-        setPlayResult(errorPlayResult);
-      }
-    } else {
-      console.error(`Deploy failed: ${deploy.error_message}`);
-      setPlayResult({
-        ...playResult,
-        data: DeployFailed.Failed,
-        loading: false,
-      });
-    }
-  };
-
-  const endPlaying = () => {
-    if (!executedDeploy) {
-      setPlayResult(errorPlayResult);
-    } else {
-      setExecutedDeploy(null);
-    }
-
-    closePlayerDeploysWebSocketStream();
-  }
-
-  const connectWallet = async () => {
-    await clickRef?.signIn();
-  };
-
-  return {
-    playerAccount,
-    connectWallet,
-    startPlaying,
-    endPlaying,
-    playResult
-  };
+	return {
+		playerAccount,
+		connectWallet,
+		startPlaying,
+		endPlaying,
+		playResult,
+	};
 };
 
 export default useManagePlay;

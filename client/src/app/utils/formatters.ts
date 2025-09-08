@@ -16,7 +16,7 @@ export const formatNumber = (
 	value: number | string,
 	{
 		precision,
-    minPrecision,
+		minPrecision,
 		notation,
 		compactDisplay,
 	}: {
@@ -27,7 +27,8 @@ export const formatNumber = (
 	} = {}
 ): string => {
 	return intl.formatNumber(value as number, {
-		minimumFractionDigits: (minPrecision !== null ? minPrecision : precision) || 0,
+		minimumFractionDigits:
+			(minPrecision !== null ? minPrecision : precision) || 0,
 		maximumFractionDigits: precision || 0,
 		notation,
 		compactDisplay,

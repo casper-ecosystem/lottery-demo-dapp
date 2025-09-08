@@ -39,37 +39,6 @@ async function main() {
 
   const csprCloudClient = new CSPRCloudAPIClient(config.csprCloudApiUrl, config.csprCloudAccessKey);
 
-  const csprCloudStreamingProxy = createProxyMiddleware({
-    target: config.csprCloudStreamingUrl,
-    ws: true,
-    changeOrigin: true,
-    logger: console,
-    headers: {
-      authorization: config.csprCloudAccessKey,
-    },
-    on: {
-      proxyReqWs: (proxyReq, req) => {
-        console.log('WebSocketProxy: WebSocket connection request', req.url);
-        proxyReq.removeHeader('Origin');
-      },
-      proxyReq: (_, req) => {
-        console.log('WebSocketProxy: Connection request', req.url)
-      },
-      open: () => {
-        console.log('WebSocketProxy: Connection opened');
-      },
-      close: () => {
-        console.log('WebSocketProxy: Connection closed');
-      },
-      error(err, req) {
-        console.log('WebSocketProxy: Connection error', req.url, err);
-      }
-    }
-  });
-  server.on('upgrade', csprCloudStreamingProxy.upgrade);
-
-  app.get('/deploys', csprCloudStreamingProxy);
-
   const csprCloudAPIProxy = createProxyMiddleware({
     target: config.csprCloudApiUrl,
     changeOrigin: true,

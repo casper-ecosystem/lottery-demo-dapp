@@ -69,17 +69,15 @@ export const preparePlayDeploy = async (
 
 export const signAndSendDeploy = async (
 	deploy: Deploy,
-	publicKey: CLPublicKey
+	publicKey: CLPublicKey,
+	onStatusUpdate: (status: string, data: any) => void
 ) => {
 	const deployJson = DeployUtil.deployToJson(deploy);
 	const response = await window.csprclick.send(
 		JSON.stringify(deployJson.deploy),
-		publicKey.toHex().toLowerCase()
+		publicKey.toHex().toLowerCase(),
+		onStatusUpdate
 	);
-
-	if (response?.cancelled) {
-		throw new Error('A deploy was not signed');
-	}
 
 	return response;
 };
