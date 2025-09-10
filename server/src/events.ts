@@ -23,31 +23,3 @@ export interface Event<T> {
   };
   timestamp: string;
 }
-
-export interface PlayDeploy {
-  action: string;
-  data: {
-    deploy_hash: string;
-    block_hash: string;
-    caller_public_key: string;
-    execution_type_id: number;
-    contract_hash: string | null;
-    entry_point_id: null;
-    args: {
-      contract_package_hash: {
-        parsed: string;
-      };
-    };
-    payment_amount: string;
-    cost: string;
-    error_message: string | null;
-    status: string;
-    timestamp: string;
-  };
-  extra: {
-    deploy_hash: string;
-    event_id: number;
-    transform_id: number;
-  } | null;
-  timestamp: string;
-}

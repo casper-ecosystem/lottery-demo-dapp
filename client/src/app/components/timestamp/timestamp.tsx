@@ -2,15 +2,15 @@ import { formatTimestamp } from '../../utils/formatters';
 import { HistoryLink } from '../history-link/history-link';
 import { BodyText } from '../body-text/body-text';
 
-interface DeployTimestampProps {
+interface TransactionTimestampProps {
 	deployHash?: string;
 	timestamp: string;
 }
 
-const DeployTimestamp = ({
+const TransactionTimestamp = ({
 	deployHash,
 	timestamp,
-}: DeployTimestampProps) => {
+}: TransactionTimestampProps) => {
 	const deployPath = `${config.cspr_live_url}/deploy/${
 		deployHash || ''
 	}`;
@@ -21,4 +21,4 @@ const DeployTimestamp = ({
 	);
 };
 
-export default DeployTimestamp;
+export default TransactionTimestamp;

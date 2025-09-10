@@ -1,4 +1,4 @@
-export interface Deploy {
+export interface Transaction {
 	deploy_hash: string;
 	block_hash: string;
 	block_height: number;
@@ -14,8 +14,8 @@ export interface Deploy {
 	timestamp: string;
 }
 
-export interface DeployMessage {
-	data: Deploy;
+export interface TransactionMessage {
+	data: Transaction;
 	action: string;
 	extra: null;
 	timestamp: string;
