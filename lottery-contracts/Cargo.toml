@@ -1,0 +1,25 @@
+[workspace]
+members = [
+    "lottery-cli",
+    "lottery-contracts",
+]
+
+resolver = "2"
+
+[workspace.dependencies]
+odra = { version = "2.4.0" }
+odra-cli = { version = "2.4.0" }
+odra-modules = { version = "2.4.0" }
+odra-test = { version = "2.4.0" }
+odra-build = { version = "2.4.0" }
+odra-bdd = { version = "2.4.0" }
+
+[profile.release]
+codegen-units = 1
+lto = true
+panic = "abort"
+opt-level = "z"
+strip = true
+
+[profile.dev.package."*"]
+opt-level = 3

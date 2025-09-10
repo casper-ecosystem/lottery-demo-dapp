@@ -1,0 +1,14 @@
+[package]
+name = "lottery-cli"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+odra.workspace = true
+odra-cli.workspace = true
+lottery-contracts = { path = "../lottery-contracts" }
+hex = "0.4.3"
+
+[[bin]]
+name = "lottery-cli"
+path = "bin/main.rs"
