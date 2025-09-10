@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Big from 'big.js';
 import {
 	BuyTicketContent,
-	DeployFailedContent,
+	TransactionFailedContent,
 	JackpotContent,
 	LoadingContent,
 	NotEnoughCsprContent,
@@ -11,13 +11,13 @@ import {
 	WelcomeModalContent,
 	YouWonContent,
 } from '../../components';
-import { DeployFailed } from '../../services/requests/play-requests';
+import { TransactionFailed } from '../../services/requests/play-requests';
 import useManagePlay from '../../services/hooks/use-manage-play';
 import { Play } from '../../types';
-import { csprToMotes } from 'casper-js-sdk';
+import {CSPRToMotes, motesToCSPR} from '../../utils/currency';
 
 interface PlayResultStateProps {
-	playResult: Play | DeployFailed;
+	playResult: Play | TransactionFailed;
 	initiatePlay: () => void;
 	closeModal: () => void;
 }
@@ -27,9 +27,9 @@ const PlayResultState = ({
 	initiatePlay,
 	closeModal,
 }: PlayResultStateProps) => {
-	if (playResult == DeployFailed.Failed) {
+	if (playResult == TransactionFailed.Failed) {
 		return (
-			<DeployFailedContent
+			<TransactionFailedContent
 				handleButtonAction={initiatePlay}
 				closeModal={closeModal}
 			/>
@@ -93,18 +93,18 @@ const ModalState = ({ closeModal }: ModalStateProps) => {
 		window.open('https://testnet.cspr.live/tools/faucet', '_blank');
 	};
 
-	const ticketPrice = Big(config.gas_price_in_cspr)
-		.add(config.lottery_ticket_price_in_cspr)
+	const ticketPrice = Big(CSPRToMotes(config.gas_price_in_cspr))
+		.add(CSPRToMotes(config.lottery_ticket_price_in_cspr))
 		.toNumber();
 	const isNotEnoughBalance =
 		!!playerAccount &&
-		(playerAccount.balance == null ||
-			parseInt(playerAccount.balance) <
-				csprToMotes(ticketPrice).toNumber());
+		(playerAccount.liquid_balance == null ||
+			parseInt(playerAccount.liquid_balance) < ticketPrice);
 
 	if (isNotEnoughBalance) {
 		return (
 			<NotEnoughCsprContent
+				minimumBalance={motesToCSPR(ticketPrice.toString())}
 				handleButtonAction={goToFaucet}
 				closeModal={handleCloseModal}
 			/>
