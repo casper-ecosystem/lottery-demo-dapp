@@ -12,7 +12,6 @@ odra-cli = { version = "2.4.0" }
 odra-modules = { version = "2.4.0" }
 odra-test = { version = "2.4.0" }
 odra-build = { version = "2.4.0" }
-odra-bdd = { version = "2.4.0" }
 
 [profile.release]
 codegen-units = 1
