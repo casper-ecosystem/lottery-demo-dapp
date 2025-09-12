@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ThemeModeType } from '@make-software/csprclick-ui';
-import { FlexRow, SvgIcon } from '../../components';
 import CloseIcon from '../../../assets/icons/close.svg';
+import { FlexRow, SvgIcon } from '@make-software/cspr-design';
 
 const ModalHeaderContainer = styled(FlexRow)<{
 	marginBottom?: string;

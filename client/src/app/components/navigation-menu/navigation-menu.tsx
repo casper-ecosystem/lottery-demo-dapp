@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { MainMenu, MainMenuItem, Link } from '../../components';
+import { Link } from '../link/link';
+import { MainMenu, MainMenuItem } from '@make-software/cspr-design';
 import {
 	ABOUT_PATH,
 	HOME_PATH,

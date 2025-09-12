@@ -1,4 +1,8 @@
-import { FlexColumn, HeaderText, PageTile } from '../index';
+import {
+	FlexColumn,
+	HeaderText,
+	PageTile,
+} from '@make-software/cspr-design';
 import styled from 'styled-components';
 
 const TitleText = styled(HeaderText)(() => ({

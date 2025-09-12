@@ -1,5 +1,5 @@
-import { BodyText, NavLink } from '../../components';
 import styled from 'styled-components';
+import { NavLink, BodyText } from '@make-software/cspr-design';
 
 const StyledWrapper = styled.span(({ theme }) => ({
 	color: theme.styleguideColors.contentBlue,

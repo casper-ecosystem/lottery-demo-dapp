@@ -1,4 +1,8 @@
-import { BodyText, TableData, TableRow } from '../../components';
+import {
+	BodyText,
+	TableData,
+	TableRow,
+} from '@make-software/cspr-design';
 import {
 	AccountInfoCell,
 	Link,

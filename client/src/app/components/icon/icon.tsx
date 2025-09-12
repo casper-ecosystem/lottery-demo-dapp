@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { FlexRow, SvgIcon } from '../../components';
 import React from 'react';
+import { FlexRow, SvgIcon } from '@make-software/cspr-design';
 
 export enum IconStatus {
 	default = 'default',

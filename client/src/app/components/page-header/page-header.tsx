@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import ClickTopBar from '../click-top-bar';
+import { NavigationMenu } from '../../components';
+import HamburgerIcon from '../../../assets/icons/hamburger-menu.svg';
+import { useMatchMedia } from '../../utils/match-media';
+import LotteryLogo from './lottery-logo';
 import {
 	FlexColumn,
 	FlexRow,
 	SvgIcon,
-	NavigationMenu,
-} from '../../components';
-import HamburgerIcon from '../../../assets/icons/hamburger-menu.svg';
-import { useMatchMedia } from '../../utils/match-media';
-import LotteryLogo from './lottery-logo';
+} from '@make-software/cspr-design';
 
 const PageHeaderWrapper = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({

@@ -1,6 +1,6 @@
-import { BodyText, NavLink } from '../../components';
 import RouterLink from './router-link';
 import styled from 'styled-components';
+import { NavLink, BodyText } from '@make-software/cspr-design';
 
 export enum LinkVariation {
 	'blue' = 'blue',

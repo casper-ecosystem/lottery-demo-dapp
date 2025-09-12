@@ -1,19 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { ModalHeader, Icon, IconStatus } from '../../components';
+
 import {
-	BodyText,
 	Button,
-	ModalHeader,
-	SubtitleText,
+	BodyText,
 	FlexColumn,
-	FlexRow,
 	SvgIcon,
-	Icon,
-	IconStatus,
+	SubtitleText,
+	FlexRow,
 	Badge,
-	BadgeVariation,
-} from '../../components';
+} from '@make-software/cspr-design';
 
 import HandIcon from '../../../assets/icons/hand.svg';
 import TicketIcon from '../../../assets/icons/ticket.svg';
@@ -151,7 +149,8 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 					</BodyText>
 					<Badge
 						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
-						variation={BadgeVariation.light}
+						variation={'#f2f3f5'}
+						textColor={'#7490ff'}
 					/>
 				</FlexColumn>
 			}

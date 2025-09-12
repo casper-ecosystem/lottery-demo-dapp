@@ -1,4 +1,4 @@
-import { BodyText, TableRow } from '../../components';
+import { BodyText, TableRow } from '@make-software/cspr-design';
 import { StyledTableDataHeader } from '../../components';
 
 const JackpotsDataHeaders = () => (

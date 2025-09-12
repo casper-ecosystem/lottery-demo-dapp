@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import ReactModal from 'react-modal';
-import { FlexColumn } from '../../components';
+import { FlexColumn } from '@make-software/cspr-design';
 
 import ModalState from './ModalState';
 

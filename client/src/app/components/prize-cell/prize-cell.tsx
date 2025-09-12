@@ -4,7 +4,7 @@ import {
 	FlexRow,
 	SvgIcon,
 	TableData,
-} from '../../components';
+} from '@make-software/cspr-design';
 import CupIcon from '../../../assets/icons/cup.svg';
 import { formatNumber } from '../../utils/formatters';
 import { motesToCSPR } from '../../utils/currency';
