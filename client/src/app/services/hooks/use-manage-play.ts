@@ -58,9 +58,8 @@ const useManagePlay = (): ManagePlayData => {
 		error: false,
 	});
 
-	const [executedTransaction, setExecutedTransaction] = useState<Deploy | null>(
-		null
-	);
+	const [executedTransaction, setExecutedTransaction] =
+		useState<Deploy | null>(null);
 
 	const { reloadPlaysData } = usePlaysData();
 
@@ -174,7 +173,9 @@ const useManagePlay = (): ManagePlayData => {
 				setPlayResult(errorPlayResult());
 			}
 		} else {
-			console.error(`Transaction failed: ${transaction.error_message}`);
+			console.error(
+				`Transaction failed: ${transaction.error_message}`
+			);
 			setPlayResult({
 				...playResult,
 				data: DeployFailed.Failed,

@@ -8,6 +8,7 @@
 		"@make-software/csprclick-core-types": "^1.9.4",
 		 "@make-software/csprclick-ui": "^1.9.0",
 		"@metamask/safe-event-emitter": "^2.0.0",
+		"@make-software/cspr-design": "github:make-software/cspr-design#a53a7d2a31fc8a5e0b3dd9272a609422c3d4bedc",
 		"axios": "^1.6.8",
 		"big.js": "^6.2.1",
 		"casper-js-sdk": "^2.15.4",

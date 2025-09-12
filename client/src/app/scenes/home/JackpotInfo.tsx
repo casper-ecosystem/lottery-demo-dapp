@@ -8,8 +8,8 @@ import {
 	HeaderText,
 	SvgIcon,
 	Text,
-} from '../../components';
-import Badge, { BadgePadding } from '../../components/badge/badge';
+	Badge,
+} from '@make-software/cspr-design';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 import ShineImg from '../../../assets/images/shine.png';
 import { motesToCSPR } from '../../utils/currency';
@@ -122,6 +122,8 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 					</IntroText>
 					<Badge
 						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
+						variation={'#181d40'}
+						textColor={'#7490ff'}
 					/>
 					<StyledButton
 						height={'36'}
@@ -140,7 +142,8 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 					</FlexRow>
 					<Badge
 						label={`Current Plays: ${total || 0}`}
-						padding={BadgePadding.big}
+						variation={'#181d40'}
+						textColor={'#7490ff'}
 					/>
 				</RightContainer>
 			</HomeInnerContainer>

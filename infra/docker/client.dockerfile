@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/node:18-alpine3.18 as builder
+FROM node:18-alpine3.18 as builder
 
 WORKDIR /app/builder
 
@@ -11,7 +11,7 @@ COPY client/. .
 
 RUN npm run build
 
-FROM public.ecr.aws/nginx/nginx:1.22.0
+FROM nginx:1.22.0
 
 WORKDIR /usr/share/nginx/html
 
