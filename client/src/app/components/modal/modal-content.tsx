@@ -10,7 +10,6 @@ import {
 	SvgIcon,
 	SubtitleText,
 	FlexRow,
-	Badge,
 } from '@make-software/cspr-design';
 
 import HandIcon from '../../../assets/icons/hand.svg';
@@ -23,6 +22,7 @@ import SadIcon from '../../../assets/icons/sad.svg';
 import LoadingIcon from '../../../assets/icons/loading.svg';
 import { formatNumber } from '../../utils/formatters';
 import { motesToCSPR } from '../../utils/currency';
+import { InfoBadge } from '../common/InfoBadge';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
@@ -147,10 +147,10 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 					>
 						Buy a ticket to get a chance to win the jackpot!
 					</BodyText>
-					<Badge
-						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
-						variation={'#f2f3f5'}
-						textColor={'#7490ff'}
+					<InfoBadge
+						background={'#f2f3f5'}
+						color={'#7490ff'}
+						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 				</FlexColumn>
 			}

@@ -8,12 +8,12 @@ import {
 	HeaderText,
 	SvgIcon,
 	Text,
-	Badge,
 } from '@make-software/cspr-design';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 import ShineImg from '../../../assets/images/shine.png';
 import { motesToCSPR } from '../../utils/currency';
 import { usePlaysData } from '../../services/providers/PlaysContext';
+import { InfoBadge } from '../../components/common/InfoBadge';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
@@ -120,10 +120,10 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						prizes – take part in the lottery now and let luck be on
 						your side!
 					</IntroText>
-					<Badge
-						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
-						variation={'#181d40'}
-						textColor={'#7490ff'}
+					<InfoBadge
+						background={'#181d40'}
+						color={'#7490ff'}
+						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 					<StyledButton
 						height={'36'}
@@ -140,10 +140,10 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						<JackpotTitle>{jackpotSum}</JackpotTitle>
 						<JackpotText>CSPR</JackpotText>
 					</FlexRow>
-					<Badge
-						label={`Current Plays: ${total || 0}`}
-						variation={'#181d40'}
-						textColor={'#7490ff'}
+					<InfoBadge
+						background={'#181d40'}
+						color={'#7490ff'}
+						title={`Current Plays: ${total || 0}`}
 					/>
 				</RightContainer>
 			</HomeInnerContainer>
