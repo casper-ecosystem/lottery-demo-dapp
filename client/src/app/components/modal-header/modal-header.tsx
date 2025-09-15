@@ -19,7 +19,7 @@ const CloseButton = styled.div(() => ({
 
 const StyledSvgIcon = styled(SvgIcon)(({ theme }) => ({
 	path: {
-		stroke: theme.styleguideColors.contentBlue,
+		stroke: '#babbbf',
 	},
 }));
 
@@ -44,7 +44,7 @@ export const ModalHeader = ({
 			{headerLogo && headerLogo}
 			{onClose && (
 				<CloseButton onClick={onClose}>
-					<StyledSvgIcon src={CloseIcon} size={20} />
+					<StyledSvgIcon src={CloseIcon} size={16} />
 				</CloseButton>
 			)}
 		</ModalHeaderContainer>

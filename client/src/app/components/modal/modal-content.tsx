@@ -28,6 +28,7 @@ const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
 		textAlign: 'center',
 		height: 'inherit',
+		justifyContent: 'center',
 	})
 );
 
@@ -39,6 +40,13 @@ const StyledTitle = styled(SubtitleText)(({ theme }) =>
 	theme.withMedia({
 		fontWeight: 700,
 		color: theme.styleguideColors.contentPrimary,
+	})
+);
+
+const StyledRow = styled(FlexRow)(({ theme }) =>
+	theme.withMedia({
+		height: '405px',
+		justifyContent: 'center',
 	})
 );
 
@@ -102,7 +110,7 @@ export const LoadingContent = ({
 	return (
 		<>
 			<ModalHeader onClose={closeModal} />
-			<FlexRow justify={'center'}>
+			<StyledRow justify={'center'}>
 				<LoadingContainer itemsSpacing={54} align={'center'}>
 					<LoadingSvgIcon
 						src={LoadingIcon}
@@ -113,7 +121,7 @@ export const LoadingContent = ({
 						Waiting for the results of your play…
 					</StyledTitle>
 				</LoadingContainer>
-			</FlexRow>
+			</StyledRow>
 		</>
 	);
 };

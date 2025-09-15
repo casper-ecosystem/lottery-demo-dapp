@@ -11,14 +11,14 @@ const modalStyles = {
 	bottom: 'auto',
 	border: 'none',
 	borderRadius: '12px',
-	padding: '32px 24px 24px 24px',
+	padding: '16px 24px 24px 24px',
 	top: '50%',
 	transform: 'translate(-50%, -50%)',
 };
 
 const ModalContainer = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
-		width: ['300px', '400px', '400px', '496px'],
+		width: ['300px', '496px', '748px', '748px'],
 		height: ['400px', '380px', '380px', '456px'],
 		background: theme.styleguideColors.backgroundPrimary,
 		borderColor: theme.styleguideColors.backgroundPrimary,
@@ -43,6 +43,7 @@ export const Modal = ({ isOpen, setModalOpen }: ModalProps) => {
 			...{
 				backgroundColor: theme.styleguideColors.backgroundPrimary,
 				borderColor: theme.styleguideColors.backgroundPrimary,
+				borderTop: '4px solid rgb(230, 51, 42)',
 			},
 		},
 	};
