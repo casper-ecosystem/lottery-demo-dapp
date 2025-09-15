@@ -10,7 +10,6 @@ const modalStyles = {
 	right: 'auto',
 	bottom: 'auto',
 	border: 'none',
-	borderRadius: '12px',
 	padding: '16px 24px 24px 24px',
 	top: '50%',
 	transform: 'translate(-50%, -50%)',
