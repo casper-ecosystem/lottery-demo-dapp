@@ -22,7 +22,7 @@ import SadIcon from '../../../assets/icons/sad.svg';
 import LoadingIcon from '../../../assets/icons/loading.svg';
 import { formatNumber } from '../../utils/formatters';
 import { motesToCSPR } from '../../utils/currency';
-import { InfoBadge } from '../common/InfoBadge';
+import { InfoBadge } from '../info-badge/info-badge';
 import { AppTheme } from '../../theme';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>

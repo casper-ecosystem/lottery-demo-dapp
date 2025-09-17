@@ -13,7 +13,7 @@ import JackpotSvg from '../../../assets/images/jackpot.svg';
 import ShineImg from '../../../assets/images/shine.png';
 import { motesToCSPR } from '../../utils/currency';
 import { usePlaysData } from '../../services/providers/PlaysContext';
-import { InfoBadge } from '../../components/common/InfoBadge';
+import { InfoBadge } from '../../components/info-badge/info-badge';
 import { AppTheme } from '../../theme';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
