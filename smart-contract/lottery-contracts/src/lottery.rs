@@ -310,7 +310,7 @@ mod tests {
     #[test]
     fn test_initialization() {
         let env = odra_test::env();
-        let _lottery = Lottery::deploy(
+        let lottery = Lottery::deploy(
             &env,
             LotteryInitArgs {
                 lottery_fee: U512::from(1 * ONE_CSPR_IN_MOTES),
@@ -320,12 +320,11 @@ mod tests {
                 consolation_prize_probability: 10,
             },
         );
-        // assert!(lottery.get_owner() == env.caller());
+        assert!(lottery.get_owner() == env.caller());
     }
     
     #[test]
     fn basic_flow() {
-        let consolation = (ONE_CSPR_IN_MOTES * 49 / 100 * 4) % (ONE_CSPR_IN_MOTES * 49);
         let env = odra_test::env();
         let admin = env.get_account(0);
         let alice = env.get_account(1);

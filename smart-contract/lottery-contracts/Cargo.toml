@@ -17,11 +17,11 @@ odra-build.workspace = true
 odra-build.workspace = true
 
 [[bin]]
-name = "lottery_contracts_build_contract"
+name = "lottery-contracts_build_contract"
 path = "bin/build_contract.rs"
 test = false
 
 [[bin]]
-name = "lottery_contracts_build_schema"
+name = "lottery-contracts_build_schema"
 path = "bin/build_schema.rs"
 test = false
