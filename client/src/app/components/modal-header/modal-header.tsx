@@ -19,7 +19,8 @@ const CloseButton = styled.div(() => ({
 
 const StyledSvgIcon = styled(SvgIcon)(({ theme }) => ({
 	path: {
-		stroke: '#babbbf',
+		// stroke: '#babbbf',
+		stroke: theme.styleguideColors.contentTertiary,
 	},
 }));
 

@@ -23,6 +23,7 @@ import LoadingIcon from '../../../assets/icons/loading.svg';
 import { formatNumber } from '../../utils/formatters';
 import { motesToCSPR } from '../../utils/currency';
 import { InfoBadge } from '../common/InfoBadge';
+import { AppTheme } from '../../theme';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
@@ -156,8 +157,8 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 						Buy a ticket to get a chance to win the jackpot!
 					</BodyText>
 					<InfoBadge
-						background={'#f2f3f5'}
-						color={'#7490ff'}
+						background={AppTheme.light.borderPrimary}
+						color={AppTheme.light.contentLightBlue}
 						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 				</FlexColumn>

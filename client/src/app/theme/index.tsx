@@ -14,5 +14,8 @@ export const AppTheme = {
 		linkColor: 'rgb(26, 25, 25)',
 		containerBackground: '#2d2d2d',
 		codeColor: '#737373',
+		contentLightBlue: '#7490FF',
+		borderPrimary: '#F2F3F5',
+		backgroundTertiary: '#181D40',
 	},
 };
