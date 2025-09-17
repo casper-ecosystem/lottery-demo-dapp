@@ -1,12 +1,8 @@
 use core::cmp::min;
-use odra::casper_types::U256;
-use odra::casper_types::U512;
-#[cfg(target_arch = "wasm32")]
-use odra::odra_casper_wasm_env::casper_contract::contract_api::runtime;
-use odra::prelude::*;
-use odra::Address;
-use odra::SubModule;
-use odra::Var;
+use odra::{
+    casper_types::{U256, U512},
+    prelude::*,
+};
 use odra_modules::access::Ownable;
 
 /// Custom error type for the lottery contract
@@ -49,7 +45,10 @@ enum Outcome {
 }
 
 /// Main lottery contract struct
-#[odra::module(events = [Play])]
+#[odra::module(
+    events = [Play],
+    errors = Error
+)]
 pub struct Lottery {
     /// Ownable sub-module for managing contract ownership
     ownable: SubModule<Ownable>,
@@ -84,7 +83,9 @@ impl Lottery {
         jackpot_probability: u8,
         consolation_prize_probability: u8,
     ) {
-        self.ownable.init();
+        let caller = self.env().caller();
+
+        self.ownable.init(caller);
         self.current_round_id.set(1);
         self.current_play_id.set(U256::one());
         self.collected_fees.set(U512::zero());
@@ -99,7 +100,7 @@ impl Lottery {
             .set(consolation_prize_probability);
     }
 
-    /// Functions from the submodules that are public in our smart contract
+    ///Functions from the submodules that are public in our smart contract
     delegate! {
         to self.ownable {
             fn get_owner(&self) -> Address;
@@ -273,7 +274,7 @@ impl Lottery {
     /// Generates cryptographically secure random number (WASM32 only).
     #[cfg(target_arch = "wasm32")]
     fn get_random_number(&self) -> u64 {
-        let random_bytes: [u8; 32] = runtime::random_bytes();
+        let random_bytes = self.env().pseudorandom_bytes(8);
         u64::from_be_bytes(random_bytes[..8].try_into().unwrap()) % 100
     }
 
@@ -294,20 +295,36 @@ impl Lottery {
 
 #[cfg(test)]
 mod tests {
-    use crate::lottery::{Error, LotteryHostRef, LotteryInitArgs, Play};
     use core::ops::Add;
+    use crate::lottery::{Error, Lottery, LotteryInitArgs, Play};
     use odra::{
-        casper_types::{U256, U512},
+        casper_types::U512,
         host::{Deployer, HostRef},
     };
+    use odra::casper_types::U256;
+    use odra::prelude::Addressable;
 
     const ONE_HOUR_IN_MILLISECONDS: u64 = 3_600_000;
     const ONE_CSPR_IN_MOTES: u64 = 1_000_000_000;
 
     #[test]
+    fn test_initialization() {
+        let env = odra_test::env();
+        let lottery = Lottery::deploy(
+            &env,
+            LotteryInitArgs {
+                lottery_fee: U512::from(1 * ONE_CSPR_IN_MOTES),
+                ticket_price: U512::from(50 * ONE_CSPR_IN_MOTES),
+                max_consolation_prize: U512::from(50 * ONE_CSPR_IN_MOTES),
+                jackpot_probability: 1,
+                consolation_prize_probability: 10,
+            },
+        );
+        assert!(lottery.get_owner() == env.caller());
+    }
+    
+    #[test]
     fn basic_flow() {
-        let consolation = (ONE_CSPR_IN_MOTES * 49 / 100 * 4) % (ONE_CSPR_IN_MOTES * 49);
-        print!("consolation: {:?}", consolation);
         let env = odra_test::env();
         let admin = env.get_account(0);
         let alice = env.get_account(1);
@@ -320,7 +337,7 @@ mod tests {
         let expected_play: U256 = U256::from(1);
 
         env.set_caller(admin);
-        let mut contract = LotteryHostRef::deploy(
+        let mut contract = Lottery::deploy(
             &env,
             LotteryInitArgs {
                 lottery_fee: U512::from(1 * ONE_CSPR_IN_MOTES),
@@ -344,8 +361,8 @@ mod tests {
             .play_lottery();
 
         assert!(env.emitted_event(
-            contract.address(),
-            &Play {
+            &contract.address(),
+            Play {
                 round_id: expected_round,
                 player: alice,
                 play_id: expected_play,
@@ -355,7 +372,7 @@ mod tests {
                 jackpot_amount: U512::zero(),
             },
         ));
-        assert_eq!(env.events_count(contract.address()), 2);
+        assert_eq!(env.events_count(&contract.address()), 2);
         expected_round += 1; // expected next round
         let expected_play = expected_play.add(1); // expected next play
 
@@ -365,8 +382,8 @@ mod tests {
             .play_lottery();
 
         assert!(env.emitted_event(
-            contract.address(),
-            &Play {
+            &contract.address(),
+            Play {
                 round_id: expected_round,
                 player: bob,
                 play_id: expected_play,
@@ -376,7 +393,7 @@ mod tests {
                 jackpot_amount: U512::zero(),
             },
         ));
-        assert_eq!(env.events_count(contract.address()), 3);
+        assert_eq!(env.events_count(&contract.address()), 3);
         expected_round += 1; // expected next round
         let expected_play = expected_play.add(1); // expected next play
 
@@ -386,8 +403,8 @@ mod tests {
             .play_lottery();
 
         assert!(env.emitted_event(
-            contract.address(),
-            &Play {
+            &contract.address(),
+            Play {
                 round_id: expected_round,
                 player: charlie,
                 play_id: expected_play,
@@ -397,7 +414,7 @@ mod tests {
                 jackpot_amount: U512::zero(),
             },
         ));
-        assert_eq!(env.events_count(contract.address()), 4);
+        assert_eq!(env.events_count(&contract.address()), 4);
         expected_round += 1;
         let expected_play = expected_play.add(1);
 
@@ -420,8 +437,8 @@ mod tests {
             .play_lottery();
 
         assert!(env.emitted_event(
-            contract.address(),
-            &Play {
+            &contract.address(),
+            Play {
                 round_id: expected_round,
                 player: charlie,
                 play_id: expected_play,
@@ -431,7 +448,7 @@ mod tests {
                 jackpot_amount: U512::from(49 * ONE_CSPR_IN_MOTES),
             },
         ));
-        assert_eq!(env.events_count(contract.address()), 5);
+        assert_eq!(env.events_count(&contract.address()), 5);
         let expected_play = expected_play.add(1);
 
         // ---------------------------------------------------------------------
@@ -453,8 +470,8 @@ mod tests {
             .play_lottery();
 
         assert!(env.emitted_event(
-            contract.address(),
-            &Play {
+            &contract.address(),
+            Play {
                 round_id: expected_round,
                 player: charlie,
                 play_id: expected_play,
@@ -464,6 +481,6 @@ mod tests {
                 jackpot_amount: U512::from(96 * ONE_CSPR_IN_MOTES),
             },
         ));
-        assert_eq!(env.events_count(contract.address()), 6);
+        assert_eq!(env.events_count(&contract.address()), 6);
     }
 }

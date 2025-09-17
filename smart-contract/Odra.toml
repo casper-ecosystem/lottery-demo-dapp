@@ -1,2 +1,2 @@
 [[contracts]]
-fqn = "lottery::Lottery"
+fqn = "lottery_contracts::Lottery"
