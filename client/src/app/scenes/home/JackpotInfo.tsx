@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import {
 	BodyText,
 	Button,
@@ -14,7 +14,6 @@ import ShineImg from '../../../assets/images/shine.png';
 import { motesToCSPR } from '../../utils/currency';
 import { usePlaysData } from '../../services/providers/PlaysContext';
 import { InfoBadge } from '../../components/info-badge/info-badge';
-import { AppTheme } from '../../theme';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
@@ -100,6 +99,8 @@ interface JackpotInfoProps {
 const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 	const { plays, total } = usePlaysData();
 
+	const theme = useTheme();
+
 	const jackpotAmount =
 		plays && plays.length > 0 ? plays[0].jackpotAmount : '0';
 
@@ -122,8 +123,8 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						your side!
 					</IntroText>
 					<InfoBadge
-						background={AppTheme.light.backgroundTertiary}
-						color={AppTheme.light.contentLightBlue}
+						background={theme.styleguideColors.backgroundTertiary}
+						color={theme.styleguideColors.contentLightBlue}
 						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 					<StyledButton
@@ -142,8 +143,8 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						<JackpotText>CSPR</JackpotText>
 					</FlexRow>
 					<InfoBadge
-						background={AppTheme.light.backgroundTertiary}
-						color={AppTheme.light.contentLightBlue}
+						background={theme.styleguideColors.backgroundTertiary}
+						color={theme.styleguideColors.contentLightBlue}
 						title={`Current Plays: ${total || 0}`}
 					/>
 				</RightContainer>

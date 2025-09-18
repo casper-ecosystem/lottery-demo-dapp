@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { ModalHeader, Icon, IconStatus } from '../../components';
 
@@ -23,7 +23,6 @@ import LoadingIcon from '../../../assets/icons/loading.svg';
 import { formatNumber } from '../../utils/formatters';
 import { motesToCSPR } from '../../utils/currency';
 import { InfoBadge } from '../info-badge/info-badge';
-import { AppTheme } from '../../theme';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
@@ -142,6 +141,7 @@ export const WelcomeModalContent = (
 };
 
 export const BuyTicketContent = (props: CustomModalContentProps) => {
+	const theme = useTheme();
 	return (
 		<ModalContent
 			logo={<Icon src={TicketIcon} />}
@@ -157,8 +157,8 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 						Buy a ticket to get a chance to win the jackpot!
 					</BodyText>
 					<InfoBadge
-						background={AppTheme.light.borderPrimary}
-						color={AppTheme.light.contentLightBlue}
+						background={theme.styleguideColors.borderPrimary}
+						color={theme.styleguideColors.contentLightBlue}
 						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 				</FlexColumn>
