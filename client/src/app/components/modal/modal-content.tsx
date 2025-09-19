@@ -45,17 +45,14 @@ const StyledTitle = styled(SubtitleText)(({ theme }) =>
 
 const StyledRow = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
-		height: '405px',
+		height: '100%',
 		justifyContent: 'center',
-		'@media only screen and (max-width: 1280px)': {
-			height: '300px',
-		}
 	})
 );
 
 const LoadingContainer = styled(StyledFlexColumn)(({ theme }) =>
 	theme.withMedia({
-		width: '300px',
+		width: '100%',
 	})
 );
 
