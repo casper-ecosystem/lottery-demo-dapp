@@ -1,11 +1,11 @@
 import styled from 'styled-components';
+import { AxiosError } from 'axios';
 import {
-	BodyText,
 	FlexColumn,
 	FlexRow,
 	HeaderText,
-} from '../../components';
-import { AxiosError } from 'axios';
+	BodyText,
+} from '@make-software/cspr-design';
 
 const StyledFlexColumn = styled(FlexColumn)(() => ({
 	width: '400px',

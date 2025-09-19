@@ -5,7 +5,7 @@ import {
 	FlexRow,
 	TableBody,
 	TableHead,
-} from '../../components';
+} from '@make-software/cspr-design';
 import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
 import { formatNumber } from '../../utils/formatters';
 

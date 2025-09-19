@@ -7,7 +7,8 @@ import {
 	MY_PLAYS_PATH,
 	JACKPOT_PLAYS_PATH,
 } from './paths';
-import { FlexColumn, PageHeader } from '../components';
+import { FlexColumn } from '@make-software/cspr-design';
+import { PageHeader } from '../components';
 import HomeScene from '../scenes/home';
 import AboutScene from '../scenes/about';
 import JackpotsScene from '../scenes/jackpots';

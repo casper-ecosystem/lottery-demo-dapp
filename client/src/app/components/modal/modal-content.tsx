@@ -1,19 +1,16 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
+
+import { ModalHeader, Icon, IconStatus } from '../../components';
 
 import {
-	BodyText,
 	Button,
-	ModalHeader,
-	SubtitleText,
+	BodyText,
 	FlexColumn,
-	FlexRow,
 	SvgIcon,
-	Icon,
-	IconStatus,
-	Badge,
-	BadgeVariation,
-} from '../../components';
+	SubtitleText,
+	FlexRow,
+} from '@make-software/cspr-design';
 
 import HandIcon from '../../../assets/icons/hand.svg';
 import TicketIcon from '../../../assets/icons/ticket.svg';
@@ -25,11 +22,13 @@ import SadIcon from '../../../assets/icons/sad.svg';
 import LoadingIcon from '../../../assets/icons/loading.svg';
 import { formatNumber } from '../../utils/formatters';
 import { motesToCSPR } from '../../utils/currency';
+import { InfoBadge } from '../info-badge/info-badge';
 
 const StyledFlexColumn = styled(FlexColumn)(({ theme }) =>
 	theme.withMedia({
 		textAlign: 'center',
 		height: 'inherit',
+		justifyContent: 'center',
 	})
 );
 
@@ -44,9 +43,16 @@ const StyledTitle = styled(SubtitleText)(({ theme }) =>
 	})
 );
 
+const StyledRow = styled(FlexRow)(({ theme }) =>
+	theme.withMedia({
+		height: '100%',
+		justifyContent: 'center',
+	})
+);
+
 const LoadingContainer = styled(StyledFlexColumn)(({ theme }) =>
 	theme.withMedia({
-		width: '300px',
+		width: '100%',
 	})
 );
 
@@ -104,7 +110,7 @@ export const LoadingContent = ({
 	return (
 		<>
 			<ModalHeader onClose={closeModal} />
-			<FlexRow justify={'center'}>
+			<StyledRow justify={'center'}>
 				<LoadingContainer itemsSpacing={54} align={'center'}>
 					<LoadingSvgIcon
 						src={LoadingIcon}
@@ -115,7 +121,7 @@ export const LoadingContent = ({
 						Waiting for the results of your play…
 					</StyledTitle>
 				</LoadingContainer>
-			</FlexRow>
+			</StyledRow>
 		</>
 	);
 };
@@ -135,6 +141,7 @@ export const WelcomeModalContent = (
 };
 
 export const BuyTicketContent = (props: CustomModalContentProps) => {
+	const theme = useTheme();
 	return (
 		<ModalContent
 			logo={<Icon src={TicketIcon} />}
@@ -149,9 +156,10 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 					>
 						Buy a ticket to get a chance to win the jackpot!
 					</BodyText>
-					<Badge
-						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
-						variation={BadgeVariation.light}
+					<InfoBadge
+						background={theme.styleguideColors.borderPrimary}
+						color={theme.styleguideColors.contentLightBlue}
+						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 				</FlexColumn>
 			}
