@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ThemeModeType } from '@make-software/csprclick-ui';
-import { FlexRow, SvgIcon } from '../../components';
 import CloseIcon from '../../../assets/icons/close.svg';
+import { FlexRow, SvgIcon } from '@make-software/cspr-design';
 
 const ModalHeaderContainer = styled(FlexRow)<{
 	marginBottom?: string;
@@ -19,7 +19,8 @@ const CloseButton = styled.div(() => ({
 
 const StyledSvgIcon = styled(SvgIcon)(({ theme }) => ({
 	path: {
-		stroke: theme.styleguideColors.contentBlue,
+		// stroke: '#babbbf',
+		stroke: theme.styleguideColors.contentTertiary,
 	},
 }));
 
@@ -44,7 +45,7 @@ export const ModalHeader = ({
 			{headerLogo && headerLogo}
 			{onClose && (
 				<CloseButton onClick={onClose}>
-					<StyledSvgIcon src={CloseIcon} size={20} />
+					<StyledSvgIcon src={CloseIcon} size={16} />
 				</CloseButton>
 			)}
 		</ModalHeaderContainer>

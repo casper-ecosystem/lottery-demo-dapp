@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import { AccountIdenticon } from '@make-software/csprclick-ui';
-import { BodyText, TableData, FlexRow } from '../../components';
 import { formatHash, HashLength } from '../../utils/formatters';
 import { HistoryLink } from '../history-link/history-link';
+import {
+	TableData,
+	FlexRow,
+	BodyText,
+} from '@make-software/cspr-design';
 
 export const StyledTableData = styled(TableData)(() => ({
 	padding: '12px 8px',

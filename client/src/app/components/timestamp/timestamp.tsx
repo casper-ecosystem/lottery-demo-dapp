@@ -1,6 +1,6 @@
 import { formatTimestamp } from '../../utils/formatters';
 import { HistoryLink } from '../history-link/history-link';
-import { BodyText } from '../body-text/body-text';
+import { BodyText } from '@make-software/cspr-design';
 
 interface TransactionTimestampProps {
 	deployHash?: string;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import {
 	BodyText,
 	Button,
@@ -8,12 +8,12 @@ import {
 	HeaderText,
 	SvgIcon,
 	Text,
-} from '../../components';
-import Badge, { BadgePadding } from '../../components/badge/badge';
+} from '@make-software/cspr-design';
 import JackpotSvg from '../../../assets/images/jackpot.svg';
 import ShineImg from '../../../assets/images/shine.png';
 import { motesToCSPR } from '../../utils/currency';
 import { usePlaysData } from '../../services/providers/PlaysContext';
+import { InfoBadge } from '../../components/info-badge/info-badge';
 
 const HomeHeaderContainer = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
@@ -99,6 +99,8 @@ interface JackpotInfoProps {
 const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 	const { plays, total } = usePlaysData();
 
+	const theme = useTheme();
+
 	const jackpotAmount =
 		plays && plays.length > 0 ? plays[0].jackpotAmount : '0';
 
@@ -120,8 +122,10 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						prizes – take part in the lottery now and let luck be on
 						your side!
 					</IntroText>
-					<Badge
-						label={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
+					<InfoBadge
+						background={theme.styleguideColors.backgroundTertiary}
+						color={theme.styleguideColors.contentLightBlue}
+						title={`1 shot = ${config.lottery_ticket_price_in_cspr} CSPR + fee`}
 					/>
 					<StyledButton
 						height={'36'}
@@ -138,9 +142,10 @@ const JackpotInfo = ({ setModalOpen }: JackpotInfoProps) => {
 						<JackpotTitle>{jackpotSum}</JackpotTitle>
 						<JackpotText>CSPR</JackpotText>
 					</FlexRow>
-					<Badge
-						label={`Current Plays: ${total || 0}`}
-						padding={BadgePadding.big}
+					<InfoBadge
+						background={theme.styleguideColors.backgroundTertiary}
+						color={theme.styleguideColors.contentLightBlue}
+						title={`Current Plays: ${total || 0}`}
 					/>
 				</RightContainer>
 			</HomeInnerContainer>

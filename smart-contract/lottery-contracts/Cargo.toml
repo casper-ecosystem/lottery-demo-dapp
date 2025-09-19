@@ -1,0 +1,27 @@
+[package]
+name = "lottery-contracts"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+odra.workspace = true
+odra-modules.workspace = true
+
+[dev-dependencies]
+odra-test.workspace = true
+
+[build-dependencies]
+odra-build.workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+odra-build.workspace = true
+
+[[bin]]
+name = "lottery-contracts_build_contract"
+path = "bin/build_contract.rs"
+test = false
+
+[[bin]]
+name = "lottery-contracts_build_schema"
+path = "bin/build_schema.rs"
+test = false

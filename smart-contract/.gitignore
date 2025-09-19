@@ -5,3 +5,6 @@ Cargo.lock
 .backend*
 .builder*
 /wasm
+/lottery-contracts/wasm
+/resources
+/user-keys

@@ -5,7 +5,7 @@ import {
 	FlexRow,
 	HeaderText,
 	PageTile,
-} from '../../components';
+} from '@make-software/cspr-design';
 import { PageLayout } from '../../components';
 import CsprClickSchemeImg from '../../../assets/images/cspr-click-scheme.png';
 

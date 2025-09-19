@@ -1,4 +1,5 @@
-import { TableData, TableRow } from '../../components';
+import { TableData, TableRow } from '@make-software/cspr-design';
+
 import { AccountInfoCell, PrizeCell } from '../../components';
 import { Play } from '../../types';
 import TransactionTimestamp from '../../components/timestamp/timestamp';
