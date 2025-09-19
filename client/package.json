@@ -7,7 +7,7 @@
 		"@make-software/cspr-design": "^2.0.3",
 		"@make-software/csprclick-core-client": "^1.10.0",
 		"@make-software/csprclick-core-types": "^1.10.0",
-		"@make-software/csprclick-ui": "^1.10.0",
+		"@make-software/csprclick-ui": "^1.10.1",
 		"@metamask/safe-event-emitter": "^2.0.0",
 		"axios": "^1.6.8",
 		"big.js": "^6.2.1",
