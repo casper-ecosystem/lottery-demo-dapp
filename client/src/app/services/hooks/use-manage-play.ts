@@ -119,7 +119,7 @@ const useManagePlay = (): ManagePlayData => {
 			const transaction = await preparePlayTransaction(playerPublicKey);
 
 			await window.csprclick.send(
-				transaction,
+				{Version1: transaction.toJSON()},
 				playerPublicKey.toHex(),
 				handleTransactionStatusUpdate
 			);

@@ -5,7 +5,7 @@ import {
 	Hash,
 	PublicKey,
 	SessionBuilder,
-	TransactionV1
+	Transaction,
 } from 'casper-js-sdk';
 import axios from 'axios';
 import { CSPRToMotes } from '../../utils/currency';
@@ -25,7 +25,7 @@ export const getProxyWASM = async (): Promise<Uint8Array> => {
 
 export const preparePlayTransaction = async (
 	playerPublicKey: PublicKey
-): Promise<object> => {
+): Promise<Transaction> => {
 	const args_bytes: Uint8Array = Args.fromMap({}).toBytes();
 
 	const serialized_args = CLValue.newCLList(CLTypeUInt8,
@@ -54,11 +54,7 @@ export const preparePlayTransaction = async (
 		.chainName(config.cspr_chain_name)
 		.build();
 
-	const txV1 = sessionTx.getTransactionV1();
-	if(!txV1)
-		throw new Error("Cannot build play transaction.")
-
-	return {Version1: TransactionV1.toJSON(txV1)};
+	return sessionTx;
 };
 
 export const getLastPlayByAccountHash = async (
