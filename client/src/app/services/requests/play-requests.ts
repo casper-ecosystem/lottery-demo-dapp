@@ -1,20 +1,16 @@
 import {
-	CasperClient,
-	CLByteArray,
-	CLList,
-	CLPublicKey,
-	CLU8,
-	CLValueBuilder,
-	Contracts,
-	csprToMotes,
-	decodeBase16,
-	DeployUtil,
-	RuntimeArgs,
+	Args,
+	CLTypeUInt8,
+	CLValue,
+	Hash,
+	PublicKey,
+	SessionBuilder,
+	Transaction,
 } from 'casper-js-sdk';
-import { Deploy } from 'casper-js-sdk/dist/lib/DeployUtil';
 import axios from 'axios';
+import { CSPRToMotes } from '../../utils/currency';
 
-export enum DeployFailed {
+export enum TransactionFailed {
 	Failed,
 }
 
@@ -27,59 +23,38 @@ export const getProxyWASM = async (): Promise<Uint8Array> => {
 	return new Uint8Array(buffer);
 };
 
-export const preparePlayDeploy = async (
-	publicKey: CLPublicKey
-): Promise<Deploy> => {
-	const contractPackageHashBytes = new CLByteArray(
-		decodeBase16(config.lottery_app_contract_package_hash)
-	);
-	const args_bytes: Uint8Array = RuntimeArgs.fromMap({})
-		.toBytes()
-		.unwrap();
+export const preparePlayTransaction = async (
+	playerPublicKey: PublicKey
+): Promise<Transaction> => {
+	const args_bytes: Uint8Array = Args.fromMap({}).toBytes();
 
-	const serialized_args = new CLList(
-		Array.from(args_bytes).map(value => new CLU8(value))
+	const serialized_args = CLValue.newCLList(CLTypeUInt8,
+		Array.from(args_bytes)
+			.map(value => CLValue.newCLUint8(value))
 	);
 
-	const casperClient = new CasperClient('');
-	const contractClient = new Contracts.Contract(casperClient);
+	const priceInMotes = CSPRToMotes(config.lottery_ticket_price_in_cspr);
 
-	const amount = CLValueBuilder.u512(
-		csprToMotes(config.lottery_ticket_price_in_cspr)
-	);
-
-	const args = RuntimeArgs.fromMap({
-		attached_value: amount,
-		amount: amount,
-		entry_point: CLValueBuilder.string('play_lottery'),
-		contract_package_hash: contractPackageHashBytes,
+	const args = Args.fromMap({
+		amount: CLValue.newCLUInt512(priceInMotes),
+		attached_value: CLValue.newCLUInt512(priceInMotes),
+		entry_point: CLValue.newCLString("play_lottery"),
+		contract_package_hash: CLValue.newCLByteArray(Hash.fromHex(config.lottery_app_contract_package_hash).toBytes()),
 		args: serialized_args,
 	});
 
+	const paymentInMotes = CSPRToMotes(config.gas_price_in_cspr);
 	const wasm = await getProxyWASM();
 
-	return contractClient.install(
-		wasm,
-		args,
-		csprToMotes(config.gas_price_in_cspr).toString(),
-		publicKey,
-		config.cspr_chain_name
-	);
-};
+	const sessionTx = new SessionBuilder()
+		.from(playerPublicKey)
+		.runtimeArgs(args)
+		.wasm(wasm)
+		.payment(paymentInMotes)
+		.chainName(config.cspr_chain_name)
+		.build();
 
-export const signAndSendDeploy = async (
-	deploy: Deploy,
-	publicKey: CLPublicKey,
-	onStatusUpdate: (status: string, data: any) => void
-) => {
-	const deployJson = DeployUtil.deployToJson(deploy);
-	const response = await window.csprclick.send(
-		JSON.stringify(deployJson.deploy),
-		publicKey.toHex().toLowerCase(),
-		onStatusUpdate
-	);
-
-	return response;
+	return sessionTx;
 };
 
 export const getLastPlayByAccountHash = async (

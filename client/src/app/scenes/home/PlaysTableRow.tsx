@@ -2,7 +2,7 @@ import { TableData, TableRow } from '@make-software/cspr-design';
 
 import { AccountInfoCell, PrizeCell } from '../../components';
 import { Play } from '../../types';
-import DeployTimestamp from '../../components/timestamp/timestamp';
+import TransactionTimestamp from '../../components/timestamp/timestamp';
 
 const PlaysTableRow = ({ play }: { play: Play }) => {
 	return (
@@ -17,7 +17,7 @@ const PlaysTableRow = ({ play }: { play: Play }) => {
 			/>
 			<TableData />
 			<TableData>
-				<DeployTimestamp
+				<TransactionTimestamp
 					deployHash={play.deployHash}
 					timestamp={play.timestamp}
 				/>

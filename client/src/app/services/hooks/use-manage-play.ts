@@ -1,22 +1,21 @@
 import { useContext, useEffect, useState } from 'react';
-import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
+import { PublicKey } from 'casper-js-sdk';
 import { useClickRef } from '@make-software/csprclick-ui';
 import {
 	AccountType,
 	TransactionStatus,
 } from '@make-software/csprclick-core-types';
-import { Deploy, Play } from '../../types';
+import { Transaction, Play } from '../../types';
 import { ActiveAccountContext } from '../../../App';
 import {
-	DeployFailed,
+	TransactionFailed,
 	getLastPlayByAccountHash,
-	preparePlayDeploy,
-	signAndSendDeploy,
+	preparePlayTransaction,
 } from '../requests/play-requests';
 import { usePlaysData } from '../providers/PlaysContext';
 
 interface PlayResult {
-	data: Play | DeployFailed | null;
+	data: Play | TransactionFailed | null;
 	loading: boolean;
 	cancelled: boolean;
 	error: boolean;
@@ -58,8 +57,9 @@ const useManagePlay = (): ManagePlayData => {
 		error: false,
 	});
 
-	const [executedTransaction, setExecutedTransaction] =
-		useState<Deploy | null>(null);
+	const [executedTransaction, setExecutedTransaction] = useState<Transaction | null>(
+		null
+	);
 
 	const { reloadPlaysData } = usePlaysData();
 
@@ -111,16 +111,16 @@ const useManagePlay = (): ManagePlayData => {
 			return;
 		}
 
-		const playerPublicKey = CLPublicKey.fromHex(
+		const playerPublicKey = PublicKey.fromHex(
 			playerAccount.public_key
 		);
 
 		try {
-			const transaction = await preparePlayDeploy(playerPublicKey);
+			const transaction = await preparePlayTransaction(playerPublicKey);
 
-			await signAndSendDeploy(
-				transaction,
-				playerPublicKey,
+			await window.csprclick.send(
+				{Version1: transaction.toJSON()},
+				playerPublicKey.toHex(),
 				handleTransactionStatusUpdate
 			);
 		} catch (e) {
@@ -128,14 +128,13 @@ const useManagePlay = (): ManagePlayData => {
 		}
 	};
 
-	const handleTransactionProcessed = async (transaction: Deploy) => {
+	const handleTransactionProcessed = async (transaction: Transaction) => {
 		if (!transaction.error_message && activeAccountContext) {
 			try {
-				const accountHash = encodeBase16(
-					CLPublicKey.fromHex(
+				const accountHash = PublicKey.fromHex(
 						activeAccountContext.public_key
-					).toAccountHash()
-				);
+					).accountHash().toHex();
+
 				/** we need interval to align receiving the 'processed' event from BE **/
 				let attempts = 0;
 				const intervalId = setInterval(async () => {
@@ -173,12 +172,10 @@ const useManagePlay = (): ManagePlayData => {
 				setPlayResult(errorPlayResult());
 			}
 		} else {
-			console.error(
-				`Transaction failed: ${transaction.error_message}`
-			);
+			console.error(`Transaction failed: ${transaction.error_message}`);
 			setPlayResult({
 				...playResult,
-				data: DeployFailed.Failed,
+				data: TransactionFailed.Failed,
 				loading: false,
 			});
 		}

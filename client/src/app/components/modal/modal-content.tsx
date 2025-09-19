@@ -169,15 +169,19 @@ export const BuyTicketContent = (props: CustomModalContentProps) => {
 	);
 };
 
+interface NotEnoughCsprContentProps extends CustomModalContentProps {
+	minimumBalance: number;
+}
+
 export const NotEnoughCsprContent = (
-	props: CustomModalContentProps
+	props: NotEnoughCsprContentProps
 ) => {
 	return (
 		<ModalContent
 			logo={<Icon src={CoinsIcon} />}
 			title={'Not enough CSPR'}
 			description={
-				'You don’t have enough CSPR to buy a ticket. Top up your account!'
+				`You need a minimum of ${props.minimumBalance} CSPR to buy a ticket. Top up your account!`
 			}
 			buttonText={'Request tokens'}
 			{...props}
@@ -199,13 +203,13 @@ export const SomethingWentWrongContent = (
 	);
 };
 
-export const DeployFailedContent = (
+export const TransactionFailedContent = (
 	props: CustomModalContentProps
 ) => {
 	return (
 		<ModalContent
 			logo={<Icon src={ConnectionIcon} />}
-			title={'Deploy Failed'}
+			title={'Transaction Failed'}
 			description={'Please try again.'}
 			buttonText={'Play'}
 			{...props}

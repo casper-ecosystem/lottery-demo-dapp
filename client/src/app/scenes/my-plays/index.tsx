@@ -11,18 +11,14 @@ import { useGetTableData } from '../../services/hooks/use-get-table-data';
 import MyPlaysDataHeaders from './MyPlaysDataHeaders';
 import MyPlaysTableRow from './MyPlaysTableRow';
 import { Play } from '../../types';
-import { CLPublicKey, encodeBase16 } from 'casper-js-sdk';
+import { PublicKey } from 'casper-js-sdk';
 import { useContext } from 'react';
 import { ActiveAccountContext } from '../../../App';
 
 const MyPlaysTable = () => {
 	const activeAccountContext = useContext(ActiveAccountContext);
 	const accountHash = activeAccountContext?.public_key
-		? encodeBase16(
-				CLPublicKey.fromHex(
-					activeAccountContext.public_key
-				).toAccountHash()
-		  )
+		? PublicKey.fromHex(activeAccountContext.public_key).accountHash().toHex()
 		: null;
 
 	const {
