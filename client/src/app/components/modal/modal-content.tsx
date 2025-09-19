@@ -47,6 +47,9 @@ const StyledRow = styled(FlexRow)(({ theme }) =>
 	theme.withMedia({
 		height: '405px',
 		justifyContent: 'center',
+		'@media only screen and (max-width: 1280px)': {
+			height: '300px',
+		}
 	})
 );
 
