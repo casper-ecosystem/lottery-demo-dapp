@@ -112,7 +112,7 @@ docker run --rm -it --name casper-nctl -d \
 Copy user keys from the container:
 
 ```
-docker cp casper-nctl:/home/casper/casper-nctl/assets/net-1/users/user-1 ./user-keys
+docker cp casper-nctl:/home/casper/casper-nctl/assets/net-1/users/user-1/ ./user-keys
 ```
 
 Copy and adjust `.env` file. It's sketched for local NCTL with Docker.
