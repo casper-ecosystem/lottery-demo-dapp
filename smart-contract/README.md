@@ -77,7 +77,7 @@ the [Event Listener](../server) about new lottery plays:
 Before using this smart contract, ensure you have the following installed:
 
 1. **Rust**: Install from [rustup.rs](https://rustup.rs/)
-2. **cargo-odra**: Install from [here](https://github.com/odradev/odra)
+2. **cargo-odra** (v0.1.5 or newer): Install from [here](https://github.com/odradev/odra)
 3. **just**: A command runner tool. Install with `cargo install just`
 
 ## Usage
@@ -112,7 +112,7 @@ docker run --rm -it --name casper-nctl -d \
 Copy user keys from the container:
 
 ```
-docker cp casper-nctl:/home/casper/casper-nctl/assets/net-1/users/user-1 ./user-keys
+docker cp casper-nctl:/home/casper/casper-nctl/assets/net-1/users/user-1/ ./user-keys
 ```
 
 Copy and adjust `.env` file. It's sketched for local NCTL with Docker.
