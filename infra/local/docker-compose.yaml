@@ -24,7 +24,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-  
+
   db_migrator:
     build:
       context: ../../
@@ -51,7 +51,7 @@ services:
       DB_URI: "mysql://root:password@mysql:3306/lottery"
     depends_on:
       - db_migrator
-  
+
   handler:
     build:
       context: ../../
@@ -70,7 +70,6 @@ services:
       dockerfile: ./infra/docker/client.dockerfile
     environment:
       LOTTERY_APP_CONTRACT_PACKAGE_HASH: "8efc85466cf4054f47eb009b683b611fa63cccd14f074bf78f1e9404dc52a347"
-      LOTTERY_PLAY_PAYMENT_AMOUNT: "1000000"
       LOTTERY_API_URL: "http://localhost:3001"
       LOTTERY_API_WS_URL: "ws://localhost:3001"
       CSPR_CLICK_APP_NAME: "Lottery Demo"

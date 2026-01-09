@@ -73,7 +73,7 @@ const useManagePlay = (): ManagePlayData => {
 		} else {
 			setPlayerAccount(null);
 		}
-	}, [activeAccountContext]);
+	}, [activeAccountContext, clickRef]);
 
 	useEffect(() => {
 		if (executedTransaction !== null) {
@@ -118,8 +118,8 @@ const useManagePlay = (): ManagePlayData => {
 		try {
 			const transaction = await preparePlayTransaction(playerPublicKey);
 
-			await window.csprclick.send(
-				{Version1: transaction.toJSON()},
+			await clickRef.send(
+				transaction.toJSON() as object,
 				playerPublicKey.toHex(),
 				handleTransactionStatusUpdate
 			);
