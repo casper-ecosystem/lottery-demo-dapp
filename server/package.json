@@ -12,10 +12,7 @@
     "typeorm": "./node_modules/ts-node/dist/bin.js ./node_modules/typeorm/cli.js -d dist/data-source.js"
   },
   "overrides": {
-    "sha.js": "^2.4.12",
-    "express-ws": {
-      "ws": "^7.5.11"
-    }
+    "sha.js": "^2.4.12"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +20,6 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "@types/express-ws": "^3.0.4",
     "@types/node": "^20.11.30",
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
@@ -39,7 +35,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.22.3",
-    "express-ws": "^5.0.2",
     "http-proxy-middleware": "^3.0.6",
     "mysql2": "^3.24.6",
     "typeorm": "^0.3.31",

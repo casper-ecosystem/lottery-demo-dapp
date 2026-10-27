@@ -1,12 +1,11 @@
-import { ParamsDictionary, RequestHandler } from 'express-serve-static-core';
-import { ParsedQs } from 'qs';
+import { RequestHandler } from 'express';
 
 // Needed for Express 4 that does not forward rejected async handlers to error middleware
 export function asyncHandler<
-  Params = ParamsDictionary,
+  Params = Record<string, string>,
   ResponseBody = unknown,
   RequestBody = unknown,
-  RequestQuery = ParsedQs,
+  RequestQuery = Record<string, string | undefined>,
   Locals extends Record<string, unknown> = Record<string, unknown>,
 >(
   handler: RequestHandler<Params, ResponseBody, RequestBody, RequestQuery, Locals>,

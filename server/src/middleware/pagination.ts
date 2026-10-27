@@ -11,36 +11,46 @@ interface PaginationRequest {
 }
 
 const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 100;
 const MAX_PAGE = 10_000;
 
-function parseInteger(value: string | undefined): number | undefined {
-  if (!value || !/^-?\d+$/.test(value)) {
+class PaginationError extends Error {
+  readonly status = 400;
+}
+
+function parsePositiveInteger(value: string | undefined, name: string): number | undefined {
+  if (value === undefined) {
     return undefined;
   }
 
-  const parsed = Number(value);
-  return Number.isInteger(parsed) ? parsed : undefined;
-}
-
-export function getPagination(query: PaginationRequest, maxLimit = 100): PaginationParams {
-  const requestedPageSize = parseInteger(query.pageSize);
-  let limit = requestedPageSize !== undefined && requestedPageSize >= 0 ? requestedPageSize : DEFAULT_PAGE_SIZE;
-
-  if (requestedPageSize === -1) {
-    return { limit: -1, offset: 0 };
+  if (!/^\d+$/.test(value)) {
+    throw new PaginationError(`${name} must be a positive integer`);
   }
 
-  limit = Math.min(limit, maxLimit);
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed < 1) {
+    throw new PaginationError(`${name} must be a positive integer`);
+  }
 
-  const requestedPage = parseInteger(query.page);
-  const page = Math.min(requestedPage !== undefined && requestedPage >= 1 ? requestedPage : 1, MAX_PAGE);
+  return parsed;
+}
+
+export function getPagination(query: PaginationRequest, maxLimit = MAX_PAGE_SIZE): PaginationParams {
+  const requestedPageSize = parsePositiveInteger(query.pageSize, 'pageSize');
+  const limit = Math.min(requestedPageSize ?? DEFAULT_PAGE_SIZE, maxLimit);
+
+  const page = parsePositiveInteger(query.page, 'page') ?? 1;
+  if (page > MAX_PAGE) {
+    throw new PaginationError(`page must not exceed ${MAX_PAGE}`);
+  }
+
   const offset = (page - 1) * limit;
 
   return { limit, offset };
 }
 
 export function pagination(
-  maxLimit = 100,
+  maxLimit = MAX_PAGE_SIZE,
 ): (req: Request<never, never, never, PaginationParams>, _: Response, next: NextFunction) => void {
   return (req: Request<never, never, never, PaginationRequest & PaginationParams>, _: Response, next: NextFunction) => {
     const { limit, offset } = getPagination(req.query, maxLimit);

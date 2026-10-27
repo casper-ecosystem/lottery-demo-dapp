@@ -4,7 +4,7 @@ import http from 'http';
 import path from 'path';
 
 import cors from 'cors';
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import fs from 'fs';
 
@@ -12,6 +12,7 @@ import { config } from './config';
 import { AppDataSource } from './data-source';
 
 import { asyncHandler } from './middleware/async-handler';
+import { errorHandler } from './middleware/error-handler';
 import { PaginationParams, pagination } from './middleware/pagination';
 import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
 import { PlayRepository } from './repository/play';
@@ -110,9 +111,13 @@ async function main() {
 
       const round = await roundsRepository.getLatest({ isFinished });
 
+      if (!round) {
+        return res.json({ data: null });
+      }
+
       await csprCloudClient.withPublicKeys([round]);
 
-      res.json({ data: round });
+      return res.json({ data: round });
     }),
   );
 
@@ -152,15 +157,7 @@ async function main() {
     }
   });
 
-  app.use((error: Error, _: Request, res: Response, next: NextFunction) => {
-    console.error(error);
-
-    if (res.headersSent) {
-      return next(error);
-    }
-
-    return res.status(500).json({ error: 'Internal server error' });
-  });
+  app.use(errorHandler);
 
   server.listen(config.httpPort, () => console.log(`Server running on http://localhost:${config.httpPort}`));
 }
