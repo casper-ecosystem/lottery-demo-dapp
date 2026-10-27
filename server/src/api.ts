@@ -4,18 +4,18 @@ import http from 'http';
 import path from 'path';
 
 import cors from 'cors';
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-
-import { AppDataSource } from './data-source';
+import fs from 'fs';
 
 import { config } from './config';
-import { PlayRepository } from './repository/play';
+import { AppDataSource } from './data-source';
 
-import fs from 'fs';
-import { RoundRepository } from './repository/round';
+import { asyncHandler } from './middleware/async-handler';
 import { PaginationParams, pagination } from './middleware/pagination';
 import { CSPRCloudAPIClient } from './cspr-cloud/api-client';
+import { PlayRepository } from './repository/play';
+import { RoundRepository } from './repository/round';
 
 const app: Express = express();
 app.use(cors<Request>());
@@ -48,65 +48,95 @@ async function main() {
   });
   app.get('/accounts/:account_hash', csprCloudAPIProxy);
 
-  app.get('/players/:player_account_hash/plays', pagination(), async (req: Request<FindPlaysByPlayerParams, never, never, PaginationParams>, res: Response) => {
-    const [plays, total] = await playsRepository.getPaginatedPlays({
-      playerAccountHash: req.params.player_account_hash,
-    },{
-      limit: req.query.limit,
-      offset: req.query.offset,
-    });
+  app.get(
+    '/players/:player_account_hash/plays',
+    pagination(),
+    asyncHandler(async (req: Request<FindPlaysByPlayerParams, never, never, PaginationParams>, res: Response) => {
+      const [plays, total] = await playsRepository.getPaginatedPlays(
+        {
+          playerAccountHash: req.params.player_account_hash,
+        },
+        {
+          limit: req.query.limit,
+          offset: req.query.offset,
+        },
+      );
 
-    await csprCloudClient.withPublicKeys(plays);
+      await csprCloudClient.withPublicKeys(plays);
 
-    res.json({ data: plays, total });
-  });
+      res.json({ data: plays, total });
+    }),
+  );
 
-  app.get('/rounds/latest/plays', pagination(), async (req: Request<never, never, never, PaginationParams>, res: Response) => {
-    const [plays, total] = await playsRepository.getLatestRoundPlays({
-      limit: req.query.limit,
-      offset: req.query.offset,
-    });
+  app.get(
+    '/rounds/latest/plays',
+    pagination(),
+    asyncHandler(async (req: Request<never, never, never, PaginationParams>, res: Response) => {
+      const [plays, total] = await playsRepository.getLatestRoundPlays({
+        limit: req.query.limit,
+        offset: req.query.offset,
+      });
 
-    await csprCloudClient.withPublicKeys(plays);
+      await csprCloudClient.withPublicKeys(plays);
 
-    res.json({ data: plays, total });
-  });
+      res.json({ data: plays, total });
+    }),
+  );
 
-  app.get('/rounds/:round_id/plays', pagination(), async (req: Request<FindPlaysByRoundParams, never, never, PaginationParams>, res: Response) => {
-    const [plays, total] = await playsRepository.getPaginatedPlays({
-      roundId: req.params.round_id,
-    },{
-      limit: req.query.limit,
-      offset: req.query.offset,
-    });
+  app.get(
+    '/rounds/:round_id/plays',
+    pagination(),
+    asyncHandler(async (req: Request<FindPlaysByRoundParams, never, never, PaginationParams>, res: Response) => {
+      const [plays, total] = await playsRepository.getPaginatedPlays(
+        {
+          roundId: req.params.round_id,
+        },
+        {
+          limit: req.query.limit,
+          offset: req.query.offset,
+        },
+      );
 
-    await csprCloudClient.withPublicKeys(plays);
+      await csprCloudClient.withPublicKeys(plays);
 
-    res.json({ data: plays, total });
-  });
+      res.json({ data: plays, total });
+    }),
+  );
 
-  app.get('/rounds/latest', async (req: Request<never, never, never, { is_finished: string }>, res: Response) => {
-    const isFinished = req.query.is_finished === 'true';
+  app.get(
+    '/rounds/latest',
+    asyncHandler(async (req: Request<never, never, never, { is_finished: string }>, res: Response) => {
+      const isFinished = req.query.is_finished === 'true';
 
-    const round = await roundsRepository.getLatest({ isFinished });
+      const round = await roundsRepository.getLatest({ isFinished });
 
-    await csprCloudClient.withPublicKeys([round]);
+      await csprCloudClient.withPublicKeys([round]);
 
-    res.json({ data: round });
-  });
+      res.json({ data: round });
+    }),
+  );
 
-  app.get('/rounds', pagination(), async (req: Request<never, never, never, PaginationParams & { is_finished: string }>, res: Response) => {
-    const isFinished = req.query.is_finished === 'true';
-  
-    const [rounds, total] = await roundsRepository.getPaginatedRounds({
-      limit: req.query.limit,
-      offset: req.query.offset,
-    }, { isFinished });
+  app.get(
+    '/rounds',
+    pagination(),
+    asyncHandler(
+      async (req: Request<never, never, never, PaginationParams & { is_finished: string }>, res: Response) => {
+        const isFinished = req.query.is_finished === 'true';
 
-    await csprCloudClient.withPublicKeys(rounds);
+        const [rounds, total] = await roundsRepository.getPaginatedRounds(
+          {
+            limit: req.query.limit,
+            offset: req.query.offset,
+          },
+          { isFinished },
+        );
 
-    res.json({ data: rounds, total });
-  });
+        await csprCloudClient.withPublicKeys(rounds);
+
+        res.json({ data: rounds, total });
+      },
+    ),
+  );
 
   app.get('/proxy-wasm', async (_: Request, res: Response) => {
     fs.createReadStream(path.resolve(__dirname, `./resources/proxy_caller.wasm`)).pipe(res);
@@ -120,6 +150,16 @@ async function main() {
     } catch (error) {
       return res.status(500).json({ status: 'DOWN', error: error.message });
     }
+  });
+
+  app.use((error: Error, _: Request, res: Response, next: NextFunction) => {
+    console.error(error);
+
+    if (res.headersSent) {
+      return next(error);
+    }
+
+    return res.status(500).json({ error: 'Internal server error' });
   });
 
   server.listen(config.httpPort, () => console.log(`Server running on http://localhost:${config.httpPort}`));
