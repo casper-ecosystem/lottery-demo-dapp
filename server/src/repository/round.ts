@@ -8,7 +8,10 @@ export class RoundRepository {
     this.repo = dataSource.getRepository(Round);
   }
 
-  async getPaginatedRounds(pagination: { limit: number; offset: number }, params: { isFinished: boolean } = { isFinished: false }): Promise<[Round[], number]> {
+  async getPaginatedRounds(
+    pagination: { limit: number; offset: number },
+    params: { isFinished: boolean } = { isFinished: false },
+  ): Promise<[Round[], number]> {
     const options: FindManyOptions<Round> = {
       order: {
         roundId: 'DESC',
@@ -27,7 +30,7 @@ export class RoundRepository {
     return this.repo.findAndCount(options);
   }
 
-  async getLatest(params: { isFinished: boolean } = { isFinished: false }): Promise<Round> {
+  async getLatest(params: { isFinished: boolean } = { isFinished: false }): Promise<Round | null> {
     const queryBuilder = this.repo.createQueryBuilder().orderBy('round_id', 'DESC').limit(1);
 
     if (params.isFinished) {

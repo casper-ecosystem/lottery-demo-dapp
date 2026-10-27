@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
-import { VISIBLE_TABLE_DATA_LENGTH } from '../../utils/constants';
+import {
+	MAX_TABLE_DATA_LENGTH,
+	VISIBLE_TABLE_DATA_LENGTH,
+} from '../../utils/constants';
 
 interface InitialState {
 	data: null;
@@ -71,7 +74,7 @@ export const useGetTableData = <T>({
 	}, [pageSize, url, requestCounter]);
 
 	const loadAllData = () => {
-		setPageSize(-1);
+		setPageSize(MAX_TABLE_DATA_LENGTH);
 	};
 
 	const resetLimit = () => {
